@@ -28,17 +28,13 @@ class EntrustServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
-	}
+		$this->app['command.entrust.migration'] = $this->app->share(function($app)
+		{
+			return new MigrationCommand($app);
+		});
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array();
+		$this->commands(
+			'command.entrust.migration'
+		);
 	}
-
 }
