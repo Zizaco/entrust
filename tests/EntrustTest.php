@@ -59,6 +59,17 @@ class EntrustTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse( $entrust->hasRole('AdminB') );
     }
 
+    public function testGetUser()
+    {
+        // Current user
+        $user = m::mock( 'User' );
+
+        $entrust = new Entrust( $this->mockAppWithCurrentUser( $user ) );
+
+        // Check the returned user
+        $this->assertEquals( $entrust->user(), $user );
+    }
+
     private function mockAppWithCurrentUser( $user )
     {
         // Mock app
