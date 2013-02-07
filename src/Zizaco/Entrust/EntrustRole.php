@@ -22,7 +22,8 @@ class EntrustRole extends Ardent
     );
 
     /**
-     * beforeSave
+     * Before save should serialize permissions to save
+     * as text into the database
      *
      * @return bool
      */
@@ -34,7 +35,8 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * afterSave
+     * After save should un-serialize permissions to be
+     * usable again
      *
      * @return bool
      */
@@ -46,7 +48,8 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * Set the array of model attributes. No checking is done.
+     * When an serialized permission comes from the database
+     * it may become an array within the object.
      *
      * @param  array  $attributes
      * @param  bool   $sync
