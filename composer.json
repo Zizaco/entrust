@@ -23,6 +23,9 @@
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
     },
     "autoload": {
+        "classmap": [
+            "src/commands"
+        ],
         "psr-0": {
             "Zizaco\\Entrust": "src/"
         }
