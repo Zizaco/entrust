@@ -14,6 +14,11 @@
         "illuminate/support": "4.0.x",
         "laravelbook/ardent": "*"
     },
+    "require-dev": {
+        "illuminate/database": "4.0.x",
+        "mockery/mockery": "0.7.2",
+        "zizaco/factory-muff": "dev-master"
+    },
     "suggest": {
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
     },
