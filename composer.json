@@ -1,0 +1,26 @@
+{
+    "name": "zizaco/entrust",
+    "description": "Role-based Permissions for Laravel 4",
+    "keywords": ["laravel","illuminate","auth","roles"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Zizaco Zizuini",
+            "email": "zizaco@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.0.x",
+        "laravelbook/ardent": "*"
+    },
+    "suggest": {
+        "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
+    },
+    "autoload": {
+        "psr-0": {
+            "Zizaco\\Entrust": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
