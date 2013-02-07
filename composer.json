@@ -1,6 +1,6 @@
 {
     "name": "zizaco/entrust",
-    "description": "This plugin provides a flexible way to add Role-based Permissions to Laravel 4",
+    "description": "This package provides a flexible way to add Role-based Permissions to Laravel 4",
     "keywords": ["laravel","illuminate","auth","roles"],
     "license": "MIT",
     "authors": [
