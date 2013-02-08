@@ -8,6 +8,10 @@ Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
 ## Quick start
 
+**PS:** Even though it's not needed. Entrust works very well with [Confide](https://github.com/Zizaco/confide) in order to eliminate repetitive tasks involving the management of users: Account creation, login, logout, confirmation by e-mail, password reset, etc.
+
+[Take a look at Confide](https://github.com/Zizaco/confide)
+
 ### Required setup
 
 In the `require` key of `composer.json` file add the following
@@ -86,7 +90,7 @@ Next, use the `HasRole` trait in your existing `User` model. For example:
 
 use Zizaco\Entrust\HasRole;
 
-class User extends Eloquent {
+class User extends Eloquent /* or ConfideUser 'wink' */{ 
     use HasRole; // Add this trait to your user model
     
 ...
