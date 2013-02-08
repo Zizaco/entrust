@@ -50,7 +50,7 @@ At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacad
     
 ### Configuration
 
-Set the properly values to the `config/auth.php`. This values will be used by entrust to refer to the correct user table and model.
+Set the propertly values to the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
 
 ### User relation to roles
 
@@ -79,7 +79,7 @@ class Role extends EntrustRole
 }
 ```
     
-The `Role` model have two main attributes: `name` and `permissions`.
+The `Role` model has two main attributes: `name` and `permissions`.
 `name`, as you can imagine, is the name of the Role. For example: "Admin", "Owner", "Employee".
 `permissions` is an array that is automagically serialized and unserialized and the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
 
@@ -165,7 +165,7 @@ Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
 
 ### Route filter
 
-It you need to customize more your filters while still use Entrive roles/permissions, you can simply use the `can` and `hasRole` methods from the Facade.
+Entrive roles/permissions can be used in filters by simply using the `can` and `hasRole` methods from within the Facade.
 
 ```php
 Route::filter('manage_posts', function()
