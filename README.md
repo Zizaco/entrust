@@ -121,7 +121,7 @@ Next, with both roles created let's assign then to the users. Thanks to the `Has
 
 ```php
 $user = User::where('username','=','Zizaco')->first();
-$user->roles()->attach( $admin->id );
+$user->attachRole( $admin );
 ```
     
 Now we can check for roles and permissions simply by doing:
