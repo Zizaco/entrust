@@ -70,6 +70,36 @@ class EntrustTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals( $entrust->user(), $user );
     }
 
+    public function testFilterRoutesNeedRole()
+    {
+        $router = m::mock( 'Router' );
+        $router->shouldReceive('addFilter')
+            ->once();
+        $router->shouldReceive('matchFilter')
+            ->once();
+
+        $app = array('router'=>$router);
+
+        $entrust = new Entrust( $app );
+
+        $entrust->routeNeedsRole('admin','Admin');
+    }
+
+    public function testFilterRoutesNeedPermission()
+    {
+        $router = m::mock( 'Router' );
+        $router->shouldReceive('addFilter')
+            ->once();
+        $router->shouldReceive('matchFilter')
+            ->once();
+
+        $app = array('router'=>$router);
+
+        $entrust = new Entrust( $app );
+
+        $entrust->routeNeedsPermission('admin','manage_users');
+    }
+
     private function mockAppWithCurrentUser( $user )
     {
         // Mock app
