@@ -54,7 +54,7 @@ Now generate the Entrust migration
 
     $ php artisan entrust:migration
 
-It will generate the `<timestamp>_entrust_setup_roles_table.php` migration. You may now run it with the artisan migrate command:
+It will generate the `<timestamp>_entrust_setup_tables.php` migration. You may now run it with the artisan migrate command:
 
     $ php artisan migrate
     
@@ -87,7 +87,7 @@ Next, use the `HasRole` trait in your existing `User` model. For example:
 use Zizaco\Entrust\HasRole;
 
 class User extends Eloquent {
-    use HasRole;
+    use HasRole; // Add this trait to your user model
     
 ...
 ```
@@ -102,7 +102,7 @@ Don't forget to dump composer autoload
 
 ## Usage
 
-### Basic usage
+### Concepts
 Let's start by creating the following `Role`s:
 
 ```php
@@ -135,9 +135,28 @@ $user->can("manage_users"); // false
 
 You can have as many `Role`s was you want in each `User` and vice versa.
 
-### Example usage
+### Short syntax Route filter
 
-Using a filter to check for permissions
+To filter a route by permission or role you can call the following in your `app/filers.php`:
+
+```php
+// Only users with roles that have the 'manage_posts' permission will
+// be able to access any route within admin/post.
+Entrust::routeNeedsPermission( 'admin/post*', 'manage_posts' );
+
+// Only owners will have access to routes within admin/advanced
+Entrust::routeNeedsRole( 'admin/advanced*', 'Owner' );
+```
+
+Both of these methods accepts a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(404)`. Overwise the third parameter will be returned. So you can use it like:
+
+```php
+Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
+```
+
+### Route filter
+
+It you need to customize more your filters while still use Entrive roles/permissions, you can simply use the `can` and `hasRole` methods from the Facade.
 
 ```php
 Route::filter('manage_posts', function()
