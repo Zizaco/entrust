@@ -64,10 +64,10 @@ trait HasRole
      */
     public function attachRole( $role )
     {
-        if(! is_object($role))
+        if( is_object($role))
             $role = $role->getKey();
 
-        if(! is_array($role))
+        if( is_array($role))
             $role = $role['id'];
 
         $this->roles()->attach( $role );
