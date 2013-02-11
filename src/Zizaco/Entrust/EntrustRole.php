@@ -22,6 +22,14 @@ class EntrustRole extends Ardent
     );
 
     /**
+     * Many-to-Many relations with Users
+     */
+    public function users()
+    {
+        return $this->belongsToMany('User', 'assigned_roles');
+    }
+
+    /**
      * Before save should serialize permissions to save
      * as text into the database
      *
