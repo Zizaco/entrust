@@ -3,6 +3,7 @@
 ![Entrust Poster](https://dl.dropbox.com/u/12506137/libs_bundles/entrust.png)
 
 [![Build Status](https://api.travis-ci.org/Zizaco/entrust.png)](https://travis-ci.org/Zizaco/entrust)
+[![ProjectStatus](http://stillmaintained.com/Zizaco/entrust.png)](http://stillmaintained.com/Zizaco/entrust)
 
 Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
