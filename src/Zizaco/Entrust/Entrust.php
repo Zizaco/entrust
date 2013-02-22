@@ -96,16 +96,21 @@ class Entrust
     {
         $filter_name = $role.'_'.substr(md5($route),0,6);
 
-        // Same as Route::filter, registers a new filter
-        $this->_app['router']->addFilter($filter_name, function() use ($role, $result) {
-            if (! $this->hasRole($role))
-            {
-                if(! $result)
-                    Facade::getFacadeApplication()->abort(404);
+        if (! $result instanceof Closure)
+        {
+            $result = function() use ($role, $result) {
+                if (! $this->hasRole($role))
+                {
+                    if(! $result)
+                        Facade::getFacadeApplication()->abort(404);
 
-                return $result;
-            }
-        });
+                    return $result;
+                }
+            };
+        }
+
+        // Same as Route::filter, registers a new filter
+        $this->_app['router']->addFilter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
@@ -128,16 +133,21 @@ class Entrust
     {
         $filter_name = $permission.'_'.substr(md5($route),0,6);
 
-        // Same as Route::filter, registers a new filter
-        $this->_app['router']->addFilter($filter_name, function() use ($permission, $result) {
-            if (! $this->can($permission))
-            {
-                if(! $result)
-                    Facade::getFacadeApplication()->abort(404);
+        if (! $result instanceof Closure)
+        {
+            $result = function() use ($permission, $result) {
+                if (! $this->can($permission))
+                {
+                    if(! $result)
+                        Facade::getFacadeApplication()->abort(404);
 
-                return $result;
-            }
-        });
+                    return $result;
+                }
+            };
+        }
+
+        // Same as Route::filter, registers a new filter
+        $this->_app['router']->addFilter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
