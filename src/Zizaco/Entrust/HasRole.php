@@ -72,4 +72,25 @@ trait HasRole
 
         $this->roles()->attach( $role );
     }
+
+    /**
+     * Alias to eloquent many-to-many relation's
+     * detach() method
+     *
+     * @param mixed $role
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function detachRole( $role )
+    {
+        if( is_object($role))
+            $role = $role->getKey();
+
+        if( is_array($role))
+            $role = $role['id'];
+
+        $this->roles()->detach( $role );
+    }
 }
