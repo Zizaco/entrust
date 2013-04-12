@@ -67,7 +67,7 @@ class EntrustRole extends Ardent
     {
         if( isset($attributes['permissions']) )
         {
-            $attributes['permissions'] = json_decode($attributes['permissions']);
+            $attributes['permissions'] = json_decode($attributes['permissions'], true);
         }
 
         parent::setRawAttributes( $attributes, $sync );
