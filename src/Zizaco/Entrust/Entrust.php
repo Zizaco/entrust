@@ -85,36 +85,42 @@ class Entrust
      * is null then return 404. Overwise the $result is returned
      * 
      * @param string $route  Route pattern. i.e: "admin/*"
-     * @param string $role   The role needed.
+     * @param array|string $roles   The role(s) needed.
      * @param mixed  $result i.e: Redirect::to('/')
      *
      * @access public
      *
      * @return void
      */
-    public function routeNeedsRole( $route, $role, $result = null )
+    public function routeNeedsRole( $route, $roles, $result = null )
     {
-        $filter_name = $role.'_'.substr(md5($route),0,6);
-
-        if (! $result instanceof Closure)
-        {
-            $result = function() use ($role, $result) {
-                if (! $this->hasRole($role))
-                {
-                    if(! $result)
-                        Facade::getFacadeApplication()->abort(404);
-
-                    return $result;
-                }
-            };
+        if(!is_array($roles)) {
+            $roles = array($roles);
         }
 
-        // Same as Route::filter, registers a new filter
-        $this->_app['router']->addFilter($filter_name, $result);
+        foreach($roles as $role) {
+            $filter_name = $role.'_'.substr(md5($route),0,6);
 
-        // Same as Route::when, assigns a route pattern to the
-        // previously created filter.
-        $this->_app['router']->matchFilter( $route, $filter_name );
+            if (! $result instanceof Closure)
+            {
+                $result = function() use ($role, $result) {
+                    if (! $this->hasRole($role))
+                    {
+                        if(! $result)
+                            Facade::getFacadeApplication()->abort(404);
+
+                        return $result;
+                    }
+                };
+            }
+
+            // Same as Route::filter, registers a new filter
+            $this->_app['router']->addFilter($filter_name, $result);
+
+            // Same as Route::when, assigns a route pattern to the
+            // previously created filter.
+            $this->_app['router']->matchFilter( $route, $filter_name );
+        }
     }
 
     /**
@@ -122,35 +128,41 @@ class Entrust
      * is null then return 404. Overwise the $result is returned
      * 
      * @param string $route  Route pattern. i.e: "admin/*"
-     * @param string $role   The permission needed.
+     * @param array|string $permissions   The permission needed.
      * @param mixed  $result i.e: Redirect::to('/')
      *
      * @access public
      *
      * @return void
      */
-    public function routeNeedsPermission( $route, $permission, $result = null )
+    public function routeNeedsPermission( $route, $permissions, $result = null )
     {
-        $filter_name = $permission.'_'.substr(md5($route),0,6);
-
-        if (! $result instanceof Closure)
-        {
-            $result = function() use ($permission, $result) {
-                if (! $this->can($permission))
-                {
-                    if(! $result)
-                        Facade::getFacadeApplication()->abort(404);
-
-                    return $result;
-                }
-            };
+        if(!is_array($permissions)) {
+            $permissions = array($permissions);
         }
 
-        // Same as Route::filter, registers a new filter
-        $this->_app['router']->addFilter($filter_name, $result);
+        foreach($permissions as $permission) {
+            $filter_name = $permission.'_'.substr(md5($route),0,6);
 
-        // Same as Route::when, assigns a route pattern to the
-        // previously created filter.
-        $this->_app['router']->matchFilter( $route, $filter_name );
+            if (! $result instanceof Closure)
+            {
+                $result = function() use ($permission, $result) {
+                    if (! $this->can($permission))
+                    {
+                        if(! $result)
+                            Facade::getFacadeApplication()->abort(404);
+
+                        return $result;
+                    }
+                };
+            }
+
+            // Same as Route::filter, registers a new filter
+            $this->_app['router']->addFilter($filter_name, $result);
+
+            // Same as Route::when, assigns a route pattern to the
+            // previously created filter.
+            $this->_app['router']->matchFilter( $route, $filter_name );
+        }
     }
 }
