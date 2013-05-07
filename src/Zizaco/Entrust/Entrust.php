@@ -83,44 +83,51 @@ class Entrust
     /**
      * Filters a route for the name Role. If the third parameter
      * is null then return 404. Overwise the $result is returned
-     * 
+     *
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $roles   The role(s) needed.
-     * @param mixed  $result i.e: Redirect::to('/')
-     *
+     * @param mixed $result i.e: Redirect::to('/')
+     * @param bool $cumulative Must have all roles.
      * @access public
      *
      * @return void
      */
-    public function routeNeedsRole( $route, $roles, $result = null )
+    public function routeNeedsRole( $route, $roles, $result = null, $cumulative=true )
     {
         if(!is_array($roles)) {
             $roles = array($roles);
         }
 
-        foreach($roles as $role) {
-            $filter_name = $role.'_'.substr(md5($route),0,6);
+        $filter_name = implode('_',$roles).'_'.substr(md5($route),0,6);
 
-            if (! $result instanceof Closure)
-            {
-                $result = function() use ($role, $result) {
-                    if (! $this->hasRole($role))
-                    {
-                        if(! $result)
-                            Facade::getFacadeApplication()->abort(404);
-
-                        return $result;
+        if (! $result instanceof Closure) {
+            $result = function() use ($roles, $result, $cumulative) {
+                $hasARole = array();
+                foreach($roles as $role) {
+                    if ($this->hasRole($role)) {
+                        $hasARole[] = true;
+                    } else {
+                        $hasARole[] = false;
                     }
-                };
-            }
+                }
 
-            // Same as Route::filter, registers a new filter
-            $this->_app['router']->addFilter($filter_name, $result);
+                // Check to see if it is false and then
+                // check additive flag and that the array only contains false.
+                if(in_array(false, $hasARole) && ($cumulative || count(array_unique($hasARole)) == 1) ) {
+                    if(! $result)
+                        Facade::getFacadeApplication()->abort(404);
 
-            // Same as Route::when, assigns a route pattern to the
-            // previously created filter.
-            $this->_app['router']->matchFilter( $route, $filter_name );
+                    return $result;
+                }
+            };
         }
+
+        // Same as Route::filter, registers a new filter
+        $this->_app['router']->addFilter($filter_name, $result);
+
+        // Same as Route::when, assigns a route pattern to the
+        // previously created filter.
+        $this->_app['router']->matchFilter( $route, $filter_name );
     }
 
     /**
@@ -130,39 +137,48 @@ class Entrust
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $permissions   The permission needed.
      * @param mixed  $result i.e: Redirect::to('/')
+     * @param bool $cumulative Must have all permissions
      *
      * @access public
      *
      * @return void
      */
-    public function routeNeedsPermission( $route, $permissions, $result = null )
+    public function routeNeedsPermission( $route, $permissions, $result = null, $cumulative=true )
     {
         if(!is_array($permissions)) {
             $permissions = array($permissions);
         }
 
-        foreach($permissions as $permission) {
-            $filter_name = $permission.'_'.substr(md5($route),0,6);
+        $filter_name = implode('_',$permissions).'_'.substr(md5($route),0,6);
 
-            if (! $result instanceof Closure)
-            {
-                $result = function() use ($permission, $result) {
-                    if (! $this->can($permission))
-                    {
-                        if(! $result)
-                            Facade::getFacadeApplication()->abort(404);
-
-                        return $result;
+        if (! $result instanceof Closure)
+        {
+            $result = function() use ($permissions, $result, $cumulative) {
+                $hasAPermission = array();
+                foreach($permissions as $permission) {
+                    if ($this->can($permission)) {
+                        $hasAPermission[] = true;
+                    } else {
+                        $hasAPermission[] = false;
                     }
-                };
-            }
+                }
 
-            // Same as Route::filter, registers a new filter
-            $this->_app['router']->addFilter($filter_name, $result);
+                // Check to see if it is false and then
+                // check additive flag and that the array only contains false.
+                if(in_array(false, $hasAPermission) && ($cumulative || count(array_unique($hasAPermission)) == 1) ) {
+                    if(! $result)
+                        Facade::getFacadeApplication()->abort(404);
 
-            // Same as Route::when, assigns a route pattern to the
-            // previously created filter.
-            $this->_app['router']->matchFilter( $route, $filter_name );
+                    return $result;
+                }
+            };
         }
+
+        // Same as Route::filter, registers a new filter
+        $this->_app['router']->addFilter($filter_name, $result);
+
+        // Same as Route::when, assigns a route pattern to the
+        // previously created filter.
+        $this->_app['router']->matchFilter( $route, $filter_name );
     }
 }
