@@ -156,9 +156,15 @@ Entrust::routeNeedsPermission( 'admin/post*', 'manage_posts' );
 
 // Only owners will have access to routes within admin/advanced
 Entrust::routeNeedsRole( 'admin/advanced*', 'Owner' );
+
+// Optionally the second parameter can be an array of permissions or roles.
+// User would need to match all roles or permissions for that route.
+Entrust::routeNeedsPermission( 'admin/post*', array('manage_posts','manage_comments') );
+
+Entrust::routeNeedsRole( 'admin/advanced*', array('Owner','Writer') );
 ```
 
-Both of these methods accepts a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(404)`. Overwise the third parameter will be returned. So you can use it like:
+Further, both of these methods accepts a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(404)`. Overwise the third parameter will be returned. So you can use it like:
 
 ```php
 Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
