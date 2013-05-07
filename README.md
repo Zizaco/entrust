@@ -217,6 +217,16 @@ Route::when('admin/advanced*', 'owner_role');
 
 As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged, and then if he has the role or permission. If the user is not logged the return will also be `false`.
 
+## Troubleshooting
+
+If you encounter an error when doing the migration that looks like:
+```
+SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150) (SQL: alter table `assigned_roles` add constraint assigned_roles_user_id_foreign foreign key (`
+  user_id`) references `users` (`id`)) (Bindings: array (
+  ))
+```
+Then it's likely that the `id` column in your user table does not match the `user_id` column in `assigned_roles`. Match sure both are `INT(10)`.
+
 ## License
 
 Entrust is free software distributed under the terms of the MIT license

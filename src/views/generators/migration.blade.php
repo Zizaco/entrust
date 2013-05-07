@@ -28,6 +28,8 @@ class EntrustSetupTables extends Migration {
             $table->index('user_id');
             $table->integer('role_id');
             $table->index('role_id');
+            $table->foreign('user_id')->references('id')->on('users'); // assumes a users table
+            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 
