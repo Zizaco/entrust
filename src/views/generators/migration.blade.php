@@ -24,9 +24,9 @@ class EntrustSetupTables extends Migration {
         Schema::create('assigned_roles', function($table)
         {
             $table->increments('id');
-            $table->integer('user_id');
+            $table->integer('user_id')->unsigned();
             $table->index('user_id');
-            $table->integer('role_id');
+            $table->integer('role_id')->unsigned();
             $table->index('role_id');
             $table->foreign('user_id')->references('id')->on('users'); // assumes a users table
             $table->foreign('role_id')->references('id')->on('roles');
