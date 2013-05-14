@@ -73,9 +73,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase {
     public function testFilterRoutesNeedRole()
     {
         $router = m::mock( 'Router' );
-        $router->shouldReceive('addFilter')
+        $router->shouldReceive('filter')
             ->once();
-        $router->shouldReceive('matchFilter')
+        $router->shouldReceive('when')
             ->once();
 
         $app = array('router'=>$router);
@@ -88,9 +88,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase {
     public function testFilterRoutesNeedPermission()
     {
         $router = m::mock( 'Router' );
-        $router->shouldReceive('addFilter')
+        $router->shouldReceive('filter')
             ->once();
-        $router->shouldReceive('matchFilter')
+        $router->shouldReceive('when')
             ->once();
 
         $app = array('router'=>$router);
