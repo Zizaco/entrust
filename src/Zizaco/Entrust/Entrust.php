@@ -123,11 +123,11 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->addFilter($filter_name, $result);
+        $this->_app['router']->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->matchFilter( $route, $filter_name );
+        $this->_app['router']->when( $route, $filter_name );
     }
 
     /**
@@ -175,10 +175,10 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->addFilter($filter_name, $result);
+        $this->_app['router']->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->matchFilter( $route, $filter_name );
+        $this->_app['router']->when( $route, $filter_name );
     }
 }
