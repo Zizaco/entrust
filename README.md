@@ -137,8 +137,8 @@ $user->roles()->attach( $admin->id ); // id only
 Now we can check for roles and permissions simply by doing:
 
 ```php
-$user->hasRole("Owner");    // true
-$user->hasRole("Admin");    // false
+$user->hasRole("Owner");    // false
+$user->hasRole("Admin");    // true
 $user->can("manage_posts"); // true
 $user->can("manage_users"); // false
 ```
@@ -147,7 +147,7 @@ You can have as many `Role`s was you want in each `User` and vice versa.
 
 ### Short syntax Route filter
 
-To filter a route by permission or role you can call the following in your `app/filers.php`:
+To filter a route by permission or role you can call the following in your `app/filters.php`:
 
 ```php
 // Only users with roles that have the 'manage_posts' permission will
@@ -184,7 +184,7 @@ Entrust::routeNeedsPermission( 'admin/advanced*', array('Owner','Writer'), null,
 
 ### Route filter
 
-Entrive roles/permissions can be used in filters by simply using the `can` and `hasRole` methods from within the Facade.
+Entrust roles/permissions can be used in filters by simply using the `can` and `hasRole` methods from within the Facade.
 
 ```php
 Route::filter('manage_posts', function()
