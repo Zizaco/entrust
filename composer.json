@@ -7,6 +7,10 @@
         {
             "name": "Zizaco Zizuini",
             "email": "zizaco@gmail.com"
+        },
+        {
+            "name": "Andrew Elkins",
+            "homepage": "http://www.andrewelkins.com"
         }
     ],
     "require": {
