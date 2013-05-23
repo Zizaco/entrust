@@ -1,4 +1,4 @@
-`# Entrust (Laravel4 Package)
+# Entrust (Laravel4 Package)
 
 ![Entrust Poster](https://dl.dropbox.com/u/12506137/libs_bundles/entrust.png)
 
