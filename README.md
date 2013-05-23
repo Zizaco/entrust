@@ -134,7 +134,7 @@ $user->roles()->attach( $admin->id ); // id only
 ```
 Now we just need to add permissions to those Roles.
 
-```
+```php
 $managePosts = new Permission;
 $managePosts->name = 'manage_posts';
 $managePosts->display_name = 'Manage Posts';
