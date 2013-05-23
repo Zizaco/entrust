@@ -35,7 +35,11 @@ class EntrustRole extends Ardent
      */
     public function perms()
     {
-        return $this->belongsToMany('Permission');
+        // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
+        // TODO remove in a future version
+        try {
+            return $this->belongsToMany('Permission');
+        } catch(Execption $e) {}
     }
 
     /**
@@ -98,6 +102,10 @@ class EntrustRole extends Ardent
         }
     }
 
+    /**
+     * Attach permission to current role
+     * @param $permission
+     */
     public function attachPermission( $permission )
     {
         if( is_object($permission))
@@ -109,6 +117,10 @@ class EntrustRole extends Ardent
         $this->perms()->attach( $permission );
     }
 
+    /**
+     * Detach permission form current role
+     * @param $permission
+     */
     public function detachPermission( $permission )
     {
         if( is_object($permission))
