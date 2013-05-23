@@ -47,7 +47,7 @@ trait HasRole
         foreach ($this->roles as $role) {
             // Validate against the Permission table
             foreach($role->perms as $perm) {
-                if($perm == $permission) {
+                if($perm->name == $permission) {
                     return true;
                 }
             }

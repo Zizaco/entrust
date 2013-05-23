@@ -51,7 +51,11 @@ class EntrustRole extends Ardent
      */
     public function beforeSave( $forced = false )
     {
-        $this->permissions = json_encode($this->permissions);
+        // TODO remove in a future version
+        // @deprecated
+        try {
+            $this->permissions = json_encode($this->permissions);
+        } catch(Execption $e) {}
 
         return true;
     }
@@ -66,7 +70,11 @@ class EntrustRole extends Ardent
      */
     public function afterSave( $success,  $forced = false )
     {
-        $this->permissions = json_decode($this->permissions);
+        // TODO remove in a future version
+        // @deprecated
+        try {
+            $this->permissions = json_decode($this->permissions);
+        } catch(Execption $e) {}
 
         return true;
     }
