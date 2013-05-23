@@ -21,4 +21,5 @@ class EntrustPermission extends Ardent
       'name' => 'required|between:4,32',
       'display_name' => 'required|between:4,32'
     );
+
 }
