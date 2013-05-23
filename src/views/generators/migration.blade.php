@@ -16,7 +16,6 @@ class EntrustSetupTables extends Migration {
         {
             $table->increments('id');
             $table->string('name');
-            $table->text('permissions'); // Model's permissions array parsed as JSON
             $table->timestamps();
         });
 
@@ -31,6 +30,22 @@ class EntrustSetupTables extends Migration {
             $table->foreign('user_id')->references('id')->on('users'); // assumes a users table
             $table->foreign('role_id')->references('id')->on('roles');
         });
+
+        // Creates the permissions table
+        Schema::create('permissions', function($table)
+        {
+            $table->increments('id');
+            $table->string('name');
+        });
+
+        // Creates the permission_role (Many-to-Many relation) table
+        Schema::create('permission_role', function($table)
+        {
+            $table->increments('id');
+            $table->integer('permission_id')->unsigned()->index();
+            $table->integer('role_id')->unsigned()->index();
+            $table->unique(array('permission_id','role_id'));
+        });
     }
 
     /**
@@ -42,6 +57,8 @@ class EntrustSetupTables extends Migration {
     {
         Schema::drop('assigned_roles');
         Schema::drop('roles');
+        Schema::drop('permissions');
+        Schema::drop('permission_role');
     }
 
 }

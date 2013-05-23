@@ -30,9 +30,19 @@ class EntrustRole extends Ardent
     }
 
     /**
+     * Many-to-Many relations with Permission
+     * named perms as permissions is already taken.
+     */
+    public function perms()
+    {
+        return $this->belongsToMany('Permission');
+    }
+
+    /**
      * Before save should serialize permissions to save
      * as text into the database
      *
+     * @param bool $forced
      * @return bool
      */
     public function beforeSave( $forced = false )
@@ -46,6 +56,8 @@ class EntrustRole extends Ardent
      * After save should un-serialize permissions to be
      * usable again
      *
+     * @param bool $success
+     * @param bool $forced
      * @return bool
      */
     public function afterSave( $success,  $forced = false )
@@ -72,4 +84,40 @@ class EntrustRole extends Ardent
 
         parent::setRawAttributes( $attributes, $sync );
     }
+
+    /**
+     * Save permissions inputted
+     * @param $inputPermissions
+     */
+    public function savePermissions($inputPermissions)
+    {
+        if(! empty($inputPermissions)) {
+            $this->perms()->sync($inputPermissions);
+        } else {
+            $this->perms()->detach();
+        }
+    }
+
+    public function attachPermission( $permission )
+    {
+        if( is_object($permission))
+            $permission = $permission->getKey();
+
+        if( is_array($permission))
+            $permission = $permission['id'];
+
+        $this->perms()->attach( $permission );
+    }
+
+    public function detachPermission( $permission )
+    {
+        if( is_object($permission))
+            $permission = $permission->getKey();
+
+        if( is_array($permission))
+            $permission = $permission['id'];
+
+        $this->perms()->detach( $permission );
+    }
+
 }

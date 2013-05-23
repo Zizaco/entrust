@@ -68,6 +68,8 @@ class Entrust
         }
     }
 
+
+
     /**
      * Get the currently authenticated user or null.
      *

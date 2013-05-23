@@ -41,9 +41,9 @@ class MigrationCommand extends Command {
         $roles_table = lcfirst($this->option('table'));
 
         $this->line('');
-        $this->info( "Tables: $roles_table, assigned_roles" );
-        $message = "An migration that creates '$roles_table' and 'assigned_roles' tables will".
-        " be created in app/database/migrations directory";
+        $this->info( "Tables: $roles_table, assigned_roles, permissions, permission_role" );
+        $message = "An migration that creates '$roles_table', 'assigned_roles', 'permissions', 'permission_role'".
+        " tables will be created in app/database/migrations directory";
 
         $this->comment( $message );
         $this->line('');
