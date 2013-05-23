@@ -36,7 +36,9 @@ class HasRoleTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue( $model->ability( 'AdminA', 'manage_a', array('validate_all' => true, 'return_type' => 'boolean' ) ) );
         $this->assertFalse( $model->ability( 'AdminA', 'wrong_permission', array('validate_all' => true, 'return_type' => 'boolean' ) ) );
         $this->assertTrue( $model->ability( 'AdminA', 'manage_b', array('validate_all' => false, 'return_type' => 'boolean' ) ) );
+        $this->assertTrue( $model->ability( 'AdminA', 'manage_b' ) );
         $this->assertTrue( $model->ability( 'AdminA', 'wrong_permission', array('validate_all' => false, 'return_type' => 'boolean' ) ) );
+        $this->assertTrue( $model->ability( 'AdminA', 'wrong_permission' ) );
         $this->assertArrayHasKey('roles', $model->ability( 'AdminA', 'manage_a', array('validate_all' => true, 'return_type' => 'array' ) ) );
         $this->assertArrayHasKey('permissions', $model->ability( 'AdminA', 'wrong_permission', array('validate_all' => true, 'return_type' => 'array' ) ) );
     }
