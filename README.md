@@ -190,6 +190,8 @@ $user->ability(array('Admin','Owner'), array('manage_posts','manage_users'));
 $user->ability('Admin,Owner', 'manage_posts,manage_users');
 
 ```
+This will check whether the user has any of the provided roles and permissions. In this case it will return true since the user
+is an Admin and has the manage_posts permission.
 
 The third parameter is an options array.
 
@@ -200,6 +202,7 @@ $options = array(
 );
 ```
 `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
+
 `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
 
 Here's an example output.
