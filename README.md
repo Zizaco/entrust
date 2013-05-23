@@ -80,9 +80,28 @@ class Role extends EntrustRole
 }
 ```
     
-The `Role` model has two main attributes: `name` and `permissions`.
+The `Role` model has one main attributes: `name` and `permissions`.
 `name`, as you can imagine, is the name of the Role. For example: "Admin", "Owner", "Employee".
-`permissions` is an array that is automagically serialized and unserialized and the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
+`permissions` field has been deprecated in preference for the permission table. You should no longer use it.
+It is an array that is automagically serialized and unserialized and the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
+
+
+Create a Permission model following the example at `app/models/Permission.php`:
+
+```php
+<?php
+
+use Zizaco\Entrust\EntrustPermission;
+
+class Permission extends EntrustPermission
+{
+
+}
+```
+
+The `Permission` model has two attributes: `name` and `display_name`.
+`name`, as you can imagine, is the name of the Permission. For example: "Admin", "Owner", "Employee", "can_manage".
+Display name is a viewer friendly version of the permission string. "Admin", "Can Manage", "Something Cool".
 
 Next, use the `HasRole` trait in your existing `User` model. For example:
 
@@ -97,7 +116,8 @@ class User extends Eloquent /* or ConfideUser 'wink' */{
 ...
 ```
     
-This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole( $name )` and `can( $permission )` within your `User` model.
+This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole( $name )`,
+`can( $permission )`, and `ability($roles, $permissions, $options)` within your `User` model.
 
 Don't forget to dump composer autoload
 
@@ -159,6 +179,53 @@ $user->can("manage_users"); // false
 ```
 
 You can have as many `Role`s was you want in each `User` and vice versa.
+
+More advanced checking can be done using the awesome `ability` function. It takes in three parameters (roles, permissions, options).
+`roles` is a set of roles to check. `permissions` is a set of permissions to check.
+Either of the roles or permissions variable can be a comma separated string or array.
+
+```php
+$user->ability(array('Admin','Owner'), array('manage_posts','manage_users'));
+//or
+$user->ability('Admin,Owner', 'manage_posts,manage_users');
+
+```
+
+The third parameter is an options array.
+
+```php
+$options = array(
+'validate_all' => true | false (Default: false),
+'return_type' => boolean | array | both (Default: boolean)
+);
+```
+`validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
+`return_type` specifies whether to return a boolean, array of checked values, or both in an array.
+
+Here's an example output.
+
+```
+$options = array(
+'validate_all' => true,
+'return_value' => 'both'
+);
+list($validate,$allValidations) = $user->ability(array('Admin','Owner'), array('manage_posts','manage_users'), $options);
+
+// Output
+var_dump($validate);
+bool(false)
+var_dump($allValidations);
+array(5) {
+  ['role']=>
+  bool(true)
+  ['role_2']=>
+  bool(false)
+  ['manage_posts']=>
+  bool(true)
+  ['manage_users']=>
+  bool(false)
+}
+```
 
 ### Short syntax Route filter
 
