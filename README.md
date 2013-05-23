@@ -218,7 +218,7 @@ list($validate,$allValidations) = $user->ability(array('Admin','Owner'), array('
 var_dump($validate);
 bool(false)
 var_dump($allValidations);
-array(5) {
+array(4) {
   ['role']=>
   bool(true)
   ['role_2']=>
