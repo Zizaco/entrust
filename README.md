@@ -1,4 +1,4 @@
-# Entrust (Laravel4 Package)
+`# Entrust (Laravel4 Package)
 
 ![Entrust Poster](https://dl.dropbox.com/u/12506137/libs_bundles/entrust.png)
 
@@ -108,18 +108,17 @@ Don't forget to dump composer autoload
 ## Usage
 
 ### Concepts
-Let's start by creating the following `Role`s:
+Let's start by creating the following `Role`s and `Permission`s:
 
 ```php
 $owner = new Role;
 $owner->name = 'Owner';
-$owner->permissions = array('manage_posts','manage_pages','manage_users');
 $owner->save();
 
 $admin = new Role;
 $admin->name = 'Admin';
-$admin->permissions = array('manage_posts','manage_pages');
 $admin->save();
+
 ```
     
 Next, with both roles created let's assign then to the users. Thanks to the `HasRole` trait this are gonna be easy as:
@@ -133,7 +132,23 @@ $user->attachRole( $admin ); // Parameter can be an Role object, array or id.
 /* OR the eloquent's original: */
 $user->roles()->attach( $admin->id ); // id only
 ```
-    
+Now we just need to add permissions to those Roles.
+
+```
+$managePosts = new Permission;
+$managePosts->name = 'manage_posts';
+$managePosts->display_name = 'Manage Posts';
+$managePosts->save();
+
+$manageUsers = new Permission;
+$manageUsers->name = 'manage_users';
+$manageUsers->display_name = 'Manage Users';
+$manageUsers->save();
+
+$owner->perms()->sync(array($managePosts->id,$manageUsers->id));
+$admin->perms()->sync(array($managePosts->id));
+```
+
 Now we can check for roles and permissions simply by doing:
 
 ```php
