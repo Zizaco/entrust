@@ -207,7 +207,7 @@ $options = array(
 
 Here's an example output.
 
-```
+```php
 $options = array(
 'validate_all' => true,
 'return_value' => 'both'
