@@ -16,6 +16,7 @@ class EntrustSetupTables extends Migration {
         {
             $table->increments('id');
             $table->string('name');
+            $table->string('permissions');
             $table->timestamps();
         });
 
@@ -36,6 +37,8 @@ class EntrustSetupTables extends Migration {
         {
             $table->increments('id');
             $table->string('name');
+            $table->string('display_name');
+            $table->timestamps();
         });
 
         // Creates the permission_role (Many-to-Many relation) table
