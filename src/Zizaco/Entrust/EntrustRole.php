@@ -54,7 +54,9 @@ class EntrustRole extends Ardent
         // TODO remove in a future version
         // @deprecated
         try {
-            $this->permissions = json_encode($this->permissions);
+            if(isset($this->permissions)) {
+                $this->permissions = json_encode($this->permissions);
+            }
         } catch(Execption $e) {}
 
         return true;
