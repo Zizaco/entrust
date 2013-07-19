@@ -210,7 +210,7 @@ Here's an example output.
 ```php
 $options = array(
 'validate_all' => true,
-'return_value' => 'both'
+'return_type' => 'both'
 );
 list($validate,$allValidations) = $user->ability(array('Admin','Owner'), array('manage_posts','manage_users'), $options);
 
