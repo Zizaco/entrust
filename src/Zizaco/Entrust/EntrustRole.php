@@ -70,7 +70,7 @@ class EntrustRole extends Ardent
      * @param bool $forced
      * @return bool
      */
-    public function afterSave( $success,  $forced = false )
+    public function afterSave( $success = null,  $forced = false )
     {
         // TODO remove in a future version
         // @deprecated
