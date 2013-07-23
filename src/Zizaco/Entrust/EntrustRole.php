@@ -43,45 +43,6 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * Before save should serialize permissions to save
-     * as text into the database
-     *
-     * @param bool $forced
-     * @return bool
-     */
-    public function beforeSave( $forced = false )
-    {
-        // TODO remove in a future version
-        // @deprecated
-        try {
-            if(isset($this->permissions)) {
-                $this->permissions = json_encode($this->permissions);
-            }
-        } catch(Execption $e) {}
-
-        return true;
-    }
-
-    /**
-     * After save should un-serialize permissions to be
-     * usable again
-     *
-     * @param bool $success
-     * @param bool $forced
-     * @return bool
-     */
-    public function afterSave( $success = null,  $forced = false )
-    {
-        // TODO remove in a future version
-        // @deprecated
-        try {
-            $this->permissions = json_decode($this->permissions);
-        } catch(Execption $e) {}
-
-        return true;
-    }
-
-    /**
      * When an serialized permission comes from the database
      * it may become an array within the object.
      *
