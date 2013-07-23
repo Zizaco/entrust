@@ -70,12 +70,28 @@ class EntrustRole extends Ardent
      * @param bool $forced
      * @return bool
      */
-    public function afterSave( $success,  $forced = false )
+    public function afterSave( $forced = false )
     {
         // TODO remove in a future version
         // @deprecated
         try {
             $this->permissions = json_decode($this->permissions);
+        } catch(Execption $e) {}
+
+        return true;
+    }
+
+    /**
+     * Before delete all constrained foreign relations
+     *
+     * @param bool $forced
+     * @return bool
+     */
+    public function beforeDelete( $forced = false )
+    {
+        try {
+            \DB::table('assigned_roles')->where('role_id', $this->id)->delete();
+            \DB::table('permission_role')->where('role_id', $this->id)->delete();
         } catch(Execption $e) {}
 
         return true;
