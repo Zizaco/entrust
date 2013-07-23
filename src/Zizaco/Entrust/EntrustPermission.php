@@ -22,4 +22,19 @@ class EntrustPermission extends Ardent
       'display_name' => 'required|between:4,32'
     );
 
+    /**
+     * Before delete all constrained foreign relations
+     *
+     * @param bool $forced
+     * @return bool
+     */
+    public function beforeDelete( $forced = false )
+    {
+        try {
+            \DB::table('permission_role')->where('permission_id', $this->id)->delete();
+        } catch(Execption $e) {}
+
+        return true;
+    }
+
 }
