@@ -1,6 +1,7 @@
 <?php namespace Zizaco\Entrust;
 
 use LaravelBook\Ardent\Ardent;
+use SebastianBergmann\Exporter\Exception;
 
 class EntrustRole extends Ardent
 {
@@ -43,14 +44,54 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * Before save should serialize permissions to save
-     * as text into the database
+     * We can change role's permissions by setting $role->permissions variable to an array of permission names
      *
-     * @param array $value
+     * @param array $permNamesArray
      */
-    public function setPermissionsAttribute($value)
+    public function setPermissionsAttribute($permNamesArray)
     {
-        $this->attributes['permissions'] = json_encode($value);
+        if(is_array($permNamesArray)) {
+            try {
+                $perms = \DB::table('permissions')->whereIn('name', array_values($permNamesArray))->lists('name', 'id');
+                $this->perms()->sync(array_keys($perms));
+                $this->attributes['permissions'] = json_encode($perms);
+                $this->permsAreSavedByAttr(true);
+            } catch (Exception $e) {}
+        }
+    }
+
+    /**
+     * Before save should serialize permissions to save as text into the database.
+     *
+     * @param bool $forced
+     */
+    public function beforeSave( $forced = false )
+    {
+        if($this->permsAreSavedByAttr()) {
+            $this->permsAreSavedByAttr(false);
+        }
+        else {
+            $this->attributes['permissions'] = json_encode($this->perms()->lists('name', 'permission_id'));
+        }
+    }
+
+    /**
+     * Helper function to determine if the permissions are saved by
+     * Directly setting $role->permissions array.
+     * @todo maybe there is a better way of doing this
+     *
+     * @param null $newValue
+     * @return bool|null
+     *
+     */
+    protected function permsAreSavedByAttr($newValue = null) {
+        static $isSavedByAttr;
+        if($newValue !== null) {
+            $isSavedByAttr = $newValue;
+        }
+        else {
+            return $isSavedByAttr;
+        }
     }
 
     /**
