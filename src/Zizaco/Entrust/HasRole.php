@@ -45,17 +45,17 @@ trait HasRole
     public function can( $permission )
     {
         foreach ($this->roles as $role) {
+            // Deprecated permission value within the role table.
+            if( is_array($role->permissions) && in_array($permission, $role->permissions) )
+            {
+                return true;
+            }
+
             // Validate against the Permission table
             foreach($role->perms as $perm) {
                 if($perm->name == $permission) {
                     return true;
                 }
-            }
-
-            // Deprecated permission value within the role table.
-            if( is_array($role->permissions) && in_array($permission, $role->permissions) )
-            {
-                return true;
             }
         }
 

@@ -46,58 +46,41 @@ class EntrustRole extends Ardent
      * Before save should serialize permissions to save
      * as text into the database
      *
-     * @param bool $forced
-     * @return bool
+     * @param array $value
      */
-    public function beforeSave( $forced = false )
+    public function setPermissionsAttribute($value)
     {
-        // TODO remove in a future version
-        // @deprecated
-        try {
-            if(isset($this->permissions)) {
-                $this->permissions = json_encode($this->permissions);
-            }
-        } catch(Execption $e) {}
-
-        return true;
+        $this->attributes['permissions'] = json_encode($value);
     }
 
     /**
-     * After save should un-serialize permissions to be
+     * When loading the object it should un-serialize permissions to be
      * usable again
      *
-     * @param bool $success
+     * @param string $value
+     * permissoins json
+     */
+    public function getPermissionsAttribute($value)
+    {
+        return (array)json_decode($value);
+    }
+
+    /**
+     * Before delete all constrained foreign relations
+     *
      * @param bool $forced
      * @return bool
      */
-    public function afterSave( $success,  $forced = false )
+    public function beforeDelete( $forced = false )
     {
-        // TODO remove in a future version
-        // @deprecated
         try {
-            $this->permissions = json_decode($this->permissions);
+            \DB::table('assigned_roles')->where('role_id', $this->id)->delete();
+            \DB::table('permission_role')->where('role_id', $this->id)->delete();
         } catch(Execption $e) {}
 
         return true;
     }
 
-    /**
-     * When an serialized permission comes from the database
-     * it may become an array within the object.
-     *
-     * @param  array  $attributes
-     * @param  bool   $sync
-     * @return void
-     */
-    public function setRawAttributes(array $attributes, $sync = false)
-    {
-        if( isset($attributes['permissions']) )
-        {
-            $attributes['permissions'] = json_decode($attributes['permissions'], true);
-        }
-
-        parent::setRawAttributes( $attributes, $sync );
-    }
 
     /**
      * Save permissions inputted
