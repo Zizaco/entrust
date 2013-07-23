@@ -14,8 +14,8 @@ class EntrustSetupTables extends Migration {
         // Creates the roles table
         Schema::create('roles', function($table)
         {
-            $table->increments('id');
-            $table->string('name');
+            $table->increments('id')->unsigned();
+            $table->string('name')->unique();
             $table->string('permissions');
             $table->timestamps();
         });
@@ -23,11 +23,9 @@ class EntrustSetupTables extends Migration {
         // Creates the assigned_roles (Many-to-Many relation) table
         Schema::create('assigned_roles', function($table)
         {
-            $table->increments('id');
+            $table->increments('id')->unsigned();
             $table->integer('user_id')->unsigned();
-            $table->index('user_id');
             $table->integer('role_id')->unsigned();
-            $table->index('role_id');
             $table->foreign('user_id')->references('id')->on('users'); // assumes a users table
             $table->foreign('role_id')->references('id')->on('roles');
         });
@@ -35,7 +33,7 @@ class EntrustSetupTables extends Migration {
         // Creates the permissions table
         Schema::create('permissions', function($table)
         {
-            $table->increments('id');
+            $table->increments('id')->unsigned();
             $table->string('name');
             $table->string('display_name');
             $table->timestamps();
@@ -44,10 +42,11 @@ class EntrustSetupTables extends Migration {
         // Creates the permission_role (Many-to-Many relation) table
         Schema::create('permission_role', function($table)
         {
-            $table->increments('id');
-            $table->integer('permission_id')->unsigned()->index();
-            $table->integer('role_id')->unsigned()->index();
-            $table->unique(array('permission_id','role_id'));
+            $table->increments('id')->unsigned();
+            $table->integer('permission_id')->unsigned();
+            $table->integer('role_id')->unsigned();
+            $table->foreign('permission_id')->references('id')->on('permissions'); // assumes a users table
+            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 
