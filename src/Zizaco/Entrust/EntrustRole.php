@@ -46,55 +46,33 @@ class EntrustRole extends Ardent
      * Before save should serialize permissions to save
      * as text into the database
      *
-     * @param bool $forced
-     * @return bool
+     * @param array $value
      */
-    public function beforeSave( $forced = false )
+    public function setPermissionsAttribute($value)
     {
-        // TODO remove in a future version
-        // @deprecated
-        try {
-            if(isset($this->permissions)) {
-                $this->permissions = json_encode($this->permissions);
-            }
-        } catch(Execption $e) {}
-
-        return true;
+        $this->attributes['permissions'] = json_encode($value);
     }
 
     /**
-     * After save should un-serialize permissions to be
+     * When loading the object it should un-serialize permissions to be
      * usable again
      *
-     * @param bool $success
-     * @param bool $forced
-     * @return bool
+     * @param string $value
+     * permissoins json 
      */
-    public function afterSave( $success,  $forced = false )
+    public function getPermissionsAttribute($value)
     {
-        // TODO remove in a future version
-        // @deprecated
-        try {
-            $this->permissions = json_decode($this->permissions);
-        } catch(Execption $e) {}
-
-        return true;
+        return json_decode($value);
     }
 
     /**
      * Before delete all constrained foreign relations
      *
-     * @param bool $forced
-     * @return bool
+     * @param string $value
      */
-    public function beforeDelete( $forced = false )
+    public function setPermissionsAttribute($value)
     {
-        try {
-            \DB::table('assigned_roles')->where('role_id', $this->id)->delete();
-            \DB::table('permission_role')->where('role_id', $this->id)->delete();
-        } catch(Execption $e) {}
-
-        return true;
+        $this->attributes['permissions'] = json_encode($value);
     }
 
     /**
