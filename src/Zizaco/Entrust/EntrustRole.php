@@ -62,23 +62,27 @@ class EntrustRole extends Ardent
         return true;
     }
 
+
     /**
      * After save should un-serialize permissions to be
      * usable again
      *
-     * @param bool $success
-     * @param bool $forced
-     * @return bool
+     * @param array $value
+     * permissoins array
      */
-    public function afterSave( $success,  $forced = false )
+    public function getPermissionsAttribute($value)
     {
-        // TODO remove in a future version
-        // @deprecated
-        try {
-            $this->permissions = json_decode($this->permissions);
-        } catch(Execption $e) {}
+        return json_decode($value);
+    }
 
-        return true;
+    /**
+     * Before delete all constrained foreign relations
+     *
+     * @param string $value
+     */
+    public function setPermissionsAttribute($value)
+    {
+        $this->attributes['permissions'] = json_encode($value);
     }
 
     /**
