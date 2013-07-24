@@ -1,7 +1,6 @@
 <?php namespace Zizaco\Entrust;
 
 use LaravelBook\Ardent\Ardent;
-use SebastianBergmann\Exporter\Exception;
 
 class EntrustRole extends Ardent
 {
