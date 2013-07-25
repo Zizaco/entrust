@@ -84,7 +84,7 @@ class Entrust
 
     /**
      * Filters a route for the name Role. If the third parameter
-     * is null then return 404. Overwise the $result is returned
+     * is null then return 403. Overwise the $result is returned
      *
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $roles   The role(s) needed.
@@ -134,7 +134,7 @@ class Entrust
 
     /**
      * Filters a route for the permission. If the third parameter
-     * is null then return 404. Overwise the $result is returned
+     * is null then return 403. Overwise the $result is returned
      * 
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $permissions   The permission needed.
