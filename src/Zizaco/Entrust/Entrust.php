@@ -117,7 +117,7 @@ class Entrust
                 // check additive flag and that the array only contains false.
                 if(in_array(false, $hasARole) && ($cumulative || count(array_unique($hasARole)) == 1) ) {
                     if(! $result)
-                        Facade::getFacadeApplication()->abort(404);
+                        Facade::getFacadeApplication()->abort(403);
 
                     return $result;
                 }
@@ -169,7 +169,7 @@ class Entrust
                 // check additive flag and that the array only contains false.
                 if(in_array(false, $hasAPermission) && ($cumulative || count(array_unique($hasAPermission)) == 1) ) {
                     if(! $result)
-                        Facade::getFacadeApplication()->abort(404);
+                        Facade::getFacadeApplication()->abort(403);
 
                     return $result;
                 }
