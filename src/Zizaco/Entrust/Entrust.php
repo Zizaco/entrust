@@ -84,7 +84,7 @@ class Entrust
 
     /**
      * Filters a route for the name Role. If the third parameter
-     * is null then return 404. Overwise the $result is returned
+     * is null then return 403. Overwise the $result is returned
      *
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $roles   The role(s) needed.
@@ -117,7 +117,7 @@ class Entrust
                 // check additive flag and that the array only contains false.
                 if(in_array(false, $hasARole) && ($cumulative || count(array_unique($hasARole)) == 1) ) {
                     if(! $result)
-                        Facade::getFacadeApplication()->abort(404);
+                        Facade::getFacadeApplication()->abort(403);
 
                     return $result;
                 }
@@ -134,7 +134,7 @@ class Entrust
 
     /**
      * Filters a route for the permission. If the third parameter
-     * is null then return 404. Overwise the $result is returned
+     * is null then return 403. Overwise the $result is returned
      * 
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $permissions   The permission needed.
@@ -169,7 +169,7 @@ class Entrust
                 // check additive flag and that the array only contains false.
                 if(in_array(false, $hasAPermission) && ($cumulative || count(array_unique($hasAPermission)) == 1) ) {
                     if(! $result)
-                        Facade::getFacadeApplication()->abort(404);
+                        Facade::getFacadeApplication()->abort(403);
 
                     return $result;
                 }
