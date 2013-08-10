@@ -9,12 +9,12 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany('Role', 'assigned_roles');
+        return $this->belongsToMany(__NAMESPACE__ . 'Role', 'assigned_roles');
     }
 
     /**
      * Checks if the user has a Role by its name
-     * 
+     *
      * @param string $name Role name.
      *
      * @access public
@@ -35,7 +35,7 @@ trait HasRole
 
     /**
      * Check if user has a permission by its name
-     * 
+     *
      * @param string $permission Permission string.
      *
      * @access public
@@ -131,7 +131,7 @@ trait HasRole
     /**
      * Alias to eloquent many-to-many relation's
      * attach() method
-     * 
+     *
      * @param mixed $role
      *
      * @access public

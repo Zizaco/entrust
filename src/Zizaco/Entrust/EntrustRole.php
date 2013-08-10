@@ -26,7 +26,7 @@ class EntrustRole extends Ardent
      */
     public function users()
     {
-        return $this->belongsToMany('User', 'assigned_roles');
+        return $this->belongsToMany(__NAMESPACE__ . 'User', 'assigned_roles');
     }
 
     /**
@@ -38,7 +38,7 @@ class EntrustRole extends Ardent
         // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
         // TODO remove in a future version
         try {
-            return $this->belongsToMany('Permission');
+            return $this->belongsToMany(__NAMESPACE__ . 'Permission');
         } catch(Execption $e) {}
     }
 
