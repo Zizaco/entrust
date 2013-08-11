@@ -9,7 +9,7 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany(__NAMESPACE__ . 'Role', 'assigned_roles');
+        return $this->belongsToMany(__NAMESPACE__ . '\Role', 'assigned_roles');
     }
 
     /**
