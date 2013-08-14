@@ -9,7 +9,13 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany(__NAMESPACE__ . '\Role', 'assigned_roles');
+        $namespace = '';
+
+        if (isset($this->namespace)) {
+            $namespace = $this->namespace;
+        }
+
+        return $this->belongsToMany($namespace . '\Role', 'assigned_roles');
     }
 
     /**
