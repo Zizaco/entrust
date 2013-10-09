@@ -2,9 +2,9 @@
 
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
-trait HasRole
+class EntrustUser extends Eloquent
 {
-    /**
+   /**
      * Many-to-Many relations with Role
      */
     public function roles()
