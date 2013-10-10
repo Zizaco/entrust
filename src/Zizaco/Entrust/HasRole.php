@@ -4,7 +4,7 @@ use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 trait HasRole
 {
-   /**
+    /**
      * Many-to-Many relations with Role
      */
     public function roles()
