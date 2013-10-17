@@ -312,6 +312,30 @@ SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter
 ```
 Then it's likely that the `id` column in your user table does not match the `user_id` column in `assigned_roles`. Match sure both are `INT(10)`.
 
+Name is having issues saving.
+
+EntrustRole->name has a length limitation set within the rules variable of the [EntrustRole class](https://github.com/Zizaco/entrust/blob/master/src/Zizaco/Entrust/EntrustRole.php#L21).
+
+You can adjust it by changing your Role Model.
+
+```php
+<?php
+
+use Zizaco\Entrust\EntrustRole;
+
+class Role extends EntrustRole
+{
+    /**
+     * Ardent validation rules
+     *
+     * @var array
+     */
+    public static $rules = array(
+      'name' => 'required|between:4,255'
+    );
+}
+```
+
 ## License
 
 Entrust is free software distributed under the terms of the MIT license
