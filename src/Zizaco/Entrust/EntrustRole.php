@@ -48,13 +48,15 @@ class EntrustRole extends Ardent
         parent::boot();
 
         static::saved(function($role){
-            if ($this->_permissionsChanged) {
+            if ($role->_permissionsChanged) {
                 $role->perms()->sync($role->_permissions);
+                $role->_permissionsChanged = false;
             }
         });
         static::updating(function($role){
-            if ($this->_permissionsChanged) {
+            if ($role->_permissionsChanged) {
                 $role->perms()->sync($role->_permissions);
+                $role->_permissionsChanged = false;
             }
         });
     }
