@@ -30,6 +30,13 @@ class EntrustRole extends Ardent
     protected $_permissions = [];
 
     /**
+     * Show when permissions should be saved in the database
+     *
+     * @var boolean
+     */
+    private $_permissionsChanged = false;
+
+    /**
      * The "booting" method of the model.
      * Overrided to perform save/update of the role's permissions.
      *
@@ -41,10 +48,14 @@ class EntrustRole extends Ardent
         parent::boot();
 
         static::saved(function($role){
-             $role->perms()->sync($role->_permissions);
+            if ($this->_permissionsChanged) {
+                $role->perms()->sync($role->_permissions);
+            }
         });
         static::updating(function($role){
-            $role->perms()->sync($role->_permissions);
+            if ($this->_permissionsChanged) {
+                $role->perms()->sync($role->_permissions);
+            }
         });
     }
 
@@ -80,6 +91,7 @@ class EntrustRole extends Ardent
             $value = [ $value ];
         }
         $this->_permissions = \DB::table('permissions')->select(['id'])->whereIn('name', $value)->lists('id');
+        $this->_permissionsChanged = true;
     }
 
     /**
