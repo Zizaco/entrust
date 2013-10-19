@@ -22,6 +22,33 @@ class EntrustRole extends Ardent
     );
 
     /**
+     * An array of permission ids
+     * Used internally only
+     *
+     * @var array
+     */
+    protected $_permissions = [];
+
+    /**
+     * The "booting" method of the model.
+     * Overrided to perform save/update of the role's permissions.
+     *
+     * @see \LaravelBook\Ardent\Ardent::boot()
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saved(function($role){
+             $role->perms()->sync($role->_permissions);
+        });
+        static::updating(function($role){
+            $role->perms()->sync($role->_permissions);
+        });
+    }
+
+    /**
      * Many-to-Many relations with Users
      */
     public function users()
@@ -43,26 +70,26 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * Before save should serialize permissions to save
-     * as text into the database
+     * Set permissions by name
+     * Finds permission ids to sync them after saving/updating
      *
      * @param array $value
      */
-    public function setPermissionsAttribute($value)
-    {
-        $this->attributes['permissions'] = json_encode($value);
+    public function setPermissionsAttribute($value) {
+        if (!is_array($value)) {
+            $value = [ $value ];
+        }
+        $this->_permissions = \DB::table('permissions')->select(['id'])->whereIn('name', $value)->lists('id');
     }
 
     /**
-     * When loading the object it should un-serialize permissions to be
-     * usable again
+     * Returns an array of permission names assigned to the role
      *
      * @param string $value
-     * permissoins json
+     * @return array
      */
-    public function getPermissionsAttribute($value)
-    {
-        return (array)json_decode($value);
+    public function getPermissionsAttribute($value) {
+        return $this->perms()->lists('name');
     }
 
     /**
