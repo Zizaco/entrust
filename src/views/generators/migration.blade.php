@@ -17,7 +17,6 @@ class EntrustSetupTables extends Migration {
         {
             $table->increments('id')->unsigned();
             $table->string('name')->unique();
-            $table->string('permissions');
             $table->timestamps();
         });
 
