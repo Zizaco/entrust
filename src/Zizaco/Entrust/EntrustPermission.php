@@ -23,6 +23,14 @@ class EntrustPermission extends Ardent
     );
 
     /**
+     * Many-to-Many relations with Roles
+     */
+    public function roles()
+    {
+        return $this->belongsToMany('Role', 'permission_role');
+    }
+
+    /**
      * Before delete all constrained foreign relations
      *
      * @param bool $forced
