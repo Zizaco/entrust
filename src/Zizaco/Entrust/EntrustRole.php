@@ -125,4 +125,34 @@ class EntrustRole extends Ardent
         $this->perms()->detach( $permission );
     }
 
+    /**
+     * Attach multiple permissions to current role
+     *
+     * @param $permissions
+     * @access public
+     * @return void
+     */
+    public function attachPermissions($permissions)
+    {
+        foreach ($permissions as $permission)
+        {
+            $this->attachPermission($permission);
+        }
+    }
+
+    /**
+     * Detach multiple permissions from current role
+     *
+     * @param $permissions
+     * @access public
+     * @return void
+     */
+    public function detachPermissions($permissions)
+    {
+        foreach ($permissions as $permission)
+        {
+            $this->detachPermission($permission);
+        }
+    }
+
 }
