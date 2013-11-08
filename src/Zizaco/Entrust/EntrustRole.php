@@ -4,6 +4,13 @@ use LaravelBook\Ardent\Ardent;
 
 class EntrustRole extends Ardent
 {
+    /**
+     * The namespace of the user, role, and permissions.
+     * This assumes they are all in the same namespace.
+     *
+     * @var string
+     */
+    protected $namespace = '';
 
     /**
      * The database table used by the model.
@@ -26,7 +33,7 @@ class EntrustRole extends Ardent
      */
     public function users()
     {
-        return $this->belongsToMany('User', 'assigned_roles');
+        return $this->belongsToMany($this->namespace . '\User', 'assigned_roles');
     }
 
     /**
@@ -38,7 +45,7 @@ class EntrustRole extends Ardent
         // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
         // TODO remove in a future version
         try {
-            return $this->belongsToMany('Permission');
+            return $this->belongsToMany($this->namespace . '\Permission');
         } catch(Execption $e) {}
     }
 
@@ -123,6 +130,36 @@ class EntrustRole extends Ardent
             $permission = $permission['id'];
 
         $this->perms()->detach( $permission );
+    }
+
+    /**
+     * Attach multiple permissions to current role
+     *
+     * @param $permissions
+     * @access public
+     * @return void
+     */
+    public function attachPermissions($permissions)
+    {
+        foreach ($permissions as $permission)
+        {
+            $this->attachPermission($permission);
+        }
+    }
+
+    /**
+     * Detach multiple permissions from current role
+     *
+     * @param $permissions
+     * @access public
+     * @return void
+     */
+    public function detachPermissions($permissions)
+    {
+        foreach ($permissions as $permission)
+        {
+            $this->detachPermission($permission);
+        }
     }
 
 }

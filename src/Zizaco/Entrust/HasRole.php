@@ -9,12 +9,18 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany('Role', 'assigned_roles');
+        $namespace = '';
+
+        if (isset($this->namespace)) {
+            $namespace = $this->namespace;
+        }
+
+        return $this->belongsToMany($namespace . '\Role', 'assigned_roles');
     }
 
     /**
      * Checks if the user has a Role by its name
-     * 
+     *
      * @param string $name Role name.
      *
      * @access public
@@ -35,7 +41,7 @@ trait HasRole
 
     /**
      * Check if user has a permission by its name
-     * 
+     *
      * @param string $permission Permission string.
      *
      * @access public
@@ -131,7 +137,7 @@ trait HasRole
     /**
      * Alias to eloquent many-to-many relation's
      * attach() method
-     * 
+     *
      * @param mixed $role
      *
      * @access public
@@ -168,5 +174,35 @@ trait HasRole
             $role = $role['id'];
 
         $this->roles()->detach( $role );
+    }
+
+    /**
+     * Attach multiple roles to a user
+     *
+     * @param $roles
+     * @access public
+     * @return void
+     */
+    public function attachRoles($roles)
+    {
+        foreach ($roles as $role)
+        {
+            $this->attachRole($role);
+        }
+    }
+
+    /**
+     * Detach multiple roles from a user
+     *
+     * @param $roles
+     * @access public
+     * @return void
+     */
+    public function detachRoles($roles)
+    {
+        foreach ($roles as $role)
+        {
+            $this->detachRole($role);
+        }
     }
 }
