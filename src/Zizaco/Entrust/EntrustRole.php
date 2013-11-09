@@ -1,6 +1,7 @@
 <?php namespace Zizaco\Entrust;
 
 use LaravelBook\Ardent\Ardent;
+use Illuminate\Support\Facades\Config;
 
 class EntrustRole extends Ardent
 {
@@ -26,7 +27,13 @@ class EntrustRole extends Ardent
      */
     public function users()
     {
-        return $this->belongsToMany('User', 'assigned_roles');
+        $userClass = Config::get('entrust::models.user');
+        
+        if (!$userClass) {
+            $userClass = Config::get('database.model', 'User');
+        }
+
+        return $this->belongsToMany($userclass, 'assigned_roles');
     }
 
     /**
@@ -35,10 +42,11 @@ class EntrustRole extends Ardent
      */
     public function perms()
     {
+        $permissionClass = Config::get('entrust::models.permission', 'Permission');
         // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
         // TODO remove in a future version
         try {
-            return $this->belongsToMany('Permission');
+            return $this->belongsToMany($permissionClass);
         } catch(Execption $e) {}
     }
 
