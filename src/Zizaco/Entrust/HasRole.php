@@ -11,7 +11,7 @@ trait HasRole
     public function roles()
     {
         $roleClass = Config::get('entrust::models.role', 'Role');
-        return $this->belongsToMany($roleclass, 'assigned_roles');
+        return $this->belongsToMany($roleClass, 'assigned_roles');
     }
 
     /**
