@@ -1,6 +1,7 @@
 <?php namespace Zizaco\Entrust;
 
 use Symfony\Component\Process\Exception\InvalidArgumentException;
+use Config;
 
 trait HasRole
 {
@@ -9,7 +10,7 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany('Role', 'assigned_roles');
+        return $this->belongsToMany(Config::get('entrust::role'), 'assigned_roles');
     }
 
     /**

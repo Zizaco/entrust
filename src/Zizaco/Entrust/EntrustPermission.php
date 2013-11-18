@@ -1,16 +1,16 @@
 <?php namespace Zizaco\Entrust;
 
 use LaravelBook\Ardent\Ardent;
+use Config;
 
 class EntrustPermission extends Ardent
 {
-
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'permissions';
+    protected $table;
 
     /**
      * Ardent validation rules
@@ -23,11 +23,20 @@ class EntrustPermission extends Ardent
     );
 
     /**
+     * Creates a new instance of the model
+     */
+    public function __construct(array $attributes = array()) {
+
+        parent::__construct($attributes);
+        $this->table = Config::get('entrust::permissions_table');
+    }
+
+    /**
      * Many-to-Many relations with Roles
      */
     public function roles()
     {
-        return $this->belongsToMany('Role', 'permission_role');
+        return $this->belongsToMany(Config::get('entrust::role'), 'permission_role');
     }
 
     /**
