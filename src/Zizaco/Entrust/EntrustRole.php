@@ -26,7 +26,10 @@ class EntrustRole extends Ardent
      */
     public function users()
     {
-        return $this->belongsToMany('User', 'assigned_roles');
+        return $this->belongsToMany('User', 'assigned_roles')
+            ->withTimestamps()
+            ->whereRaw('(assigned_roles.expires_at > NOW() OR assigned_roles.expires_at IS NULL)')
+            ->whereNull('assigned_roles.deleted_at');
     }
 
     /**
