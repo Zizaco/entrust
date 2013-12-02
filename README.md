@@ -51,7 +51,7 @@ At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacad
     
 ### Configuration
 
-Set the propertly values to the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
+Set the property values in the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
 
 ### User relation to roles
 
@@ -80,10 +80,10 @@ class Role extends EntrustRole
 }
 ```
     
-The `Role` model has one main attributes: `name` and `permissions`.
+The `Role` model has two main attributes: `name` and `permissions`.
 `name`, as you can imagine, is the name of the Role. For example: "Admin", "Owner", "Employee".
-`permissions` field has been deprecated in preference for the permission table. You should no longer use it.
-It is an array that is automagically serialized and unserialized and the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
+The `permissions` field has been deprecated in preference for the permission table. You should no longer use it.
+It is an array that is automatically serialized and unserialized when the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
 
 
 Create a Permission model following the example at `app/models/Permission.php`:
@@ -101,7 +101,7 @@ class Permission extends EntrustPermission
 
 The `Permission` model has two attributes: `name` and `display_name`.
 `name`, as you can imagine, is the name of the Permission. For example: "Admin", "Owner", "Employee", "can_manage".
-Display name is a viewer friendly version of the permission string. "Admin", "Can Manage", "Something Cool".
+`display_name` is a viewer friendly version of the permission string. "Admin", "Can Manage", "Something Cool".
 
 Next, use the `HasRole` trait in your existing `User` model. For example:
 
@@ -205,7 +205,7 @@ $options = array(
 
 `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
 
-Here's an example output.
+Here's some example output.
 
 ```php
 $options = array(
@@ -255,7 +255,7 @@ Both of these methods accepts a third parameter. If the third parameter is null 
 Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
 ```
 
-Further both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions given.
+Further more both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions given.
 If you set it to false, the function will only fail if all roles/permissions fail for that user. Useful for admin applications where
 you want to allow access for multiple groups.
 
@@ -344,8 +344,8 @@ class Role extends EntrustRole
 
 Entrust is free software distributed under the terms of the MIT license
 
-## Aditional information
+## Additional information
 
-Any questions, feel free to contact me or ask [here](http://forums.laravel.io/viewtopic.php?id=4658)
+Any questions, feel free to contact me or ask [here](http://forums.laravel.io/viewtopic.php?id=9313)
 
 Any issues, please [report here](https://github.com/Zizaco/entrust/issues)
