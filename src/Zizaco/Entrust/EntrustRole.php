@@ -36,7 +36,7 @@ class EntrustRole extends Ardent
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.model'), 'assigned_roles');
+        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust::assigned_roles_table'));
     }
 
     /**
@@ -84,8 +84,8 @@ class EntrustRole extends Ardent
     public function beforeDelete( $forced = false )
     {
         try {
-            \DB::table('assigned_roles')->where('role_id', $this->id)->delete();
-            \DB::table('permission_role')->where('role_id', $this->id)->delete();
+            \DB::table(Config::get('entrust::assigned_roles_table'))->where('role_id', $this->id)->delete();
+            \DB::table(Config::get('entrust::permission_role_table'))->where('role_id', $this->id)->delete();
         } catch(Execption $e) {}
 
         return true;
