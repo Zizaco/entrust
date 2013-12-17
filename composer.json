@@ -15,11 +15,11 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.0.x",
+        "illuminate/support": "4.x",
         "laravelbook/ardent": "2.1.x"
     },
     "require-dev": {
-        "illuminate/database": "4.0.x",
+        "illuminate/database": "4.x",
         "mockery/mockery": "0.7.2",
         "zizaco/factory-muff": "dev-master"
     },
