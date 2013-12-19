@@ -44,5 +44,24 @@ class EntrustPermission extends Ardent
 
         return true;
     }
+    
+    /**
+     * Returns an Eloquent Collection of all users with this permission
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getUsers()
+    {
+        $roles = $this->roles;
+
+        $users = new \Illuminate\Database\Eloquent\Collection();
+
+        foreach ($roles as $role) {
+            $roleUsers = $role->users()->get();
+            $users = $users->merge($roleUsers);
+        }
+
+        return $users;
+    }
 
 }
