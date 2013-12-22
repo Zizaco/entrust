@@ -1,6 +1,7 @@
 <?php namespace Zizaco\Entrust;
 
 use Symfony\Component\Process\Exception\InvalidArgumentException;
+use DB;
 
 trait HasRole
 {
