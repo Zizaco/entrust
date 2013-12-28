@@ -16,7 +16,7 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "4.1.x",
-        "laravelbook/ardent": "2.3.x"
+        "laravelbook/ardent": "2.4.x"
     },
     "require-dev": {
         "illuminate/database": "4.x",
