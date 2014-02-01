@@ -13,10 +13,16 @@
             "homepage": "http://www.andrewelkins.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Zizaco/ardent.git"
+        }
+    ],
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "4.x",
-        "laravelbook/ardent": "2.4.x"
+        "laravelbook/ardent": "dev-has-session-fix"
     },
     "require-dev": {
         "illuminate/database": "4.x",
