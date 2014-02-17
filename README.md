@@ -131,11 +131,12 @@ Don't forget to dump composer autoload
 Let's start by creating the following `Role`s and `Permission`s:
 
 ```php
-$owner = new Role;
+use Zizaco\Entrust\EntrustRole;
+$owner = new EntrustRole;
 $owner->name = 'Owner';
 $owner->save();
 
-$admin = new Role;
+$admin = new EntrustRole;
 $admin->name = 'Admin';
 $admin->save();
 
