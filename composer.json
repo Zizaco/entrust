@@ -23,6 +23,25 @@
         "mockery/mockery": "0.7.2",
         "zizaco/factory-muff": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "laravelbook/ardent",
+                "version": "dev-master",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/bexarcreativeinc/ardent.git",
+                    "reference": "master"
+                },
+                "autoload": {
+                    "psr-0": {
+                    "LaravelBook\\Ardent": "src/"
+                    }
+                }
+            }
+        }
+    ],
     "suggest": {
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
     },
