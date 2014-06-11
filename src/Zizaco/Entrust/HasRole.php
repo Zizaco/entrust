@@ -1,7 +1,6 @@
 <?php namespace Zizaco\Entrust;
 
-use Symfony\Component\Process\Exception\InvalidArgumentException;
-use DB;
+use Symfony\Component\Process\Exception\InvalidArgumentException, DB, Config;
 
 trait HasRole
 {
@@ -28,7 +27,7 @@ trait HasRole
 
     /**
      * Checks if the user has a Role by its name
-     * 
+     *
      * @param string $name Role name.
      *
      * @access public
@@ -49,7 +48,7 @@ trait HasRole
 
     /**
      * Check if user has a permission by its name
-     * 
+     *
      * @param string $permission Permission string.
      *
      * @access public
