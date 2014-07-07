@@ -14,18 +14,21 @@ trait HasRole
     }
 
     /**
-     * Checks if the user has a Role by its name
+     * Checks if the user has a Role by its name or id
      *
-     * @param string $name Role name.
+     * @param string|int $name Role name or id.
+     *
+     * @param boolean $id Specify if searching by name or id.
      *
      * @access public
      *
      * @return boolean
      */
-    public function hasRole( $name )
-    {
+    public function hasRole( $name, $id = false )
+    {   
+        $field = !$id ? 'name' : 'id';
         foreach ($this->roles as $role) {
-            if( $role->name == $name )
+            if( $role->$field == $name )
             {
                 return true;
             }
