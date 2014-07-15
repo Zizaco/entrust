@@ -1,5 +1,6 @@
 <?php namespace Zizaco\Entrust;
 
+use Closure;
 use Illuminate\Support\Facades\Facade;
 
 class Entrust
