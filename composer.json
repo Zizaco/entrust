@@ -52,5 +52,10 @@
         "psr-0": {
             "Zizaco\\Entrust": "src/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.2-dev"
+        }
     }
 }
