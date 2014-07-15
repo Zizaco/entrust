@@ -21,7 +21,7 @@
     "require-dev": {
         "illuminate/database": "~4.0",
         "zizaco/factory-muff": "~1.5",
-        "mockery/mockery": "0.7.2"
+        "mockery/mockery": "~0.8"
     },
     "repositories": [
         {
@@ -51,6 +51,11 @@
         ],
         "psr-0": {
             "Zizaco\\Entrust": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.2-dev"
         }
     }
 }
