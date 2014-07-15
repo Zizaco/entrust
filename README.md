@@ -178,7 +178,7 @@ $user->can("manage_posts"); // true
 $user->can("manage_users"); // false
 ```
 
-You can have as many `Role`s was you want in each `User` and vice versa.
+You can have as many `Role`s as you want for each `User` and vice versa.
 
 More advanced checking can be done using the awesome `ability` function. It takes in three parameters (roles, permissions, options).
 `roles` is a set of roles to check. `permissions` is a set of permissions to check.
