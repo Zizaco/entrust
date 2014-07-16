@@ -35,7 +35,7 @@ class EntrustSetupTables extends Migration {
         Schema::create('permissions', function($table)
         {
             $table->increments('id')->unsigned();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('display_name');
             $table->timestamps();
         });
