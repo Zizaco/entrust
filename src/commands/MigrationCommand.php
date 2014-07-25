@@ -43,7 +43,7 @@ class MigrationCommand extends Command {
 
         $this->line('');
         $this->info( "Tables: $roles_table, user_roles, permissions, permission_role" );
-        $message = "An migration that creates '$roles_table', 'user_roles', 'permissions', 'permission_role'".
+        $message = "A migration that creates '$roles_table', 'user_roles', 'permissions', 'permission_role'".
         " tables will be created in app/database/migrations directory";
 
         $this->comment( $message );
