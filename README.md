@@ -48,7 +48,7 @@ At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacad
 
 ),
 ```
-    
+
 ### Configuration
 
 Set the property values in the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
@@ -62,7 +62,7 @@ Now generate the Entrust migration
 It will generate the `<timestamp>_entrust_setup_tables.php` migration. You may now run it with the artisan migrate command:
 
     $ php artisan migrate
-    
+
 After the migration, two new tables will be present: `roles` which contain the existent roles and it's permissions and `assigned_roles` which will represent the [Many-to-Many](http://four.laravel.com/docs/eloquent#many-to-many) relation between `User` and `Role`.
 
 ### Models
@@ -79,7 +79,7 @@ class Role extends EntrustRole
 
 }
 ```
-    
+
 The `Role` model has two main attributes: `name` and `permissions`.
 `name`, as you can imagine, is the name of the Role. For example: "Admin", "Owner", "Employee".
 The `permissions` field has been deprecated in preference for the permission table. You should no longer use it.
@@ -110,12 +110,12 @@ Next, use the `HasRole` trait in your existing `User` model. For example:
 
 use Zizaco\Entrust\HasRole;
 
-class User extends Eloquent /* or ConfideUser 'wink' */{ 
+class User extends Eloquent /* or ConfideUser 'wink' */{
     use HasRole; // Add this trait to your user model
-    
+
 ...
 ```
-    
+
 This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole( $name )`,
 `can( $permission )`, and `ability($roles, $permissions, $options)` within your `User` model.
 
@@ -140,7 +140,7 @@ $admin->name = 'Admin';
 $admin->save();
 
 ```
-    
+
 Next, with both roles created let's assign then to the users. Thanks to the `HasRole` trait this is as easy as:
 
 ```php
@@ -286,7 +286,7 @@ Route::filter('manage_posts', function()
 
 // Only users with roles that have the 'manage_posts' permission will
 // be able to access any admin/post route.
-Route::when('admin/post*', 'manage_posts'); 
+Route::when('admin/post*', 'manage_posts');
 ```
 
 Using a filter to check for a role:
@@ -301,7 +301,7 @@ Route::filter('owner_role', function()
 });
 
 // Only owners will have access to routes within admin/advanced
-Route::when('admin/advanced*', 'owner_role'); 
+Route::when('admin/advanced*', 'owner_role');
 ```
 
 As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged, and then if he has the role or permission. If the user is not logged the return will also be `false`.
