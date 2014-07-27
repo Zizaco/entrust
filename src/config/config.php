@@ -63,4 +63,5 @@ return array(
 	|
 	*/
 	'assigned_roles_table' => 'assigned_roles',
+
 );

@@ -1,10 +1,10 @@
 <?php
 
-use Zizaco\Entrust\HasRole;
 use Mockery as m;
+use Zizaco\Entrust\HasRole;
 
-class HasRoleTest extends PHPUnit_Framework_TestCase {
-
+class HasRoleTest extends PHPUnit_Framework_TestCase
+{
     public function tearDown()
     {
         m::close();
@@ -52,7 +52,7 @@ class TestingModel
     public $roles = array();
     public $perms = array();
 
-    function __construct()
+    public function __construct()
     {
         // Simulates Eloquent's relation access
         $role_a = m::mock('Role'); $role_a->name = "AdminA";

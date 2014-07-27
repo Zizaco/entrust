@@ -1,11 +1,10 @@
 <?php
 
+use Mockery as m;
 use Zizaco\Entrust\Entrust;
 
-use Mockery as m;
-
-class EntrustTest extends PHPUnit_Framework_TestCase {
-
+class EntrustTest extends PHPUnit_Framework_TestCase
+{
     public function tearDown()
     {
         m::close();
@@ -100,7 +99,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase {
         $entrust->routeNeedsPermission('admin','manage_users');
     }
 
-    private function mockAppWithCurrentUser( $user )
+    private function mockAppWithCurrentUser($user)
     {
         // Mock app
         $app = array( 'auth' => m::mock( 'Auth' ) );

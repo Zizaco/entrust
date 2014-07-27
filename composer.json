@@ -50,8 +50,8 @@
         "classmap": [
             "src/commands"
         ],
-        "psr-0": {
-            "Zizaco\\Entrust": "src/"
+        "psr-4": {
+            "Zizaco\\Entrust\\": "src/Entrust/"
         }
     },
     "extra": {
