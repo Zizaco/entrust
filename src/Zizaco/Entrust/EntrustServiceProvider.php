@@ -30,7 +30,7 @@ class EntrustServiceProvider extends ServiceProvider {
     {
         $this->registerEntrust();
 
-        $this->registerCommands(); 
+        $this->registerCommands();
     }
 
     /**

@@ -59,7 +59,7 @@ class MigrationCommand extends Command {
                 $this->info( "Migration successfully created!" );
             }
             else{
-                $this->error( 
+                $this->error(
                     "Coudn't create migration.\n Check the write permissions".
                     " within the app/database/migrations directory."
                 );

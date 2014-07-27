@@ -7,14 +7,14 @@ class Entrust
 {
     /**
      * Laravel application
-     * 
+     *
      * @var Illuminate\Foundation\Application
      */
     public $_app;
 
     /**
      * Create a new confide instance.
-     * 
+     *
      * @param  Illuminate\Foundation\Application  $app
      * @return void
      */
@@ -25,7 +25,7 @@ class Entrust
 
     /**
      * Checks if the current user has a Role by its name
-     * 
+     *
      * @param string $name Role name.
      *
      * @access public
@@ -35,7 +35,7 @@ class Entrust
     public function hasRole( $permission )
     {
         $user = $this->user();
-        
+
         if( $user )
         {
             return $user->hasRole( $permission );
@@ -48,7 +48,7 @@ class Entrust
 
     /**
      * Check if the current user has a permission by its name
-     * 
+     *
      * @param string $permission Permission string.
      *
      * @access public
@@ -58,7 +58,7 @@ class Entrust
     public function can( $permission )
     {
         $user = $this->user();
-        
+
         if( $user )
         {
             return $user->can( $permission );
@@ -136,7 +136,7 @@ class Entrust
     /**
      * Filters a route for the permission. If the third parameter
      * is null then return 403. Overwise the $result is returned
-     * 
+     *
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $permissions   The permission needed.
      * @param mixed  $result i.e: Redirect::to('/')
