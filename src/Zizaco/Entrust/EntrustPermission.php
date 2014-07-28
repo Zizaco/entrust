@@ -49,7 +49,7 @@ class EntrustPermission extends Ardent
     {
         try {
             \DB::table(Config::get('entrust::permission_role_table'))->where('permission_id', $this->id)->delete();
-        } catch(Execption $e) {}
+        } catch(Exception $e) {}
 
         return true;
     }

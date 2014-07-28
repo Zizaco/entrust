@@ -48,10 +48,10 @@ At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacad
 
 ),
 ```
-    
+
 ### Configuration
 
-Set the propertly values to the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
+Set the property values in the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
 
 ### User relation to roles
 
@@ -62,7 +62,7 @@ Now generate the Entrust migration
 It will generate the `<timestamp>_entrust_setup_tables.php` migration. You may now run it with the artisan migrate command:
 
     $ php artisan migrate
-    
+
 After the migration, two new tables will be present: `roles` which contain the existent roles and it's permissions and `assigned_roles` which will represent the [Many-to-Many](http://four.laravel.com/docs/eloquent#many-to-many) relation between `User` and `Role`.
 
 ### Models
@@ -79,11 +79,11 @@ class Role extends EntrustRole
 
 }
 ```
-    
-The `Role` model has one main attributes: `name` and `permissions`.
+
+The `Role` model has two main attributes: `name` and `permissions`.
 `name`, as you can imagine, is the name of the Role. For example: "Admin", "Owner", "Employee".
-`permissions` field has been deprecated in preference for the permission table. You should no longer use it.
-It is an array that is automagically serialized and unserialized and the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
+The `permissions` field has been deprecated in preference for the permission table. You should no longer use it.
+It is an array that is automatically serialized and unserialized when the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
 
 
 Create a Permission model following the example at `app/models/Permission.php`:
@@ -101,7 +101,7 @@ class Permission extends EntrustPermission
 
 The `Permission` model has two attributes: `name` and `display_name`.
 `name`, as you can imagine, is the name of the Permission. For example: "Admin", "Owner", "Employee", "can_manage".
-Display name is a viewer friendly version of the permission string. "Admin", "Can Manage", "Something Cool".
+`display_name` is a viewer friendly version of the permission string. "Admin", "Can Manage", "Something Cool".
 
 Next, use the `HasRole` trait in your existing `User` model. For example:
 
@@ -110,12 +110,12 @@ Next, use the `HasRole` trait in your existing `User` model. For example:
 
 use Zizaco\Entrust\HasRole;
 
-class User extends Eloquent /* or ConfideUser 'wink' */{ 
+class User extends Eloquent /* or ConfideUser 'wink' */{
     use HasRole; // Add this trait to your user model
-    
+
 ...
 ```
-    
+
 This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole( $name )`,
 `can( $permission )`, and `ability($roles, $permissions, $options)` within your `User` model.
 
@@ -140,7 +140,7 @@ $admin->name = 'Admin';
 $admin->save();
 
 ```
-    
+
 Next, with both roles created let's assign then to the users. Thanks to the `HasRole` trait this is as easy as:
 
 ```php
@@ -178,7 +178,7 @@ $user->can("manage_posts"); // true
 $user->can("manage_users"); // false
 ```
 
-You can have as many `Role`s was you want in each `User` and vice versa.
+You can have as many `Role`s as you want for each `User` and vice versa.
 
 More advanced checking can be done using the awesome `ability` function. It takes in three parameters (roles, permissions, options).
 `roles` is a set of roles to check. `permissions` is a set of permissions to check.
@@ -205,7 +205,7 @@ $options = array(
 
 `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
 
-Here's an example output.
+Here's some example output.
 
 ```php
 $options = array(
@@ -249,13 +249,13 @@ Entrust::routeNeedsPermission( 'admin/post*', array('manage_posts','manage_comme
 Entrust::routeNeedsRole( 'admin/advanced*', array('Owner','Writer') );
 ```
 
-Both of these methods accepts a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(403)`. Otherwise the third parameter will be returned. So you can use it like:
+Both of these methods accept a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(403)`. Otherwise the third parameter will be returned. So you can use it like:
 
 ```php
 Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
 ```
 
-Further both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions given.
+Further more both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions given.
 If you set it to false, the function will only fail if all roles/permissions fail for that user. Useful for admin applications where
 you want to allow access for multiple groups.
 
@@ -286,7 +286,7 @@ Route::filter('manage_posts', function()
 
 // Only users with roles that have the 'manage_posts' permission will
 // be able to access any admin/post route.
-Route::when('admin/post*', 'manage_posts'); 
+Route::when('admin/post*', 'manage_posts');
 ```
 
 Using a filter to check for a role:
@@ -301,7 +301,7 @@ Route::filter('owner_role', function()
 });
 
 // Only owners will have access to routes within admin/advanced
-Route::when('admin/advanced*', 'owner_role'); 
+Route::when('admin/advanced*', 'owner_role');
 ```
 
 As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged, and then if he has the role or permission. If the user is not logged the return will also be `false`.
@@ -344,8 +344,8 @@ class Role extends EntrustRole
 
 Entrust is free software distributed under the terms of the MIT license
 
-## Aditional information
+## Additional information
 
-Any questions, feel free to contact me or ask [here](http://forums.laravel.io/viewtopic.php?id=4658)
+Any questions, feel free to contact me or ask [here](http://forums.laravel.io/viewtopic.php?id=9313)
 
 Any issues, please [report here](https://github.com/Zizaco/entrust/issues)

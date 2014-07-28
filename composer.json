@@ -15,20 +15,21 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.x",
-        "laravelbook/ardent": "dev-master"
+        "illuminate/support": "~4.0",
+        "laravelbook/ardent": "~2.4"
     },
     "require-dev": {
-        "illuminate/database": "4.x",
-        "mockery/mockery": "0.7.2",
-        "zizaco/factory-muff": "dev-master"
+        "phpunit/phpunit": "~4.0",
+        "mockery/mockery": "~0.8",
+        "illuminate/database": "~4.0",
+        "league/factory-muffin": "~1.5"
     },
     "repositories": [
         {
             "type": "package",
             "package": {
                 "name": "laravelbook/ardent",
-                "version": "dev-master",
+                "version": "2.4.2",
                 "source": {
                     "type": "git",
                     "url": "https://github.com/bexarcreativeinc/ardent.git",
@@ -53,5 +54,9 @@
             "Zizaco\\Entrust": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.2-dev"
+        }
+    }
 }
