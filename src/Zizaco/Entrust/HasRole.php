@@ -1,7 +1,6 @@
 <?php namespace Zizaco\Entrust;
 
-use Symfony\Component\Process\Exception\InvalidArgumentException;
-use Config;
+use Symfony\Component\Process\Exception\InvalidArgumentException, DB, Config;
 
 trait HasRole
 {
@@ -10,7 +9,20 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'));
+        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'))
+            ->withTimestamps()
+            ->whereRaw('(assigned_roles.expires_at > NOW() OR assigned_roles.expires_at IS NULL)')
+            ->whereNull('assigned_roles.deleted_at');
+    }
+
+    /**
+     * Many-to-Many relations with Role
+     */
+    public function inactiveRoles()
+    {
+        return $this->belongsToMany('Role', 'assigned_roles')
+            ->withTimestamps()
+            ->whereRaw('assigned_roles.expires_at <= NOW() OR assigned_roles.deleted_at IS NOT NULL');
     }
 
     /**
@@ -130,24 +142,29 @@ trait HasRole
     }
 
     /**
-     * Alias to eloquent many-to-many relation's
-     * attach() method
-     *
-     * @param mixed $role
-     *
-     * @access public
-     *
+     * Accept a role and attach it to the user IFF the user does not already 
+     * have the role specified
+     * 
+     * @param mixed $role array or Role
+     * @param array $attributes allows the caller to specify addtional 
+     *  attributes to write onto the assigned_roles join table such as 
+     *  expires_at and subscription_id
      * @return void
      */
-    public function attachRole( $role )
+    public function attachRole( $role, $attributes=[] )
     {
-        if( is_object($role))
-            $role = $role->getKey();
+        if( is_array($role) )
+        {
+            $role = Role::findorfail( $role['id'] );
+        }
 
-        if( is_array($role))
-            $role = $role['id'];
-
-        $this->roles()->attach( $role );
+        // Only attach the role if it is not already attached. Fail silently if 
+        // the role is already attached since the objective of the call is 
+        // accomplished
+        if ( ! $this->hasRole($role->name) ) 
+        {
+            $this->roles()->attach( $role->getKey(), $attributes );
+        }
     }
 
     /**
@@ -168,7 +185,10 @@ trait HasRole
         if( is_array($role))
             $role = $role['id'];
 
-        $this->roles()->detach( $role );
+        $assingedRole = DB::table('assigned_roles')
+            ->where('user_id', $this->id )
+            ->where('role_id', $role)
+            ->update( ['deleted_at' => DB::raw('NOW()')] );
     }
 
     /**
