@@ -1,10 +1,10 @@
 <?php
 
-use Zizaco\Entrust\HasRole;
 use Mockery as m;
+use Zizaco\Entrust\HasRole;
 
-class HasRoleTest extends PHPUnit_Framework_TestCase {
-
+class HasRoleTest extends PHPUnit_Framework_TestCase
+{
     public function tearDown()
     {
         m::close();
@@ -14,33 +14,33 @@ class HasRoleTest extends PHPUnit_Framework_TestCase {
     {
         $model = new TestingModel;
 
-        $this->assertTrue( $model->hasRole( 'AdminA' ) );
-        $this->assertTrue( $model->hasRole( 'AdminB' ) );
-        $this->assertFalse($model->hasRole( 'AdminC' ) );
+        $this->assertTrue($model->hasRole('AdminA'));
+        $this->assertTrue($model->hasRole('AdminB'));
+        $this->assertFalse($model->hasRole('AdminC'));
     }
 
     public function testCan()
     {
         $model = new TestingModel;
 
-        $this->assertTrue( $model->can( 'manage_a' ) );
-        $this->assertTrue( $model->can( 'manage_b' ) );
-        $this->assertTrue( $model->can( 'manage_c' ) );
-        $this->assertFalse($model->can( 'manage_d' ) );
+        $this->assertTrue($model->can('manage_a'));
+        $this->assertTrue($model->can('manage_b'));
+        $this->assertTrue($model->can('manage_c'));
+        $this->assertFalse($model->can('manage_d'));
     }
 
     public function testAbility()
     {
         $model = new TestingModel;
 
-        $this->assertTrue( $model->ability( 'AdminA', 'manage_a', array('validate_all' => true, 'return_type' => 'boolean' ) ) );
-        $this->assertFalse( $model->ability( 'AdminA', 'wrong_permission', array('validate_all' => true, 'return_type' => 'boolean' ) ) );
-        $this->assertTrue( $model->ability( 'AdminA', 'manage_b', array('validate_all' => false, 'return_type' => 'boolean' ) ) );
-        $this->assertTrue( $model->ability( 'AdminA', 'manage_b' ) );
-        $this->assertTrue( $model->ability( 'AdminA', 'wrong_permission', array('validate_all' => false, 'return_type' => 'boolean' ) ) );
-        $this->assertTrue( $model->ability( 'AdminA', 'wrong_permission' ) );
-        $this->assertArrayHasKey('roles', $model->ability( 'AdminA', 'manage_a', array('validate_all' => true, 'return_type' => 'array' ) ) );
-        $this->assertArrayHasKey('permissions', $model->ability( 'AdminA', 'wrong_permission', array('validate_all' => true, 'return_type' => 'array' ) ) );
+        $this->assertTrue($model->ability('AdminA', 'manage_a', array('validate_all' => true, 'return_type' => 'boolean')));
+        $this->assertFalse($model->ability('AdminA', 'wrong_permission', array('validate_all' => true, 'return_type' => 'boolean')));
+        $this->assertTrue($model->ability('AdminA', 'manage_b', array('validate_all' => false, 'return_type' => 'boolean')));
+        $this->assertTrue($model->ability('AdminA', 'manage_b'));
+        $this->assertTrue($model->ability('AdminA', 'wrong_permission', array('validate_all' => false, 'return_type' => 'boolean')));
+        $this->assertTrue($model->ability('AdminA', 'wrong_permission'));
+        $this->assertArrayHasKey('roles', $model->ability('AdminA', 'manage_a', array('validate_all' => true, 'return_type' => 'array')));
+        $this->assertArrayHasKey('permissions', $model->ability('AdminA', 'wrong_permission', array('validate_all' => true, 'return_type' => 'array')));
     }
 
 }
@@ -52,7 +52,7 @@ class TestingModel
     public $roles = array();
     public $perms = array();
 
-    function __construct()
+    public function __construct()
     {
         // Simulates Eloquent's relation access
         $role_a = m::mock('Role'); $role_a->name = "AdminA";
