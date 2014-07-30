@@ -10,7 +10,7 @@ class Entrust
      *
      * @var Illuminate\Foundation\Application
      */
-    public $_app;
+    public $app;
 
     /**
      * Create a new confide instance.
@@ -20,7 +20,7 @@ class Entrust
      */
     public function __construct($app)
     {
-        $this->_app = $app;
+        $this->app = $app;
     }
 
     /**
@@ -80,7 +80,7 @@ class Entrust
      */
     public function user()
     {
-        return $this->_app['auth']->user();
+        return $this->app->auth->user();
     }
 
     /**
@@ -126,11 +126,11 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->filter($filter_name, $result);
+        $this->app->router->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->when( $route, $filter_name );
+        $this->app->router->when( $route, $filter_name );
     }
 
     /**
@@ -178,11 +178,11 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->filter($filter_name, $result);
+        $this->app->router->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->when( $route, $filter_name );
+        $this->app->router->when( $route, $filter_name );
     }
 
     /**
@@ -242,10 +242,10 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->filter($filter_name, $result);
+        $this->app->router->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->when( $route, $filter_name );
+        $this->app->router->when( $route, $filter_name );
     }
 }
