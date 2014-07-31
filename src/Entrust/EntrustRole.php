@@ -49,7 +49,7 @@ class EntrustRole extends Ardent
         // TODO remove in a future version
         try {
 			return $this->belongsToMany(Config::get('entrust::permission'), Config::get('entrust::permission_role_table'));
-        } catch(Execption $e) {}
+        } catch(Exception $e) {}
     }
 
     /**
