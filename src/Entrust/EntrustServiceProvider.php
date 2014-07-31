@@ -2,8 +2,8 @@
 
 use Illuminate\Support\ServiceProvider;
 
-class EntrustServiceProvider extends ServiceProvider {
-
+class EntrustServiceProvider extends ServiceProvider
+{
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -18,7 +18,9 @@ class EntrustServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->package('zizaco/entrust');
+        $this->package('zizaco/entrust', 'entrust', __DIR__.'/../');
+
+        $this->commands('command.entrust.migration');
     }
 
     /**
@@ -40,8 +42,7 @@ class EntrustServiceProvider extends ServiceProvider {
 	 */
 	private function registerEntrust()
 	{
-		$this->app->bind('entrust', function($app)
-        {
+		$this->app->bind('entrust', function ($app) {
             return new Entrust($app);
         });
 	}
@@ -53,13 +54,20 @@ class EntrustServiceProvider extends ServiceProvider {
 	 */
 	private function registerCommands()
 	{
-		$this->app['command.entrust.migration'] = $this->app->share(function($app)
-        {
-            return new MigrationCommand($app);
+        $this->app->bindShared('command.entrust.migration', function ($app) {
+            return new MigrationCommand();
         });
+	}
 
-        $this->commands(
+    /**
+     * Get the services provided.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return array(
             'command.entrust.migration'
         );
-	}
+    }
 }

@@ -1,12 +1,14 @@
 <?php namespace Zizaco\Entrust;
 
+use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
-use Config;
 
 trait HasRole
 {
     /**
-     * Many-to-Many relations with Role
+     * Many-to-Many relations with Role.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function roles()
     {
@@ -14,19 +16,16 @@ trait HasRole
     }
 
     /**
-     * Checks if the user has a Role by its name
+     * Checks if the user has a Role by its name.
      *
      * @param string $name Role name.
      *
-     * @access public
-     *
-     * @return boolean
+     * @return bool
      */
-    public function hasRole( $name )
+    public function hasRole($name)
     {
         foreach ($this->roles as $role) {
-            if( $role->name == $name )
-            {
+            if ($role->name == $name) {
                 return true;
             }
         }
@@ -35,26 +34,23 @@ trait HasRole
     }
 
     /**
-     * Check if user has a permission by its name
+     * Check if user has a permission by its name.
      *
      * @param string $permission Permission string.
      *
-     * @access public
-     *
-     * @return boolean
+     * @return bool
      */
-    public function can( $permission )
+    public function can($permission)
     {
         foreach ($this->roles as $role) {
             // Deprecated permission value within the role table.
-            if( is_array($role->permissions) && in_array($permission, $role->permissions) )
-            {
+            if (is_array($role->permissions) && in_array($permission, $role->permissions) ) {
                 return true;
             }
 
             // Validate against the Permission table
-            foreach($role->perms as $perm) {
-                if($perm->name == $permission) {
+            foreach ($role->perms as $perm) {
+                if ($perm->name == $permission) {
                     return true;
                 }
             }
@@ -64,34 +60,38 @@ trait HasRole
     }
 
     /**
-     * Checks role(s) and permission(s) and returns bool, array or both
-     * @param string|array $roles Array of roles or comma separated string
+     * Checks role(s) and permission(s).
+     *
+     * @param string|array $roles       Array of roles or comma separated string
      * @param string|array $permissions Array of permissions or comma separated string.
-     * @param array $options validate_all (true|false) or return_type (boolean|array|both) Default: false | boolean
+     * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
+     *
+     * @throws \InvalidArgumentException
+     *
      * @return array|bool
-     * @throws InvalidArgumentException
      */
-    public function ability( $roles, $permissions, $options=array() ) {
+    public function ability($roles, $permissions, $options = array())
+    {
         // Convert string to array if that's what is passed in.
-        if(!is_array($roles)){
+        if (!is_array($roles)) {
             $roles = explode(',', $roles);
         }
-        if(!is_array($permissions)){
+        if (!is_array($permissions)) {
             $permissions = explode(',', $permissions);
         }
 
         // Set up default values and validate options.
-        if(!isset($options['validate_all'])) {
+        if (!isset($options['validate_all'])) {
             $options['validate_all'] = false;
         } else {
-            if($options['validate_all'] != true && $options['validate_all'] != false) {
+            if ($options['validate_all'] != true && $options['validate_all'] != false) {
                 throw new InvalidArgumentException();
             }
         }
-        if(!isset($options['return_type'])) {
+        if (!isset($options['return_type'])) {
             $options['return_type'] = 'boolean';
         } else {
-            if($options['return_type'] != 'boolean' &&
+            if ($options['return_type'] != 'boolean' &&
                 $options['return_type'] != 'array' &&
                 $options['return_type'] != 'both') {
                 throw new InvalidArgumentException();
@@ -101,10 +101,10 @@ trait HasRole
         // Loop through roles and permissions and check each.
         $checkedRoles = array();
         $checkedPermissions = array();
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
             $checkedRoles[$role] = $this->hasRole($role);
         }
-        foreach($permissions as $permission) {
+        foreach ($permissions as $permission) {
             $checkedPermissions[$permission] = $this->can($permission);
         }
 
@@ -119,9 +119,9 @@ trait HasRole
         }
 
         // Return based on option
-        if($options['return_type'] == 'boolean') {
+        if ($options['return_type'] == 'boolean') {
             return $validateAll;
-        } elseif($options['return_type'] == 'array') {
+        } elseif ($options['return_type'] == 'array') {
             return array('roles' => $checkedRoles, 'permissions' => $checkedPermissions);
         } else {
             return array($validateAll, array('roles' => $checkedRoles, 'permissions' => $checkedPermissions));
@@ -130,16 +130,13 @@ trait HasRole
     }
 
     /**
-     * Alias to eloquent many-to-many relation's
-     * attach() method
+     * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
      *
-     * @access public
-     *
      * @return void
      */
-    public function attachRole( $role )
+    public function attachRole($role)
     {
         if( is_object($role))
             $role = $role->getKey();
@@ -151,37 +148,35 @@ trait HasRole
     }
 
     /**
-     * Alias to eloquent many-to-many relation's
-     * detach() method
+     * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
      *
-     * @access public
-     *
      * @return void
      */
-    public function detachRole( $role )
+    public function detachRole($role)
     {
-        if( is_object($role))
+        if (is_object($role)) {
             $role = $role->getKey();
+        }
 
-        if( is_array($role))
+        if (is_array($role)) {
             $role = $role['id'];
+        }
 
-        $this->roles()->detach( $role );
+        $this->roles()->detach($role);
     }
 
     /**
      * Attach multiple roles to a user
      *
-     * @param $roles
-     * @access public
+     * @param mixed $roles
+     *
      * @return void
      */
     public function attachRoles($roles)
     {
-        foreach ($roles as $role)
-        {
+        foreach ($roles as $role) {
             $this->attachRole($role);
         }
     }
@@ -189,14 +184,13 @@ trait HasRole
     /**
      * Detach multiple roles from a user
      *
-     * @param $roles
-     * @access public
+     * @param mixed $roles
+     *
      * @return void
      */
     public function detachRoles($roles)
     {
-        foreach ($roles as $role)
-        {
+        foreach ($roles as $role) {
             $this->detachRole($role);
         }
     }
