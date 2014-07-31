@@ -1,11 +1,12 @@
 <?php namespace Zizaco\Entrust;
 
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use LaravelBook\Ardent\Ardent;
-use Config;
 
 class EntrustRole extends Ardent
 {
-
     /**
      * The database table used by the model.
      *
@@ -14,16 +15,18 @@ class EntrustRole extends Ardent
     protected $table;
 
     /**
-     * Ardent validation rules
+     * Ardent validation rules.
      *
      * @var array
      */
     public static $rules = array(
-      'name' => 'required|between:4,128'
+        'name' => 'required|between:4,128'
     );
 
     /**
-     * Creates a new instance of the model
+     * Creates a new instance of the model.
+     *
+     * @return void
      */
     public function __construct(array $attributes = array())
     {
@@ -32,7 +35,9 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * Many-to-Many relations with Users
+     * Many-to-Many relations with Users.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users()
     {
@@ -40,23 +45,27 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * Many-to-Many relations with Permission
-     * named perms as permissions is already taken.
+     * Many-to-Many relations with Permission named perms as permissions is already taken.
+     *
+     * @return void
      */
     public function perms()
     {
         // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
-        // TODO remove in a future version
+        // TODO remove in a future version.
         try {
 			return $this->belongsToMany(Config::get('entrust::permission'), Config::get('entrust::permission_role_table'));
-        } catch(Execption $e) {}
+        } catch (Exception $e) {
+            // do nothing
+        }
     }
 
     /**
-     * Before save should serialize permissions to save
-     * as text into the database
+     * Before save should serialize permissions to save as text into the database.
      *
      * @param array $value
+     *
+     * @return void
      */
     public function setPermissionsAttribute($value)
     {
@@ -64,41 +73,47 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * When loading the object it should un-serialize permissions to be
-     * usable again
+     * When loading the object it should un-serialize permissions to be usable again.
      *
-     * @param string $value
-     * permissoins json
+     * @param string $value permissions json.
+     *
+     * @return array
      */
     public function getPermissionsAttribute($value)
     {
-        return (array)json_decode($value);
+        return (array) json_decode($value);
     }
 
     /**
      * Before delete all constrained foreign relations
      *
      * @param bool $forced
+     *
      * @return bool
      */
-    public function beforeDelete( $forced = false )
+    public function beforeDelete($forced = false)
     {
         try {
-            \DB::table(Config::get('entrust::assigned_roles_table'))->where('role_id', $this->id)->delete();
-            \DB::table(Config::get('entrust::permission_role_table'))->where('role_id', $this->id)->delete();
-        } catch(Exception $e) {}
+            DB::table(Config::get('entrust::assigned_roles_table'))->where('role_id', $this->id)->delete();
+            DB::table(Config::get('entrust::permission_role_table'))->where('role_id', $this->id)->delete();
+        } catch (Exception $e) {
+            // do nothing
+        }
 
         return true;
     }
 
 
     /**
-     * Save permissions inputted
-     * @param $inputPermissions
+     * Save the inputted permissions.
+     *
+     * @param mixed $inputPermissions
+     *
+     * @return void
      */
     public function savePermissions($inputPermissions)
     {
-        if(! empty($inputPermissions)) {
+        if (!empty($inputPermissions)) {
             $this->perms()->sync($inputPermissions);
         } else {
             $this->perms()->detach();
@@ -106,46 +121,53 @@ class EntrustRole extends Ardent
     }
 
     /**
-     * Attach permission to current role
-     * @param $permission
+     * Attach permission to current role.
+     *
+     * @param object|array $permission
+     *
+     * @return void
      */
-    public function attachPermission( $permission )
+    public function attachPermission($permission)
     {
-        if( is_object($permission))
+        if (is_object($permission)) {
             $permission = $permission->getKey();
+        }
 
-        if( is_array($permission))
+        if (is_array($permission)) {
             $permission = $permission['id'];
+        }
 
-        $this->perms()->attach( $permission );
+        $this->perms()->attach($permission);
     }
 
     /**
-     * Detach permission form current role
-     * @param $permission
+     * Detach permission form current role.
+     *
+     * @param object|array $permission
+     *
+     * @return void
      */
-    public function detachPermission( $permission )
+    public function detachPermission($permission)
     {
-        if( is_object($permission))
+        if (is_object($permission))
             $permission = $permission->getKey();
 
-        if( is_array($permission))
+        if (is_array($permission))
             $permission = $permission['id'];
 
         $this->perms()->detach( $permission );
     }
 
     /**
-     * Attach multiple permissions to current role
+     * Attach multiple permissions to current role.
      *
-     * @param $permissions
-     * @access public
+     * @param mixed $permissions
+     *
      * @return void
      */
     public function attachPermissions($permissions)
     {
-        foreach ($permissions as $permission)
-        {
+        foreach ($permissions as $permission) {
             $this->attachPermission($permission);
         }
     }
@@ -153,16 +175,14 @@ class EntrustRole extends Ardent
     /**
      * Detach multiple permissions from current role
      *
-     * @param $permissions
-     * @access public
+     * @param mixed $permissions
+     *
      * @return void
      */
     public function detachPermissions($permissions)
     {
-        foreach ($permissions as $permission)
-        {
+        foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
     }
-
 }
