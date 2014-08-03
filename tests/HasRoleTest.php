@@ -33,7 +33,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('belongsToMany')
-            ->with('role_table_name','assigned_roles_table_name')
+            ->with('role_table_name', 'assigned_roles_table_name')
             ->andReturn($belongsToMany)
             ->once();
 
@@ -759,10 +759,10 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $user->roles = [$roleA];
 
         function isExceptionThrown(
-        	HasRoleUser $user,
-        	array $roles,
-        	array $perms,
-        	array $options
+            HasRoleUser $user,
+            array $roles,
+            array $perms,
+            array $options
         ) {
             $isExceptionThrown = false;
             
