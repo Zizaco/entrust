@@ -12,7 +12,7 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'));
+        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'), 'user_id', 'role_id');
     }
 
     /**
