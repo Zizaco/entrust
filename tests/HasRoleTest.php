@@ -33,7 +33,6 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('belongsToMany')
-            ->with('role_table_name', 'assigned_roles_table_name')
             ->andReturn($belongsToMany)
             ->once();
 
