@@ -17,7 +17,7 @@ Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
 In the `require` key of `composer.json` file add the following
 
-    "zizaco/entrust": "dev-master"
+    "zizaco/entrust": "1.2.*@dev"
 
 Run the Composer update comand
 
