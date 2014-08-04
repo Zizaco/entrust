@@ -1,7 +1,7 @@
 {
     "name": "zizaco/entrust",
     "description": "This package provides a flexible way to add Role-based Permissions to Laravel 4",
-    "keywords": ["laravel","illuminate","auth","roles"],
+    "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
     "license": "MIT",
     "authors": [
         {
@@ -15,8 +15,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "~4.0",
-        "laravelbook/ardent": "~2.4"
+        "illuminate/support": "~4.2",
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
@@ -24,25 +23,6 @@
         "illuminate/database": "~4.0",
         "symfony/process": "~2.3"
     },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "laravelbook/ardent",
-                "version": "2.4.2",
-                "source": {
-                    "type": "git",
-                    "url": "https://github.com/bexarcreativeinc/ardent.git",
-                    "reference": "master"
-                },
-                "autoload": {
-                    "psr-0": {
-                    "LaravelBook\\Ardent": "src/"
-                    }
-                }
-            }
-        }
-    ],
     "suggest": {
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
     },
@@ -56,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.2-dev"
+            "dev-master": "2.0-dev"
         }
     }
 }
