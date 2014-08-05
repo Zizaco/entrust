@@ -63,7 +63,7 @@ It will generate the `<timestamp>_entrust_setup_tables.php` migration. You may n
 
     $ php artisan migrate
 
-After the migration, two new tables will be present: `roles` which contain the existent roles and it's permissions and `assigned_roles` which will represent the [Many-to-Many](http://four.laravel.com/docs/eloquent#many-to-many) relation between `User` and `Role`.
+After the migration, two new tables will be present: `roles` which contain the existent roles and it's permissions and `user_roles` which will represent the [Many-to-Many](http://four.laravel.com/docs/eloquent#many-to-many) relation between `User` and `Role`.
 
 ### Models
 
@@ -310,11 +310,11 @@ As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is l
 
 If you encounter an error when doing the migration that looks like:
 ```
-SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150) (SQL: alter table `assigned_roles` add constraint assigned_roles_user_id_foreign foreign key (`
+SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150) (SQL: alter table `user_roles` add constraint user_roles_user_id_foreign foreign key (`
   user_id`) references `users` (`id`)) (Bindings: array (
   ))
 ```
-Then it's likely that the `id` column in your user table does not match the `user_id` column in `assigned_roles`. Match sure both are `INT(10)`.
+Then it's likely that the `id` column in your user table does not match the `user_id` column in `user_roles`. Match sure both are `INT(10)`.
 
 Name is having issues saving.
 
