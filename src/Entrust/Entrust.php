@@ -3,6 +3,13 @@
 use Closure;
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * This class is the main entry point of entrust. Usually this the interaction
+ * with this class will be done trought the Entrust Facade
+ *
+ * @license MIT
+ * @package Zizaco\Enstrust
+ */
 class Entrust
 {
     /**
@@ -50,7 +57,7 @@ class Entrust
     public function can($permission)
     {
         if ($user = $this->user()) {
-            return $user->can( $permission );
+            return $user->can($permission);
         }
 
         return false;
@@ -79,13 +86,13 @@ class Entrust
      *
      * @return mixed
      */
-    public function routeNeedsRole($route, $roles, $result = null, $cumulative=true)
+    public function routeNeedsRole($route, $roles, $result = null, $cumulative = true)
     {
         if (!is_array($roles)) {
             $roles = array($roles);
         }
 
-        $filter_name = implode('_',$roles).'_'.substr(md5($route),0,6);
+        $filter_name = implode('_', $roles).'_'.substr(md5($route), 0, 6);
 
         if (!$result instanceof Closure) {
             $result = function () use ($roles, $result, $cumulative) {
@@ -100,9 +107,10 @@ class Entrust
 
                 // Check to see if it is false and then
                 // check additive flag and that the array only contains false.
-                if (in_array(false, $hasARole) && ($cumulative || count(array_unique($hasARole)) == 1) ) {
-                    if(! $result)
+                if (in_array(false, $hasARole) && ($cumulative || count(array_unique($hasARole)) == 1)) {
+                    if (! $result) {
                         Facade::getFacadeApplication()->abort(403);
+                    }
 
                     return $result;
                 }
@@ -114,7 +122,7 @@ class Entrust
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->app->router->when( $route, $filter_name );
+        $this->app->router->when($route, $filter_name);
     }
 
     /**
@@ -130,13 +138,13 @@ class Entrust
      *
      * @return mixed
      */
-    public function routeNeedsPermission($route, $permissions, $result = null, $cumulative=true)
+    public function routeNeedsPermission($route, $permissions, $result = null, $cumulative = true)
     {
         if (!is_array($permissions)) {
             $permissions = array($permissions);
         }
 
-        $filter_name = implode('_',$permissions).'_'.substr(md5($route),0,6);
+        $filter_name = implode('_', $permissions).'_'.substr(md5($route), 0, 6);
 
         if (!$result instanceof Closure) {
 
@@ -152,9 +160,10 @@ class Entrust
 
                 // Check to see if it is false and then
                 // check additive flag and that the array only contains false.
-                if (in_array(false, $hasAPermission) && ($cumulative || count(array_unique($hasAPermission)) == 1) ) {
-                    if(! $result)
+                if (in_array(false, $hasAPermission) && ($cumulative || count(array_unique($hasAPermission)) == 1)) {
+                    if (! $result) {
                         Facade::getFacadeApplication()->abort(403);
+                    }
 
                     return $result;
                 }
@@ -166,7 +175,7 @@ class Entrust
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->app->router->when( $route, $filter_name );
+        $this->app->router->when($route, $filter_name);
     }
 
     /**
@@ -183,7 +192,7 @@ class Entrust
      *
      * @return void
      */
-    public function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = null, $cumulative=false)
+    public function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = null, $cumulative = false)
     {
         if (!is_array($roles)) {
             $roles = array($roles);
@@ -192,7 +201,7 @@ class Entrust
             $permissions = array($permissions);
         }
 
-        $filter_name = implode('_',$roles).'_'.implode('_',$permissions).'_'.substr(md5($route),0,6);
+        $filter_name = implode('_', $roles).'_'.implode('_', $permissions).'_'.substr(md5($route), 0, 6);
 
         if (!$result instanceof Closure) {
 
@@ -217,8 +226,9 @@ class Entrust
                 // Check to see if it is false and then
                 // check additive flag and that the array only contains false.
                 if (((in_array(false, $hasARole) || in_array(false, $hasAPermission))) && ($cumulative || count(array_unique(array_merge($hasARole, $hasAPermission))) == 1 )) {
-                    if(! $result)
+                    if (! $result) {
                         Facade::getFacadeApplication()->abort(403);
+                    }
 
                     return $result;
                 }
@@ -230,6 +240,6 @@ class Entrust
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->app->router->when( $route, $filter_name );
+        $this->app->router->when($route, $filter_name);
     }
 }
