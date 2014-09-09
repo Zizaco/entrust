@@ -36,7 +36,7 @@ class EntrustRole extends Ardent
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust::assigned_roles_table'));
+        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust::assigned_roles_table'),'role_id','user_id');
     }
 
     /**
