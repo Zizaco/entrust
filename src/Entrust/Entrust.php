@@ -87,7 +87,7 @@ class Entrust
 
         $filter_name = implode('_',$roles).'_'.substr(md5($route),0,6);
 
-        if (!$result instanceof Closure) {
+        if (!$result instanceof \Closure) {
             $result = function () use ($roles, $result, $cumulative) {
                 $hasARole = array();
                 foreach ($roles as $role) {
