@@ -29,10 +29,10 @@
             "type": "package",
             "package": {
                 "name": "laravelbook/ardent",
-                "version": "2.4.2",
+                "version": "2.5.*",
                 "source": {
                     "type": "git",
-                    "url": "https://github.com/bexarcreativeinc/ardent.git",
+                    "url": "https://github.com/andrewelkins/ardent.git",
                     "reference": "master"
                 },
                 "autoload": {
