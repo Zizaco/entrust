@@ -4,9 +4,12 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use LaravelBook\Ardent\Ardent;
+use Illuminate\Console\AppNamespaceDetectorTrait;
 
 class EntrustPermission extends Ardent
 {
+    use AppNamespaceDetectorTrait;
+    
     /**
      * The database table used by the model.
      *
@@ -42,7 +45,7 @@ class EntrustPermission extends Ardent
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::permission_role_table'));
+        return $this->belongsToMany($this->getAppNamespace().Config::get('entrust::role'), Config::get('entrust::permission_role_table'));
     }
 
     /**
