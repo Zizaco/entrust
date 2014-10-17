@@ -80,7 +80,7 @@ class MigrationCommand extends Command
      */
     protected function createMigration($roles_table = 'roles')
     {
-        $migration_file = $this->laravel->path."/database/migrations/".date('Y_m_d_His')."_entrust_setup_tables.php";
+        $migration_file = base_path()."/database/migrations/".date('Y_m_d_His')."_entrust_setup_tables.php";
         $output = $this->laravel->view->make('entrust::generators.migration')->with('table', $roles_table)->render();
 
         if (!file_exists($migration_file) && $fs = fopen($migration_file, 'x')) {
