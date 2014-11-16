@@ -15,15 +15,15 @@ Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
 ### Required setup
 
-In the `require` key of `composer.json` file add the following
+In the `require` key of the `composer.json` file, add the following:
 
     "zizaco/entrust": "1.2.*@dev"
 
-Run the Composer update comand
+Run the Composer update command:
 
     $ composer update
 
-In your `config/app.php` add `'Zizaco\Entrust\EntrustServiceProvider'` to the end of the `$providers` array
+In your `config/app.php` add `'Zizaco\Entrust\EntrustServiceProvider'` to the end of the `$providers` array:
 
 ```php
 'providers' => array(
@@ -36,7 +36,7 @@ In your `config/app.php` add `'Zizaco\Entrust\EntrustServiceProvider'` to the en
 ),
 ```
 
-At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacade'` to the `$aliases` array
+At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacade'` to the `$aliases` array:
 
 ```php
 'aliases' => array(
@@ -55,7 +55,7 @@ Set the property values in the `config/auth.php`. These values will be used by e
 
 ### User relation to roles
 
-Now generate the Entrust migration
+Now generate the Entrust migration:
 
     $ php artisan entrust:migration
 
@@ -63,7 +63,7 @@ It will generate the `<timestamp>_entrust_setup_tables.php` migration. You may n
 
     $ php artisan migrate
 
-After the migration, two new tables will be present: `roles` which contain the existent roles and it's permissions and `assigned_roles` which will represent the [Many-to-Many](http://four.laravel.com/docs/eloquent#many-to-many) relation between `User` and `Role`.
+After the migration, two new tables will be present: `roles`, which contains the existent roles and it's permissions and `assigned_roles`, which will represent the [Many-to-Many](http://four.laravel.com/docs/eloquent#many-to-many) relation between `User` and `Role`.
 
 ### Models
 
@@ -119,7 +119,7 @@ class User extends Eloquent /* or ConfideUser 'wink' */{
 This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole( $name )`,
 `can( $permission )`, and `ability($roles, $permissions, $options)` within your `User` model.
 
-Don't forget to dump composer autoload
+Don't forget to dump composer autoload:
 
     $ composer dump-autoload
 
@@ -141,13 +141,13 @@ $admin->save();
 
 ```
 
-Next, with both roles created let's assign then to the users. Thanks to the `HasRole` trait this is as easy as:
+Next, with both roles created let's assign them to the users. Thanks to the `HasRole` trait this is as easy as:
 
 ```php
 $user = User::where('username','=','Zizaco')->first();
 
 /* role attach alias */
-$user->attachRole( $admin ); // Parameter can be an Role object, array or id.
+$user->attachRole( $admin ); // Parameter can be a Role object, array or id.
 
 /* OR the eloquent's original: */
 $user->roles()->attach( $admin->id ); // id only
@@ -255,7 +255,7 @@ Both of these methods accept a third parameter. If the third parameter is null t
 Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
 ```
 
-Further more both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions given.
+Further more, both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions given.
 If you set it to false, the function will only fail if all roles/permissions fail for that user. Useful for admin applications where
 you want to allow access for multiple groups.
 
