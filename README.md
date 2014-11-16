@@ -141,7 +141,7 @@ $admin->save();
 
 ```
 
-Next, with both roles created let's assign then to the users. Thanks to the `HasRole` trait this is as easy as:
+Next, with both roles created let's assign them to the users. Thanks to the `HasRole` trait this is as easy as:
 
 ```php
 $user = User::where('username','=','Zizaco')->first();
