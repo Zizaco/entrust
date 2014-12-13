@@ -79,7 +79,7 @@ class MigrationCommand extends Command
         $userModel   = Config::get('auth.model');
         $userKeyName = (new $userModel())->getKeyName();
 
-        $data = compact('rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName')
+        $data = compact('rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
 
         $output = $this->laravel->view->make('entrust::generators.migration')->with($data)->render();
 
