@@ -62,6 +62,6 @@ return array(
 	| This is the assigned_roles table used by Entrust to save assigned roles to the database.
 	|
 	*/
-	'assigned_roles_table' => 'assigned_roles',
+	'role_user_table' => 'role_user',
 
 );
