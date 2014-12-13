@@ -38,10 +38,10 @@ class Entrust
      *
      * @return bool
      */
-    public function hasRole($permission)
+    public function hasRole($role)
     {
         if ($user = $this->user()) {
-            return $user->hasRole($permission);
+            return $user->hasRole($role);
         }
 
         return false;
