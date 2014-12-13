@@ -1,4 +1,4 @@
-<?php echo "<?php\n"; ?>
+{{ '<?php' }}
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,37 +13,47 @@ class EntrustSetupTables extends Migration
     public function up()
     {
         // Creates the roles table
-        Schema::create('roles', function ($table) {
-            $table->increments('id')->unsigned();
+        Schema::create('{{ $rolesTable }}', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('name')->unique();
+            $table->string('display_name');
+            $table->string('description');
             $table->timestamps();
         });
 
         // Creates the assigned_roles (Many-to-Many relation) table
-        Schema::create('assigned_roles', function ($table) {
-            $table->increments('id')->unsigned();
+        Schema::create('{{ $roleUserTable }}', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
             $table->integer('role_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('{{ \Illuminate\Support\Facades\Config::get('auth.table') }}')
+
+            $table->foreign('user_id')->references('{{ $userKeyName }}')->on('{{ $userTable }}')
                 ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('role_id')->references('id')->on('roles');
+            $table->foreign('role_id')->references('id')->on('{{ $rolesTable }}')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->primary(['user_id', 'role_id']);
         });
 
         // Creates the permissions table
-        Schema::create('permissions', function ($table) {
-            $table->increments('id')->unsigned();
+        Schema::create('{{ $permissionsTable }}', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('name')->unique();
             $table->string('display_name');
+            $table->string('description');
             $table->timestamps();
         });
 
         // Creates the permission_role (Many-to-Many relation) table
-        Schema::create('permission_role', function ($table) {
-            $table->increments('id')->unsigned();
+        Schema::create('{{ $permissionRoleTable }}', function (Blueprint $table) {
             $table->integer('permission_id')->unsigned();
             $table->integer('role_id')->unsigned();
-            $table->foreign('permission_id')->references('id')->on('permissions'); // assumes a users table
-            $table->foreign('role_id')->references('id')->on('roles');
+
+            $table->foreign('permission_id')->references('id')->on('{{ $permissionTable }}')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('role_id')->references('id')->on('{{ $roleTable }}')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->primary(['permission_id', 'role_id']);
         });
     }
 
@@ -54,20 +64,9 @@ class EntrustSetupTables extends Migration
      */
     public function down()
     {
-        Schema::table('assigned_roles', function (Blueprint $table) {
-            $table->dropForeign('assigned_roles_user_id_foreign');
-            $table->dropForeign('assigned_roles_role_id_foreign');
-        });
-
-        Schema::table('permission_role', function (Blueprint $table) {
-            $table->dropForeign('permission_role_permission_id_foreign');
-            $table->dropForeign('permission_role_role_id_foreign');
-        });
-
-        Schema::drop('assigned_roles');
-        Schema::drop('permission_role');
-        Schema::drop('roles');
-        Schema::drop('permissions');
+        Schema::drop('{{ $permissionRoleTable }}');
+        Schema::drop('{{ $permissionsTable }}');
+        Schema::drop('{{ $roleUserTable }}');
+        Schema::drop('{{ $rolesTable }}');
     }
-
 }
