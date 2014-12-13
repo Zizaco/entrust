@@ -22,11 +22,28 @@ trait HasRole
      *
      * @return bool
      */
-    public function hasRole($name)
+    public function hasRole($name, $requireAll = false)
     {
-        foreach ($this->roles as $role) {
-            if ($role->name == $name) {
-                return true;
+        if (is_array($name)) {
+            foreach ($name as $roleName) {
+                $hasRole = $this->hasRole($roleName);
+
+                if ($hasRole && !$requireAll) {
+                    return true;
+                } elseif (!$hasRole && $requireAll) {
+                    return false;
+                }
+            }
+
+            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
+            // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
+            // Return the value of $requireAll;
+            return $requireAll;
+        } else {
+            foreach ($this->roles as $role) {
+                if ($role->name == $name) {
+                    return true;
+                }
             }
         }
 
