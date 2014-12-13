@@ -346,6 +346,6 @@ Entrust is free software distributed under the terms of the MIT license
 
 ## Additional information
 
-Any questions, feel free to contact me or ask [here](http://forums.laravel.io/viewtopic.php?id=9313)
+Any questions, feel free to contact me or ask [here](http://laravel.io/forum/09-23-2014-package-zizaco-entrust)
 
 Any issues, please [report here](https://github.com/Zizaco/entrust/issues)
