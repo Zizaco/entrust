@@ -42,37 +42,7 @@ class EntrustRole extends Model
      */
     public function perms()
     {
-        // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
-        // TODO remove in a future version.
-        try {
-			return $this->belongsToMany(Config::get('entrust::permission'), Config::get('entrust::permission_role_table'));
-        } catch (Exception $e) {
-            // do nothing
-        }
-    }
-
-    /**
-     * Before save should serialize permissions to save as text into the database.
-     *
-     * @param array $value
-     *
-     * @return void
-     */
-    public function setPermissionsAttribute($value)
-    {
-        $this->attributes['permissions'] = json_encode($value);
-    }
-
-    /**
-     * When loading the object it should un-serialize permissions to be usable again.
-     *
-     * @param string $value permissions json.
-     *
-     * @return array
-     */
-    public function getPermissionsAttribute($value)
-    {
-        return (array) json_decode($value);
+        return $this->belongsToMany(Config::get('entrust::permission'), Config::get('entrust::permission_role_table'));
     }
 
     /**
@@ -93,7 +63,6 @@ class EntrustRole extends Model
 
         return true;
     }
-
 
     /**
      * Save the inputted permissions.
