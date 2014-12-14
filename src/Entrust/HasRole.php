@@ -57,18 +57,30 @@ trait HasRole
      *
      * @return bool
      */
-    public function can($permission)
+    public function can($permission, $requireAll = false)
     {
-        foreach ($this->roles as $role) {
-            // Deprecated permission value within the role table.
-            if (is_array($role->permissions) && in_array($permission, $role->permissions) ) {
-                return true;
+        if (is_array($permission)) {
+            foreach ($permission as $permName) {
+                $hasPerm = $this->can($permName);
+
+                if ($hasPerm && !$requireAll) {
+                    return true;
+                } elseif (!$hasPerm && $requireAll) {
+                    return false;
+                }
             }
 
-            // Validate against the Permission table
-            foreach ($role->perms as $perm) {
-                if ($perm->name == $permission) {
-                    return true;
+            // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found
+            // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
+            // Return the value of $requireAll;
+            return $requireAll;
+        } else {
+            foreach ($this->roles as $role) {
+                // Validate against the Permission table
+                foreach ($role->perms as $perm) {
+                    if ($perm->name == $permission) {
+                        return true;
+                    }
                 }
             }
         }
