@@ -38,10 +38,10 @@ class Entrust
      *
      * @return bool
      */
-    public function hasRole($role)
+    public function hasRole($role, $requireAll = false)
     {
         if ($user = $this->user()) {
-            return $user->hasRole($role);
+            return $user->hasRole($role, $requireAll);
         }
 
         return false;
@@ -54,10 +54,10 @@ class Entrust
      *
      * @return bool
      */
-    public function can($permission)
+    public function can($permission, $requireAll = false)
     {
         if ($user = $this->user()) {
-            return $user->can($permission);
+            return $user->can($permission, $requireAll);
         }
 
         return false;
