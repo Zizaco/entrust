@@ -48,10 +48,21 @@ At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacad
 
 ),
 ```
+**Laravel 5:** Laravel 5 compatability will not be added until the dust settles. There is a fork that will allow basic integration. Read more at https://github.com/Zizaco/entrust/issues/196 and be aware of your model namespaces.
 
 ### Configuration
 
 Set the property values in the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
+
+Additional configuration can be set through the Artisan Commands
+
+```
+//Laravel 4
+php artisan config:publish zizaco/entrust  
+
+//Laravel 5
+php artisan publish:config zizaco/entrust
+````
 
 ### User relation to roles
 
