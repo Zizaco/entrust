@@ -36,12 +36,12 @@ class EntrustTest extends PHPUnit_Framework_TestCase
             ->once()->ordered();
 
         $user->shouldReceive('hasRole')
-            ->with('UserRole')
+            ->with('UserRole', false)
             ->andReturn(true)
             ->once();
 
         $user->shouldReceive('hasRole')
-            ->with('NonUserRole')
+            ->with('NonUserRole', false)
             ->andReturn(false)
             ->once();
 
@@ -80,12 +80,12 @@ class EntrustTest extends PHPUnit_Framework_TestCase
             ->once()->ordered();
 
         $user->shouldReceive('can')
-            ->with('user_can')
+            ->with('user_can', false)
             ->andReturn(true)
             ->once();
 
         $user->shouldReceive('can')
-            ->with('user_cannot')
+            ->with('user_cannot', false)
             ->andReturn(false)
             ->once();
 

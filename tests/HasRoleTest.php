@@ -38,7 +38,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
 
         Config::shouldReceive('get')->once()->with('entrust::role')
             ->andReturn('role_table_name');
-        Config::shouldReceive('get')->once()->with('entrust::assigned_roles_table')
+        Config::shouldReceive('get')->once()->with('entrust::role_user_table')
             ->andReturn('assigned_roles_table_name');
 
         /*
@@ -101,35 +101,6 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($user->can('manage_b'));
         $this->assertTrue($user->can('manage_c'));
         $this->assertFalse($user->can('manage_d'));
-    }
-
-    public function testCanShouldSupportDeprecatedPermissions()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $roleA = $this->mockRole('RoleA');
-        $roleB = $this->mockRole('RoleB');
-
-        $roleA->permissions = 'manage_a';
-        $roleB->permissions = ['manage_b', 'manage_c'];
-
-        $user = new HasRoleUser();
-        $user->roles = [$roleA, $roleB];
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->can('manage_b'));
-        $this->assertTrue($user->can('manage_c'));
-        $this->assertFalse($user->can('manage_d'));
-
-        // Non-array permissions attribute is ignored.
-        $this->assertFalse($user->can('manage_a'));
     }
 
     public function testAbilityShouldReturnBoolean()
