@@ -1,11 +1,14 @@
 # Entrust (Laravel4 Package)
 
-![Entrust Poster](https://dl.dropbox.com/u/12506137/libs_bundles/entrust.png)
-
-[![Build Status](https://api.travis-ci.org/Zizaco/entrust.png)](https://travis-ci.org/Zizaco/entrust)
-[![ProjectStatus](http://stillmaintained.com/Zizaco/entrust.png)](http://stillmaintained.com/Zizaco/entrust)
-
 Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
+
+First and foremost I must give credit to the original developers of this package. Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work with this package and the fundamental design and functionality. My fork is intended to:
+
+- Remove extra components not really relevant to role & permission management (in particular, Ardent).
+- Add extra functionality I felt was useful and particularly suited to this package.
+- Make integrating the package more flexible and dynamic (eventually).
+
+Were my changes ever to be integrated back into the Zizaco version of this plugin, I think that would be lovely. Either way though, I hope to demonstrate some genuinely helpful features and options.
 
 ## Quick start
 
@@ -17,9 +20,9 @@ Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
 In the `require` key of `composer.json` file add the following
 
-    "bbatsche/entrust": "1.2.*@dev"
+    "bbatsche/entrust": "~2.0"
 
-Run the Composer update comand
+Run the Composer update command
 
     $ composer update
 
@@ -315,30 +318,6 @@ SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter
   ))
 ```
 Then it's likely that the `id` column in your user table does not match the `user_id` column in `assigned_roles`. Match sure both are `INT(10)`.
-
-Name is having issues saving.
-
-EntrustRole->name has a length limitation set within the rules variable of the [EntrustRole class](https://github.com/Zizaco/entrust/blob/master/src/Zizaco/Entrust/EntrustRole.php#L21).
-
-You can adjust it by changing your Role Model.
-
-```php
-<?php
-
-use Bbatsche\Entrust\EntrustRole;
-
-class Role extends EntrustRole
-{
-    /**
-     * Ardent validation rules
-     *
-     * @var array
-     */
-    public static $rules = array(
-      'name' => 'required|between:4,255'
-    );
-}
-```
 
 ## License
 
