@@ -125,7 +125,7 @@ class User extends Eloquent
 ...
 ```
 
-This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole($name)`,
+This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`,
 `can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
 
 Don't forget to dump composer autoload
@@ -286,7 +286,13 @@ Entrust::routeNeedsRole('admin/advanced*', array('owner','writer'), null, false)
 
 // If a user is a member of `owner`, `writer` or both, or user has `create-post`, `edit-comment` they will have access.
 // You can set the 4th parameter to true then user must be member of Role and must has Permission.
-Entrust::routeNeedsRoleOrPermission('admin/advanced*', array('owner', 'writer'), array('create-post', 'edit-comment'), null, false);
+Entrust::routeNeedsRoleOrPermission(
+    'admin/advanced*',
+    array('owner', 'writer'),
+    array('create-post', 'edit-comment'),
+    null,
+    false
+);
 ```
 
 ### Route filter
@@ -330,7 +336,9 @@ role or permission. If the user is not logged the return will also be `false`.
 If you encounter an error when doing the migration that looks like:
 
 ```
-SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150) (SQL: alter table `role_user` add constraint role_user_user_id_foreign foreign key (`user_id`) references `users` (`id`)) (Bindings: array ())
+SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150)
+    (SQL: alter table `role_user` add constraint role_user_user_id_foreign foreign key (`user_id`)
+    references `users` (`id`)) (Bindings: array ())
 ```
 
 Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`. Match sure
