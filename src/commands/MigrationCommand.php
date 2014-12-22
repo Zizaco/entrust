@@ -1,4 +1,4 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Bbatsche\Entrust;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;

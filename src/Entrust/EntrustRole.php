@@ -1,4 +1,4 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Bbatsche\Entrust;
 
 use Exception;
 use Illuminate\Support\Facades\DB;

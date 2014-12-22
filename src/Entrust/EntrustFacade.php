@@ -1,4 +1,4 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Bbatsche\Entrust;
 
 class EntrustFacade extends \Illuminate\Support\Facades\Facade
 {

@@ -1,5 +1,5 @@
 {
-    "name": "zizaco/entrust",
+    "name": "bbatsche/entrust",
     "description": "This package provides a flexible way to add Role-based Permissions to Laravel 4",
     "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
     "license": "MIT",
@@ -35,7 +35,7 @@
             "src/commands"
         ],
         "psr-4": {
-            "Zizaco\\Entrust\\": "src/Entrust/"
+            "Bbatsche\\Entrust\\": "src/Entrust/"
         }
     },
     "extra": {

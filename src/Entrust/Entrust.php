@@ -1,4 +1,4 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Bbatsche\Entrust;
 
 use Closure;
 use Illuminate\Support\Facades\Facade;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
  * with this class will be done trought the Entrust Facade
  *
  * @license MIT
- * @package Zizaco\Enstrust
+ * @package Bbatsche\Enstrust
  */
 class Entrust
 {

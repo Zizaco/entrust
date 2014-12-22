@@ -17,13 +17,13 @@ Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
 In the `require` key of `composer.json` file add the following
 
-    "zizaco/entrust": "1.2.*@dev"
+    "bbatsche/entrust": "1.2.*@dev"
 
 Run the Composer update comand
 
     $ composer update
 
-In your `config/app.php` add `'Zizaco\Entrust\EntrustServiceProvider'` to the end of the `$providers` array
+In your `config/app.php` add `'Bbatsche\Entrust\EntrustServiceProvider'` to the end of the `$providers` array
 
 ```php
 'providers' => array(
@@ -31,12 +31,12 @@ In your `config/app.php` add `'Zizaco\Entrust\EntrustServiceProvider'` to the en
     'Illuminate\Foundation\Providers\ArtisanServiceProvider',
     'Illuminate\Auth\AuthServiceProvider',
     ...
-    'Zizaco\Entrust\EntrustServiceProvider',
+    'Bbatsche\Entrust\EntrustServiceProvider',
 
 ),
 ```
 
-At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacade'` to the `$aliases` array
+At the end of `config/app.php` add `'Entrust'    => 'Bbatsche\Entrust\EntrustFacade'` to the `$aliases` array
 
 ```php
 'aliases' => array(
@@ -44,7 +44,7 @@ At the end of `config/app.php` add `'Entrust'    => 'Zizaco\Entrust\EntrustFacad
     'App'        => 'Illuminate\Support\Facades\App',
     'Artisan'    => 'Illuminate\Support\Facades\Artisan',
     ...
-    'Entrust'    => 'Zizaco\Entrust\EntrustFacade',
+    'Entrust'    => 'Bbatsche\Entrust\EntrustFacade',
 
 ),
 ```
@@ -72,7 +72,7 @@ Create a Role model following the example at `app/models/Role.php`:
 ```php
 <?php
 
-use Zizaco\Entrust\EntrustRole;
+use Bbatsche\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
@@ -91,7 +91,7 @@ Create a Permission model following the example at `app/models/Permission.php`:
 ```php
 <?php
 
-use Zizaco\Entrust\EntrustPermission;
+use Bbatsche\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
@@ -108,7 +108,7 @@ Next, use the `HasRole` trait in your existing `User` model. For example:
 ```php
 <?php
 
-use Zizaco\Entrust\HasRole;
+use Bbatsche\Entrust\HasRole;
 
 class User extends Eloquent /* or ConfideUser 'wink' */{
     use HasRole; // Add this trait to your user model
@@ -144,7 +144,7 @@ $admin->save();
 Next, with both roles created let's assign them to the users. Thanks to the `HasRole` trait this is as easy as:
 
 ```php
-$user = User::where('username','=','Zizaco')->first();
+$user = User::where('username','=','bbatsche')->first();
 
 /* role attach alias */
 $user->attachRole( $admin ); // Parameter can be an Role object, array or id.
@@ -325,7 +325,7 @@ You can adjust it by changing your Role Model.
 ```php
 <?php
 
-use Zizaco\Entrust\EntrustRole;
+use Bbatsche\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
@@ -348,4 +348,4 @@ Entrust is free software distributed under the terms of the MIT license
 
 Any questions, feel free to contact me or ask [here](http://laravel.io/forum/09-23-2014-package-zizaco-entrust)
 
-Any issues, please [report here](https://github.com/Zizaco/entrust/issues)
+Any issues, please [report here](https://github.com/bbatsche/entrust/issues)

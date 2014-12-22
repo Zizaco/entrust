@@ -1,4 +1,4 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Bbatsche\Entrust;
 
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
