@@ -52,7 +52,7 @@ At the end of `config/app.php` add `'Entrust'    => 'Bbatsche\Entrust\EntrustFac
 ),
 ```
 
-### Configuration
+## Configuration
 
 Set the property values in the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
 
@@ -66,7 +66,7 @@ It will generate the `<timestamp>_entrust_setup_tables.php` migration. You may n
 
     $ php artisan migrate
 
-After the migration, two new tables will be present: `roles` which contain the existent roles and it's permissions and `assigned_roles` which will represent the [Many-to-Many](http://four.laravel.com/docs/eloquent#many-to-many) relation between `User` and `Role`.
+After the migration, two new tables will be present: `roles` which contain the existent roles and it's permissions and `role_user` which will represent the [Many-to-Many](http://laravel.com/docs/4.2/eloquent#many-to-many) relation between `User` and `Role`.
 
 ### Models
 
@@ -83,11 +83,12 @@ class Role extends EntrustRole
 }
 ```
 
-The `Role` model has two main attributes: `name` and `permissions`.
-`name`, as you can imagine, is the name of the Role. For example: "Admin", "Owner", "Employee".
-The `permissions` field has been deprecated in preference for the permission table. You should no longer use it.
-It is an array that is automatically serialized and unserialized when the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
-
+The `Role` model has three main attributes: `name`, `display_name`, and `description`. `name`, as you can imagine, is
+the name of the Role. It is the unique key used to represent the Role in your application. For example: "admin",
+"owner", "employee". `display_name` is a human readable name for that role. It is not unique and should only be used
+for display purposes. For example: "User Administrator", "Project Owner", "Widget  Co. Employee". `description` can be
+used for a longer form description of the role. Both `display_name` and `description` are optional; their fields are
+nullable in the database.
 
 Create a Permission model following the example at `app/models/Permission.php`:
 
@@ -102,9 +103,13 @@ class Permission extends EntrustPermission
 }
 ```
 
-The `Permission` model has two attributes: `name` and `display_name`.
-`name`, as you can imagine, is the name of the Permission. For example: "Admin", "Owner", "Employee", "can_manage".
-`display_name` is a viewer friendly version of the permission string. "Admin", "Can Manage", "Something Cool".
+The `Permission` model has the same three attributes as the `Role`: `name`, `display_name`, and `description`. These
+three fields have the same general purpose as for your Roles, but instead applied to the Permission model.
+`name` is the unique name of the Permission. For example: "create-post", "edit-user", "post-payment",
+"mailing-list-subscribe". `display_name` is a viewer friendly version of the permission string. For example "Create
+Posts", "Edit Users", "Post Payments", "Subscribe to mailing list". Description can be a more detailed explanation for
+the Permission. In general, it may be helpful to think of the attributes in the form of a sentence: "The permission
+`display_name` allows a user to `description`."
 
 Next, use the `HasRole` trait in your existing `User` model. For example:
 
@@ -113,14 +118,15 @@ Next, use the `HasRole` trait in your existing `User` model. For example:
 
 use Bbatsche\Entrust\HasRole;
 
-class User extends Eloquent /* or ConfideUser 'wink' */{
+class User extends Eloquent
+{
     use HasRole; // Add this trait to your user model
 
 ...
 ```
 
-This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole( $name )`,
-`can( $permission )`, and `ability($roles, $permissions, $options)` within your `User` model.
+This will do the trick to enable the relation with `Role` and the following methods `roles`, `hasRole($name)`,
+`can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
 
 Don't forget to dump composer autoload
 
@@ -134,88 +140,97 @@ Don't forget to dump composer autoload
 Let's start by creating the following `Role`s and `Permission`s:
 
 ```php
-$owner = new Role;
-$owner->name = 'Owner';
+$owner = new Role();
+$owner->name         = 'owner';
+$owner->display_name = 'Project Owner'; // optional
+$owner->description  = 'User is the owner of a given project'; // optional
 $owner->save();
 
-$admin = new Role;
-$admin->name = 'Admin';
+$admin = new Role();
+$admin->name         = 'admin';
+$admin->display_name = 'User Administrator'; // optional
+$admin->description  = 'User is allowed to manage and edit other users'; //optional
 $admin->save();
-
 ```
 
 Next, with both roles created let's assign them to the users. Thanks to the `HasRole` trait this is as easy as:
 
 ```php
-$user = User::where('username','=','bbatsche')->first();
+$user = User::where('username', '=', 'bbatsche')->first();
 
 /* role attach alias */
-$user->attachRole( $admin ); // Parameter can be an Role object, array or id.
+$user->attachRole($admin); // Parameter can be an Role object, array or id.
 
 /* OR the eloquent's original: */
-$user->roles()->attach( $admin->id ); // id only
+$user->roles()->attach($admin->id); // id only
 ```
 Now we just need to add permissions to those Roles.
 
 ```php
-$managePosts = new Permission;
-$managePosts->name = 'manage_posts';
-$managePosts->display_name = 'Manage Posts';
-$managePosts->save();
+$createPost = new Permission();
+$createPost->name         = 'create-post';
+$createPost->display_name = 'Create Posts'; // optional
+// Allow a user to...
+$createPost->description  = 'create new blog posts'; // optional
+$createPost->save();
 
-$manageUsers = new Permission;
-$manageUsers->name = 'manage_users';
-$manageUsers->display_name = 'Manage Users';
-$manageUsers->save();
+$editUser = new Permission();
+$editUser->name         = 'edit-user';
+$editUser->display_name = 'Edit Users'; // optional
+// Allow a user to...
+$editUser->description  = 'edit existing users'; // optional
+$editUser->save();
 
-$owner->perms()->sync(array($managePosts->id,$manageUsers->id));
-$admin->perms()->sync(array($managePosts->id));
+$owner->perms()->sync(array($createPost->id, $editUser->id));
+$admin->perms()->sync(array($createPost->id));
 ```
 
 Now we can check for roles and permissions simply by doing:
 
 ```php
-$user->hasRole("Owner");    // false
-$user->hasRole("Admin");    // true
-$user->can("manage_posts"); // true
-$user->can("manage_users"); // false
+$user->hasRole('owner');   // false
+$user->hasRole('admin');   // true
+$user->can('edit-user');   // false
+$user->can('create-post'); // true
 ```
 
 You can have as many `Role`s as you want for each `User` and vice versa.
 
-More advanced checking can be done using the awesome `ability` function. It takes in three parameters (roles, permissions, options).
-`roles` is a set of roles to check. `permissions` is a set of permissions to check.
+More advanced checking can be done using the awesome `ability` function. It takes in three parameters (roles,
+permissions, options). `roles` is a set of roles to check. `permissions` is a set of permissions to check.
 Either of the roles or permissions variable can be a comma separated string or array.
 
 ```php
-$user->ability(array('Admin','Owner'), array('manage_posts','manage_users'));
+$user->ability(array('admin', 'owner'), array('create-post', 'edit-user'));
 //or
-$user->ability('Admin,Owner', 'manage_posts,manage_users');
+$user->ability('admin, owner', 'create-post, edit-user');
 
 ```
-This will check whether the user has any of the provided roles and permissions. In this case it will return true since the user
-is an Admin and has the manage_posts permission.
+
+This will check whether the user has any of the provided roles and permissions. In this case it will return true
+since the user is an `admin` and has the `create-post` permission.
 
 The third parameter is an options array.
 
 ```php
 $options = array(
-'validate_all' => true | false (Default: false),
-'return_type' => boolean | array | both (Default: boolean)
+    'validate_all' => true | false (Default: false),
+    'return_type'  => boolean | array | both (Default: boolean)
 );
 ```
-`validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
 
-`return_type` specifies whether to return a boolean, array of checked values, or both in an array.
+- `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one
+  role or permission is matched.
+- `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
 
 Here's some example output.
 
 ```php
 $options = array(
-'validate_all' => true,
-'return_type' => 'both'
+    'validate_all' => true,
+    'return_type' => 'both'
 );
-list($validate,$allValidations) = $user->ability(array('Admin','Owner'), array('manage_posts','manage_users'), $options);
+list($validate, $allValidations) = $user->ability(array('admin', 'owner'), array('create-post', 'edit-user'), $options);
 
 // Output
 var_dump($validate);
@@ -226,52 +241,52 @@ array(4) {
   bool(true)
   ['role_2']=>
   bool(false)
-  ['manage_posts']=>
+  ['create-post']=>
   bool(true)
-  ['manage_users']=>
+  ['edit-user']=>
   bool(false)
 }
 ```
 
-### Short syntax Route filter
+### Short Syntax Route Filter
 
 To filter a route by permission or role you can call the following in your `app/filters.php`:
 
 ```php
 // Only users with roles that have the 'manage_posts' permission will
 // be able to access any route within admin/post.
-Entrust::routeNeedsPermission( 'admin/post*', 'manage_posts' );
+Entrust::routeNeedsPermission('admin/post*', 'create-post');
 
 // Only owners will have access to routes within admin/advanced
-Entrust::routeNeedsRole( 'admin/advanced*', 'Owner' );
+Entrust::routeNeedsRole('admin/advanced*', 'owner');
 
 // Optionally the second parameter can be an array of permissions or roles.
 // User would need to match all roles or permissions for that route.
-Entrust::routeNeedsPermission( 'admin/post*', array('manage_posts','manage_comments') );
+Entrust::routeNeedsPermission('admin/post*', array('create-post', 'edit-comment'));
 
-Entrust::routeNeedsRole( 'admin/advanced*', array('Owner','Writer') );
+Entrust::routeNeedsRole('admin/advanced*', array('owner','writer'));
 ```
 
 Both of these methods accept a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(403)`. Otherwise the third parameter will be returned. So you can use it like:
 
 ```php
-Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
+Entrust::routeNeedsRole('admin/advanced*', 'owner', Redirect::to('/home'));
 ```
 
-Further more both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions given.
-If you set it to false, the function will only fail if all roles/permissions fail for that user. Useful for admin applications where
-you want to allow access for multiple groups.
+Further more both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions
+given. If you set it to false, the function will only fail if all roles/permissions fail for that user. Useful for
+admin applications where you want to allow access for multiple groups.
 
 ```php
-// If a user has `manage_posts`, `manage_comments` or both they will have access.
-Entrust::routeNeedsPermission( 'admin/post*', array('manage_posts','manage_comments'), null, false );
+// If a user has `create-post`, `edit-comment` or both they will have access.
+Entrust::routeNeedsPermission('admin/post*', array('create-post', 'edit-comment'), null, false);
 
-// If a user is a member of `Owner`, `Writer` or both they will have access.
-Entrust::routeNeedsRole( 'admin/advanced*', array('Owner','Writer'), null, false );
+// If a user is a member of `owner`, `writer` or both they will have access.
+Entrust::routeNeedsRole('admin/advanced*', array('owner','writer'), null, false);
 
-// If a user is a member of `Owner`, `Writer` or both, or user has `manage_posts`, `manage_comments` they will have access.
+// If a user is a member of `owner`, `writer` or both, or user has `create-post`, `edit-comment` they will have access.
 // You can set the 4th parameter to true then user must be member of Role and must has Permission.
-Entrust::routeNeedsRoleOrPermission( 'admin/advanced*', array('Owner','Writer'), array('manage_posts','manage_comments'), null, false);
+Entrust::routeNeedsRoleOrPermission('admin/advanced*', array('owner', 'writer'), array('create-post', 'edit-comment'), null, false);
 ```
 
 ### Route filter
@@ -281,8 +296,8 @@ Entrust roles/permissions can be used in filters by simply using the `can` and `
 ```php
 Route::filter('manage_posts', function()
 {
-    if (! Entrust::can('manage_posts') ) // Checks the current user
-    {
+    // Checks the current user
+    if (!Entrust::can('create-post')) {
         return Redirect::to('admin');
     }
 });
@@ -297,8 +312,8 @@ Using a filter to check for a role:
 ```php
 Route::filter('owner_role', function()
 {
-    if (! Entrust::hasRole('Owner') ) // Checks the current user
-    {
+    // Checks the current user
+    if (!Entrust::hasRole('Owner')) {
         App::abort(404);
     }
 });
@@ -307,17 +322,19 @@ Route::filter('owner_role', function()
 Route::when('admin/advanced*', 'owner_role');
 ```
 
-As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged, and then if he has the role or permission. If the user is not logged the return will also be `false`.
+As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged in, and then if he or she has the
+role or permission. If the user is not logged the return will also be `false`.
 
 ## Troubleshooting
 
 If you encounter an error when doing the migration that looks like:
+
 ```
-SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150) (SQL: alter table `assigned_roles` add constraint assigned_roles_user_id_foreign foreign key (`
-  user_id`) references `users` (`id`)) (Bindings: array (
-  ))
+SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150) (SQL: alter table `role_user` add constraint role_user_user_id_foreign foreign key (`user_id`) references `users` (`id`)) (Bindings: array ())
 ```
-Then it's likely that the `id` column in your user table does not match the `user_id` column in `assigned_roles`. Match sure both are `INT(10)`.
+
+Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`. Match sure
+both are `INT(10)`.
 
 ## License
 
