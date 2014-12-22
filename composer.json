@@ -30,6 +30,9 @@
     "suggest": {
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
     },
+    "replace": {
+        "zizaco/entrust": "1.*"
+    },
     "autoload": {
         "classmap": [
             "src/commands"
