@@ -18,7 +18,18 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('zizaco/entrust', 'entrust', __DIR__.'/../');
+
+        // Work-around to deal with the removal of [packages] from Laravel 5
+        //$this->package('zizaco/entrust', 'entrust', __DIR__.'/../');
+
+        // Is it possible to register the config?
+        if (method_exists($this->app['config'], 'package')) {
+            $this->app['config']->package('zizaco/entrust',__DIR__ . '/../');
+        } else {
+            // Load the config for now..
+            $config = $this->app['files']->getRequire(__DIR__ .'/../config/config.php');
+            $this->app['config']->set('entrust::config', $config);
+        }
 
         $this->commands('command.entrust.migration');
     }
