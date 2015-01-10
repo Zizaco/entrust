@@ -34,7 +34,7 @@ class MigrationCommand extends Command
         $this->line('');
         $this->info( "Tables: $roles_table, user_roles, permissions, permission_role" );
         $message = "A migration that creates '$roles_table', 'user_roles', 'permissions', 'permission_role'".
-        " tables will be created in app/database/migrations directory";
+        " tables will be created in database/migrations directory";
 
         $this->comment( $message );
         $this->line('');
@@ -50,7 +50,7 @@ class MigrationCommand extends Command
             } else {
                 $this->error(
                     "Coudn't create migration.\n Check the write permissions".
-                    " within the app/database/migrations directory."
+                    " within the database/migrations directory."
                 );
             }
 
@@ -80,7 +80,7 @@ class MigrationCommand extends Command
      */
     protected function createMigration($roles_table = 'roles')
     {
-        $migration_file = $this->laravel->path."/database/migrations/".date('Y_m_d_His')."_entrust_setup_tables.php";
+        $migration_file = base_path() ."/database/migrations/".date('Y_m_d_His')."_entrust_setup_tables.php";
         $output = $this->laravel->view->make('entrust::generators.migration')->with('table', $roles_table)->render();
 
         if (!file_exists($migration_file) && $fs = fopen($migration_file, 'x')) {
