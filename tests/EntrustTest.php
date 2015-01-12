@@ -6,6 +6,58 @@ use Mockery as m;
 
 class EntrustTest extends PHPUnit_Framework_TestCase
 {
+    use Codeception\Specify;
+
+    protected $nullFilterTest;
+    protected $abortFilterTest;
+    protected $customResponseFilterTest;
+
+    protected $expectedResponse;
+
+    protected $entrust;
+
+    public function setUp()
+    {
+        $this->nullFilterTest = function($filterClosure) {
+            if (!($filterClosure instanceof Closure)) {
+                return false;
+            }
+
+            $this->assertNull($filterClosure());
+
+            return true;
+        };
+
+        $this->abortFilterTest = function($filterClosure) {
+            if (!($filterClosure instanceof Closure)) {
+                return false;
+            }
+
+            try {
+                $filterClosure();
+            } catch (Exception $e) {
+                $this->assertSame('abort', $e->getMessage());
+
+                return true;
+            }
+
+            // If we've made it this far, no exception was thrown and something went wrong
+            return false;
+        };
+
+        $this->customResponseFilterTest = function($filterClosure) {
+            if (!($filterClosure instanceof Closure)) {
+                return false;
+            }
+
+            $result = $filterClosure();
+
+            $this->assertSame($this->expectedResponse, $result);
+
+            return true;
+        };
+    }
+    
     public function tearDown()
     {
         m::close();
@@ -142,9 +194,8 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $route = 'route';
         $oneRole = 'RoleA';
         $manyRole = ['RoleA', 'RoleB', 'RoleC'];
-        $emptyClosure = function () {};
 
-        $oneRoleFilterName = $this->makeFilterName($route, [$oneRole]);
+        $oneRoleFilterName  = $this->makeFilterName($route, [$oneRole]);
         $manyRoleFilterName = $this->makeFilterName($route, $manyRole);
 
         /*
@@ -155,13 +206,10 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $app->router->shouldReceive('filter')
             ->with(m::anyOf($oneRoleFilterName, $manyRoleFilterName), m::type('Closure'))
             ->twice()->ordered();
-        $app->router->shouldReceive('filter')
-            ->with(m::anyOf($oneRoleFilterName, $manyRoleFilterName), m::mustBe($emptyClosure))
-            ->twice()->ordered();
 
         $app->router->shouldReceive('when')
             ->with($route, m::anyOf($oneRoleFilterName, $manyRoleFilterName))
-            ->times(4);
+            ->twice();
 
         /*
         |------------------------------------------------------------
@@ -170,132 +218,66 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         */
         $entrust->routeNeedsRole($route, $oneRole);
         $entrust->routeNeedsRole($route, $manyRole);
-        $entrust->routeNeedsRole($route, $oneRole, $emptyClosure);
-        $entrust->routeNeedsRole($route, $manyRole, $emptyClosure);
     }
 
     public function testFilterGeneratedByRouteNeedsRole()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $app = new stdClass();
-        $app->router = m::mock('Route');
-        $entrust = m::mock('Bbatsche\Entrust\Entrust[hasRole]', [$app]);
-        $facadeApp = m::mock('_mockedApplication');
-        Facade::setFacadeApplication($facadeApp);
+        // Set & Check Mock objects after each specify
+        $this->beforeSpecify(function() {
+            $app           = m::mock('Illuminate\Foundation\Application');
+            $app->router   = m::mock('Route');
+            $this->entrust = m::mock('Bbatsche\Entrust\Entrust[hasRole]', [$app]);
+        });
+        
+        $this->afterSpecify(function() {
+            m::close();
+        });
 
-        $route = 'route';
-        $userRoleA = 'UserRoleA';
-        $userRoleB = 'UserRoleB';
-        $nonUserRoleA = 'NonUserRoleA';
-        $nonUserRoleB = 'NonUserRoleB';
-        $nonUserRoles = [$nonUserRoleA, $nonUserRoleB];
-        $customResponse = new stdClass();
-
-        $roles = [];
-        $isPassedCustomResponse = false;
-        $isCumulative = false;
-
-        $callFilterAndAssert = function ($filter) use (
-            $nonUserRoles,
-            $customResponse,
-            &$roles,
-            &$isPassedCustomResponse,
-            &$isCumulative
+        // Static values
+        $route      = 'route';
+        $roleName   = 'UserRole';
+        $filterName = $this->makeFilterName($route, [$roleName]);
+        
+        // Test spec and execution
+        $this->specify('return no value if user has role', function() use (
+            $route, $roleName, $filterName
         ) {
-            if (!($filter instanceof Closure)) {
-                return false;
-            }
-
-            $result = null;
-            $numAgainst = count(array_intersect($nonUserRoles, $roles));
-            $numTotal = count($roles);
-            $isUserAuthorized = !($numAgainst > 0 && ($isCumulative || $numAgainst === $numTotal));
-
-            try {
-                $result = $filter();
-            } catch(Exception $e) {
-                $this->assertSame('abort', $e->getMessage());
-                $this->assertFalse($isPassedCustomResponse);
-                $this->assertFalse($isUserAuthorized);
-                return true;
-            }
-
-            if ($isUserAuthorized) {
-                $this->assertNull($result);
-            } else {
-                $this->assertSame($customResponse, $result);
-            }
-
-            return true;
-        };
-
-        $runTestCase = function (
-            array $caseRoles,
-            $result = null,
-            $cumulative = true
-        ) use (
-            $entrust,
-            $route,
-            &$roles,
-            &$isPassedCustomResponse,
-            &$isCumulative
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->nullFilterTest))->once();
+            
+            $this->entrust->shouldReceive('hasRole')->with($roleName, m::any(true, false))->andReturn(true)->once();
+            $this->entrust->routeNeedsRole($route, $roleName);
+        });
+        
+        $this->specify('abort 403 if user does not have role', function() use (
+            $route, $roleName, $filterName
         ) {
-            list($roles, $isPassedCustomResponse, $isCumulative)
-                = [$caseRoles, !is_null($result), $cumulative];
-            $entrust->routeNeedsRole(
-                $route,
-                $caseRoles,
-                $result,
-                $cumulative
-            );
-        };
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->abortFilterTest))->once();
+            
+            $this->entrust->app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->once();
+            
+            $this->entrust->shouldReceive('hasRole')->with($roleName, m::any(true, false))->andReturn(false)->once();
+            $this->entrust->routeNeedsRole($route, $roleName);
+        });
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $app->router->shouldReceive('filter')
-            ->with(m::type('string'), m::on($callFilterAndAssert));
-        $app->router->shouldReceive('when')
-            ->with($route, m::type('string'));
+        $this->specify('return callback if user does not have role', function() use (
+            $route, $roleName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->customResponseFilterTest))->once();
+            
+            $this->expectedResponse = new stdClass();
 
-        $facadeApp->shouldReceive('abort')
-            ->with(403)->andThrow('Exception', 'abort');
-
-        $entrust->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleA, $userRoleB))
-            ->andReturn(true);
-        $entrust->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleA, $nonUserRoleB))
-            ->andReturn(false);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        // Case: User has both roles.
-        $runTestCase([$userRoleA, $userRoleB]);
-        $runTestCase([$userRoleA, $userRoleB], null, false);
-        $runTestCase([$userRoleA, $userRoleB], $customResponse);
-        $runTestCase([$userRoleA, $userRoleB], $customResponse, false);
-
-        // Case: User lacks a role.
-        $runTestCase([$nonUserRoleA, $userRoleB]);
-        $runTestCase([$nonUserRoleA, $userRoleB], null, false);
-        $runTestCase([$nonUserRoleA, $userRoleB], $customResponse);
-        $runTestCase([$nonUserRoleA, $userRoleB], $customResponse, false);
-
-        // Case: User lacks both roles.
-        $runTestCase([$nonUserRoleA, $nonUserRoleB]);
-        $runTestCase([$nonUserRoleA, $nonUserRoleB], null, false);
-        $runTestCase([$nonUserRoleA, $nonUserRoleB], $customResponse);
-        $runTestCase([$nonUserRoleA, $nonUserRoleB], $customResponse, false);
+            $this->entrust->shouldReceive('hasRole')->with($roleName, m::any(true, false))->andReturn(false)->once();
+            $this->entrust->routeNeedsRole($route, $roleName, $this->expectedResponse);
+        });
     }
 
     public function testRouteNeedsPermission()
@@ -312,7 +294,6 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $route = 'route';
         $onePerm = 'can_a';
         $manyPerm = ['can_a', 'can_b', 'can_c'];
-        $emptyClosure = function () {};
 
         $onePermFilterName = $this->makeFilterName($route, [$onePerm]);
         $manyPermFilterName = $this->makeFilterName($route, $manyPerm);
@@ -325,13 +306,10 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $app->router->shouldReceive('filter')
             ->with(m::anyOf($onePermFilterName, $manyPermFilterName), m::type('Closure'))
             ->twice()->ordered();
-        $app->router->shouldReceive('filter')
-            ->with(m::anyOf($onePermFilterName, $manyPermFilterName), m::mustBe($emptyClosure))
-            ->twice()->ordered();
 
         $app->router->shouldReceive('when')
             ->with($route, m::anyOf($onePermFilterName, $manyPermFilterName))
-            ->times(4);
+            ->twice();
 
         /*
         |------------------------------------------------------------
@@ -340,133 +318,67 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         */
         $entrust->routeNeedsPermission($route, $onePerm);
         $entrust->routeNeedsPermission($route, $manyPerm);
-        $entrust->routeNeedsPermission($route, $onePerm, $emptyClosure);
-        $entrust->routeNeedsPermission($route, $manyPerm, $emptyClosure);
     }
 
     public function testFilterGeneratedByRouteNeedsPermission()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $app = new stdClass();
-        $app->router = m::mock('Route');
-        $entrust = m::mock('Bbatsche\Entrust\Entrust[can]', [$app]);
-        $facadeApp = m::mock('_mockedApplication');
-        Facade::setFacadeApplication($facadeApp);
+        // Set & Check Mock objects after each specify
+        $this->beforeSpecify(function() {
+            $app           = m::mock('Illuminate\Foundation\Application');
+            $app->router   = m::mock('Route');
+            $this->entrust = m::mock('Bbatsche\Entrust\Entrust[can]', [$app]);
+        });
+        
+        $this->afterSpecify(function() {
+            m::close();
+        });
 
-        $route = 'route';
-        $userPermA = 'user_can_a';
-        $userPermB = 'user_can_b';
-        $nonUserPermA = 'user_cannot_a';
-        $nonUserPermB = 'user_cannot_b';
-        $nonUserPerms = [$nonUserPermA, $nonUserPermB];
-        $customResponse = new stdClass();
+        // Static values
+        $route      = 'route';
+        $permName   = 'user-permission';
+        $filterName = $this->makeFilterName($route, [$permName]);
 
-        $perms = [];
-        $isPassedCustomResponse = false;
-        $isCumulative = false;
-
-        $callFilterAndAssert = function ($filter) use (
-            $nonUserPerms,
-            $customResponse,
-            &$perms,
-            &$isPassedCustomResponse,
-            &$isCumulative
+        // Test spec and execution
+        $this->specify('return no value if user has permission', function() use (
+            $route, $permName, $filterName
         ) {
-            if (!($filter instanceof Closure)) {
-                return false;
-            }
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('filter')->with($filterName, m::on($this->nullFilterTest))->once();
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            
+            $this->entrust->shouldReceive('can')->with($permName, m::any(true, false))->andReturn(true)->once();
 
-            $result = null;
-            $numAgainst = count(array_intersect($nonUserPerms, $perms));
-            $numTotal = count($perms);
-            $isUserAuthorized = !($numAgainst > 0 && ($isCumulative || $numAgainst === $numTotal));
+            $this->entrust->routeNeedsPermission($route, $permName);
+        });
 
-            try {
-                $result = $filter();
-            } catch(Exception $e) {
-                $this->assertSame('abort', $e->getMessage());
-                $this->assertFalse($isPassedCustomResponse);
-                $this->assertFalse($isUserAuthorized);
-                return true;
-            }
-
-            if ($isUserAuthorized) {
-                $this->assertNull($result);
-            } else {
-                $this->assertSame($customResponse, $result);
-            }
-
-            return true;
-        };
-
-        $runTestCase = function (
-            array $casePerms,
-            $result = null,
-            $cumulative = true
-        ) use (
-            $entrust,
-            $route,
-            &$perms,
-            &$isPassedCustomResponse,
-            &$isCumulative
+        $this->specify('abort 403 if user does not have permission', function() use (
+            $route, $permName, $filterName
         ) {
-            list($perms, $isPassedCustomResponse, $isCumulative)
-                = [$casePerms, !is_null($result), $cumulative];
-            $entrust->routeNeedsPermission(
-                $route,
-                $casePerms,
-                $result,
-                $cumulative
-            );
-        };
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('filter')->with($filterName, m::on($this->abortFilterTest))->once();
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            
+            $this->entrust->app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->once();
+            
+            $this->entrust->shouldReceive('can')->with($permName, m::any(true, false))->andReturn(false)->once();
+            $this->entrust->routeNeedsPermission($route, $permName);
+        });
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $app->router->shouldReceive('filter')
-            ->with(m::type('string'), m::on($callFilterAndAssert));
-        $app->router->shouldReceive('when')
-            ->with($route, m::type('string'));
-
-        $facadeApp->shouldReceive('abort')
-            ->with(403)->andThrow('Exception', 'abort');
-
-        $entrust->shouldReceive('can')
-            ->with(m::anyOf($userPermA, $userPermB))
-            ->andReturn(true);
-        $entrust->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermA, $nonUserPermB))
-            ->andReturn(false);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        // Case: User has both permissions.
-        $runTestCase([$userPermA, $userPermB]);
-        $runTestCase([$userPermA, $userPermB], null, false);
-        $runTestCase([$userPermA, $userPermB], $customResponse);
-        $runTestCase([$userPermA, $userPermB], $customResponse, false);
-
-
-        // Case: User lacks a permission.
-        $runTestCase([$nonUserPermA, $userPermB]);
-        $runTestCase([$nonUserPermA, $userPermB], null, false);
-        $runTestCase([$nonUserPermA, $userPermB], $customResponse, false);
-        $runTestCase([$nonUserPermA, $userPermB], $customResponse);
-
-        // Case: User lacks both permissions.
-        $runTestCase([$nonUserPermA, $nonUserPermB]);
-        $runTestCase([$nonUserPermA, $nonUserPermB], null, false);
-        $runTestCase([$nonUserPermA, $nonUserPermB], $customResponse, false);
-        $runTestCase([$nonUserPermA, $nonUserPermB], $customResponse);
+        $this->specify('return callback if user does not have permission', function() use (
+            $route, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('filter')->with($filterName, m::on($this->customResponseFilterTest))->once();
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            
+            $this->expectedResponse = new stdClass();
+            
+            $this->entrust->shouldReceive('can')->with($permName, m::any(true, false))->andReturn(false)->once();
+            $this->entrust->routeNeedsPermission($route, $permName, $this->expectedResponse);
+        });
     }
 
     public function testRouteNeedsRoleOrPermission()
@@ -485,7 +397,6 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $manyRole = ['RoleA', 'RoleB', 'RoleC'];
         $onePerm = 'can_a';
         $manyPerm = ['can_a', 'can_b', 'can_c'];
-        $emptyClosure = function () {};
 
         $oneRoleOnePermFilterName = $this->makeFilterName($route, [$oneRole], [$onePerm]);
         $oneRoleManyPermFilterName = $this->makeFilterName($route, [$oneRole], $manyPerm);
@@ -508,17 +419,6 @@ class EntrustTest extends PHPUnit_Framework_TestCase
                 m::type('Closure')
             )
             ->times(4)->ordered();
-        $app->router->shouldReceive('filter')
-            ->with(
-                m::anyOf(
-                    $oneRoleOnePermFilterName,
-                    $oneRoleManyPermFilterName,
-                    $manyRoleOnePermFilterName,
-                    $manyRoleManyPermFilterName
-                ),
-                m::mustBe($emptyClosure)
-            )
-            ->times(4)->ordered();
 
         $app->router->shouldReceive('when')
             ->with(
@@ -530,7 +430,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
                     $manyRoleManyPermFilterName
                 )
             )
-            ->times(8);
+            ->times(4);
 
         /*
         |------------------------------------------------------------
@@ -541,162 +441,177 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $entrust->routeNeedsRoleOrPermission($route, $oneRole, $manyPerm);
         $entrust->routeNeedsRoleOrPermission($route, $manyRole, $onePerm);
         $entrust->routeNeedsRoleOrPermission($route, $manyRole, $manyPerm);
-
-        $entrust->routeNeedsRoleOrPermission($route, $oneRole, $onePerm, $emptyClosure);
-        $entrust->routeNeedsRoleOrPermission($route, $oneRole, $manyPerm, $emptyClosure);
-        $entrust->routeNeedsRoleOrPermission($route, $manyRole, $onePerm, $emptyClosure);
-        $entrust->routeNeedsRoleOrPermission($route, $manyRole, $manyPerm, $emptyClosure);
     }
 
     public function testFilterGeneratedByRouteNeedsRoleOrPermission()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $app = new stdClass();
-        $app->router = m::mock('Route');
-        $entrust = m::mock('Bbatsche\Entrust\Entrust[hasRole,can]', [$app]);
-        $facadeApp = m::mock('_mockedApplication');
-        Facade::setFacadeApplication($facadeApp);
+        // Set & Check Mock objects after each specify
+        $this->beforeSpecify(function() {
+            $app           = m::mock('Illuminate\Foundation\Application');
+            $app->router   = m::mock('Route');
+            $this->entrust = m::mock('Bbatsche\Entrust\Entrust[hasRole, can]', [$app]);
+        });
 
-        $route = 'route';
-        $userRoleA = 'UserRoleA';
-        $userRoleB = 'UserRoleB';
-        $userPermA = 'user_can_a';
-        $userPermB = 'user_can_b';
-        $nonUserRoleA = 'NonUserRoleA';
-        $nonUserRoleB = 'NonUserRoleB';
-        $nonUserPermA = 'user_cannot_a';
-        $nonUserPermB = 'user_cannot_b';
-        $nonUserRolesPerms = [$nonUserRoleA, $nonUserRoleB, $nonUserPermA, $nonUserPermB];
-        $customResponse = new stdClass();
+        $this->afterSpecify(function() {
+            m::close();
+        });
 
-        $roles = [];
-        $perms = [];
-        $isPassedCustomResponse = false;
-        $isCumulative = false;
+        // Static values
+        $route      = 'route';
+        $roleName   = 'UserRole';
+        $permName   = 'user-permission';
+        $filterName = $this->makeFilterName($route, [$roleName], [$permName]);
 
-        $callFilterAndAssert = function ($filter) use (
-            $nonUserRolesPerms,
-            $customResponse,
-            &$roles,
-            &$perms,
-            &$isPassedCustomResponse,
-            &$isCumulative
+        // Test spec and execution
+        $this->specify('return no value with valid role and perm', function() use (
+            $route, $roleName, $permName, $filterName
         ) {
-            if (!($filter instanceof Closure)) {
-                return false;
-            }
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->twice();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->nullFilterTest))->twice();
 
-            $result = null;
-            $numAgainst = count(array_intersect($nonUserRolesPerms, array_merge($roles, $perms)));
-            $numTotal = count(array_merge($roles, $perms));
-            $isUserAuthorized = !($numAgainst > 0 && ($isCumulative || $numAgainst === $numTotal));
+            $this->entrust->shouldReceive('hasRole')->with($roleName, true)->andReturn(true)->once();
+            $this->entrust->shouldReceive('hasRole')->with($roleName, false)->andReturn(true)->once();
+            
+            $this->entrust->shouldReceive('can')->with($permName, true)->andReturn(true)->once();
+            $this->entrust->shouldReceive('can')->with($permName, false)->andReturn(true)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName);
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, null, true);
+        });
 
-            try {
-                $result = $filter();
-            } catch(Exception $e) {
-                $this->assertSame('abort', $e->getMessage());
-                $this->assertFalse($isPassedCustomResponse);
-                $this->assertFalse($isUserAuthorized);
-                return true;
-            }
-
-            if ($isUserAuthorized) {
-                $this->assertNull($result);
-            } else {
-                $this->assertSame($customResponse, $result);
-            }
-
-            return true;
-        };
-
-        $runTestCase = function (
-            array $caseRoles,
-            array $casePerms,
-            $result = null,
-            $cumulative = false
-        ) use (
-            $entrust,
-            $route,
-            &$roles,
-            &$perms,
-            &$isPassedCustomResponse,
-            &$isCumulative
+        $this->specify('return no value with valid role and invalid perm if require all is false', function() use (
+            $route, $roleName, $permName, $filterName
         ) {
-            list($roles, $perms, $isPassedCustomResponse, $isCumulative)
-                = [$caseRoles, $casePerms, !is_null($result), $cumulative];
-            $entrust->routeNeedsRoleOrPermission(
-                $route,
-                $caseRoles,
-                $casePerms,
-                $result,
-                $cumulative
-            );
-        };
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->nullFilterTest))->once();
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $app->router->shouldReceive('filter')
-            ->with(m::type('string'), m::on($callFilterAndAssert));
-        $app->router->shouldReceive('when')
-            ->with($route, m::type('string'));
+            $this->entrust->shouldReceive('hasRole')->with($roleName, false)->andReturn(true)->once();
+            $this->entrust->shouldReceive('can')->with($permName, false)->andReturn(false)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName);
+        });
 
-        $facadeApp->shouldReceive('abort')
-            ->with(403)->andThrow('Exception', 'abort');
+        $this->specify('return no value with invalid role and valid perm if require all is false', function() use (
+            $route, $roleName, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->nullFilterTest))->once();
 
-        $entrust->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleA, $userRoleB))
-            ->andReturn(true);
-        $entrust->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleA, $nonUserRoleB))
-            ->andReturn(false);
-        $entrust->shouldReceive('can')
-            ->with(m::anyOf($userPermA, $userPermB))
-            ->andReturn(true);
-        $entrust->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermA, $nonUserPermB))
-            ->andReturn(false);
+            $this->entrust->shouldReceive('hasRole')->with($roleName, false)->andReturn(false)->once();
+            $this->entrust->shouldReceive('can')->with($permName, false)->andReturn(true)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName);
+        });
 
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        // Case: User has everything.
-        $runTestCase([$userRoleA, $userRoleB], [$userPermA, $userPermB]);
-        $runTestCase([$userRoleA, $userRoleB], [$userPermA, $userPermB], null, true);
-        $runTestCase([$userRoleA, $userRoleB], [$userPermA, $userPermB], $customResponse, true);
-        $runTestCase([$userRoleA, $userRoleB], [$userPermA, $userPermB], $customResponse);
+        $this->specify('abort 403 with valid role and invalid perm if require all is true', function() use (
+            $route, $roleName, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->abortFilterTest))->once();
 
-        // Case: User lacks a role.
-        $runTestCase([$nonUserRoleA, $userRoleB], [$userPermA, $userPermB]);
-        $runTestCase([$nonUserRoleA, $userRoleB], [$userPermA, $userPermB], null, true);
-        $runTestCase([$nonUserRoleA, $userRoleB], [$userPermA, $userPermB], $customResponse, true);
-        $runTestCase([$nonUserRoleA, $userRoleB], [$userPermA, $userPermB], $customResponse);
+            $this->entrust->app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->once();
 
-        // Case: User lacks a permission.
-        $runTestCase([$userRoleA, $userRoleB], [$nonUserPermA, $userPermB]);
-        $runTestCase([$userRoleA, $userRoleB], [$nonUserPermA, $userPermB], null, true);
-        $runTestCase([$userRoleA, $userRoleB], [$nonUserPermA, $userPermB], $customResponse, true);
-        $runTestCase([$userRoleA, $userRoleB], [$nonUserPermA, $userPermB], $customResponse);
+            $this->entrust->shouldReceive('hasRole')->with($roleName, true)->andReturn(true)->once();
+            $this->entrust->shouldReceive('can')->with($permName, true)->andReturn(false)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, null, true);
+        });
 
-        // Case: User lacks a role and a permission.
-        $runTestCase([$nonUserRoleA, $userRoleB], [$nonUserPermA, $userPermB]);
-        $runTestCase([$nonUserRoleA, $userRoleB], [$nonUserPermA, $userPermB], null, true);
-        $runTestCase([$nonUserRoleA, $userRoleB], [$nonUserPermA, $userPermB], $customResponse, true);
-        $runTestCase([$nonUserRoleA, $userRoleB], [$nonUserPermA, $userPermB], $customResponse);
+        $this->specify('abort 403 with invalid role and valid perm if require all is true', function() use (
+            $route, $roleName, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->abortFilterTest))->once();
+            
+            $this->entrust->app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->once();
 
-        // Case: User lacks everything.
-        $runTestCase([$nonUserRoleA, $nonUserRoleB], [$nonUserPermA, $nonUserPermB]);
-        $runTestCase([$nonUserRoleA, $nonUserRoleB], [$nonUserPermA, $nonUserPermB], null, true);
-        $runTestCase([$nonUserRoleA, $nonUserRoleB], [$nonUserPermA, $nonUserPermB], $customResponse, true);
-        $runTestCase([$nonUserRoleA, $nonUserRoleB], [$nonUserPermA, $nonUserPermB], $customResponse);
+            $this->entrust->shouldReceive('hasRole')->with($roleName, true)->andReturn(false)->once();
+            $this->entrust->shouldReceive('can')->with($permName, true)->andReturn(true)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, null, true);
+        });
+
+        $this->specify('abort 403 with invalid role and invalid perm', function() use (
+            $route, $roleName, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->twice();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->abortFilterTest))->twice();
+            
+            $this->entrust->app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->twice();
+
+            $this->entrust->shouldReceive('hasRole')->with($roleName, false)->andReturn(false)->once();
+            $this->entrust->shouldReceive('hasRole')->with($roleName, true)->andReturn(false)->once();
+            
+            $this->entrust->shouldReceive('can')->with($permName, false)->andReturn(false)->once();
+            $this->entrust->shouldReceive('can')->with($permName, true)->andReturn(false)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName);
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, null, true);
+        });
+
+        $this->specify('return callback with valid role and invalid perm if require all is true', function() use (
+            $route, $roleName, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->customResponseFilterTest))->once();
+
+            $this->expectedResponse = new stdClass();
+
+            $this->entrust->shouldReceive('hasRole')->with($roleName, true)->andReturn(true)->once();
+            $this->entrust->shouldReceive('can')->with($permName, true)->andReturn(false)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, $this->expectedResponse, true);
+        });
+
+        $this->specify('return callback with invalid role and valid perm if require all is true', function() use (
+            $route, $roleName, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->once();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->customResponseFilterTest))->once();
+
+            $this->expectedResponse = new stdClass();
+
+            $this->entrust->shouldReceive('hasRole')->with($roleName, true)->andReturn(false)->once();
+            $this->entrust->shouldReceive('can')->with($permName, true)->andReturn(true)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, $this->expectedResponse, true);
+        });
+
+        $this->specify('return callback with invalid role and invalid perm', function() use (
+            $route, $roleName, $permName, $filterName
+        ) {
+            $router = $this->entrust->app->router;
+            
+            $router->shouldReceive('when')->with($route, $filterName)->twice();
+            $router->shouldReceive('filter')->with($filterName, m::on($this->customResponseFilterTest))->twice();
+
+            $this->expectedResponse = new stdClass();
+
+            $this->entrust->shouldReceive('hasRole')->with($roleName, false)->andReturn(false)->once();
+            $this->entrust->shouldReceive('hasRole')->with($roleName, true)->andReturn(false)->once();
+            
+            $this->entrust->shouldReceive('can')->with($permName, false)->andReturn(false)->once();
+            $this->entrust->shouldReceive('can')->with($permName, true)->andReturn(false)->once();
+            
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, $this->expectedResponse);
+            $this->entrust->routeNeedsRoleOrPermission($route, $roleName, $permName, $this->expectedResponse, true);
+        });
     }
 
     protected function makeFilterName($route, array $roles, array $permissions = null)
