@@ -42,18 +42,18 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function registerEntrust()
     {
-	$this->app->bind('entrust', function ($app) {
+        $this->app->bind('entrust', function ($app) {
             return new Entrust($app);
         });
     }
 
-	/**
-	 * Register the artisan commands.
-	 *
-	 * @return void
-	 */
-	private function registerCommands()
-	{
+    /**
+     * Register the artisan commands.
+     *
+     * @return void
+     */
+    private function registerCommands()
+    {
         $this->app->bindShared('command.entrust.migration', function ($app) {
             return new MigrationCommand();
         });

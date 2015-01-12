@@ -18,7 +18,7 @@ trait HasRole
     /**
      * Checks if the user has a Role by its name.
      *
-     * @param string $name Role name.
+     * @param string|array $name Role name or array of role names.
      *
      * @return bool
      */
@@ -53,7 +53,7 @@ trait HasRole
     /**
      * Check if user has a permission by its name.
      *
-     * @param string $permission Permission string.
+     * @param string|array $permission Permission string or array of permissions.
      *
      * @return bool
      */
