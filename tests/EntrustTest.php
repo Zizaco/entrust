@@ -147,7 +147,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($entrust->can('any_permission'));
     }
 
-    public function testShouldGetUser()
+    public function testUser()
     {
         /*
         |------------------------------------------------------------
