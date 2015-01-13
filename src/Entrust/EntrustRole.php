@@ -26,7 +26,7 @@ class EntrustRole extends Model
     }
 
     /**
-     * Many-to-Many relations with Users.
+     * Many-to-Many relations with the user model.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -36,9 +36,10 @@ class EntrustRole extends Model
     }
 
     /**
-     * Many-to-Many relations with Permission named perms as permissions is already taken.
+     * Many-to-Many relations with the permission model.
+     * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function perms()
     {
@@ -46,7 +47,7 @@ class EntrustRole extends Model
     }
 
     /**
-     * Before delete all constrained foreign relations
+     * Before delete, remove all constrained foreign relations.
      *
      * @param bool $forced
      *
@@ -115,7 +116,7 @@ class EntrustRole extends Model
         if (is_array($permission))
             $permission = $permission['id'];
 
-        $this->perms()->detach( $permission );
+        $this->perms()->detach($permission);
     }
 
     /**

@@ -26,7 +26,7 @@ class EntrustPermission extends Model
     }
 
     /**
-     * Many-to-Many relations with Roles.
+     * Many-to-Many relations with role model.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -36,7 +36,7 @@ class EntrustPermission extends Model
     }
 
     /**
-     * Before delete all constrained foreign relations.
+     * Before delete, remove all constrained foreign relations.
      *
      * @param bool $forced
      *

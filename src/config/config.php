@@ -28,8 +28,8 @@ return array(
     | Entrust Permission Model
     |--------------------------------------------------------------------------
     |
-    | This is the Permission model used by Entrust to create correct relations.  Update
-    | the permission if it is in a different namespace.
+    | This is the Permission model used by Entrust to create correct relations.
+    | Update the permission if it is in a different namespace.
     |
     */
     'permission' => '\Permission',
@@ -39,7 +39,8 @@ return array(
     | Entrust Permissions Table
     |--------------------------------------------------------------------------
     |
-    | This is the permissions table used by Entrust to save permissions to the database.
+    | This is the permissions table used by Entrust to save permissions to the
+    | database.
     |
     */
     'permissions_table' => 'permissions',
@@ -49,17 +50,19 @@ return array(
     | Entrust permission_role Table
     |--------------------------------------------------------------------------
     |
-    | This is the permission_role table used by Entrust to save relationship between permissions and roles to the database.
+    | This is the permission_role table used by Entrust to save relationship
+    | between permissions and roles to the database.
     |
     */
     'permission_role_table' => 'permission_role',
 
     /*
     |--------------------------------------------------------------------------
-    | Entrust role_user_table Table
+    | Entrust role_user Table
     |--------------------------------------------------------------------------
     |
-    | This is the role_user table used by Entrust to save assigned roles to the database.
+    | This is the role_user table used by Entrust to save assigned roles to the
+    | database.
     |
     */
     'role_user_table' => 'role_user',

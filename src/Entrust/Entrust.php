@@ -1,8 +1,5 @@
 <?php namespace Bbatsche\Entrust;
 
-use Closure;
-use Illuminate\Support\Facades\Facade;
-
 /**
  * This class is the main entry point of entrust. Usually this the interaction
  * with this class will be done through the Entrust Facade
@@ -32,7 +29,7 @@ class Entrust
     }
 
     /**
-     * Checks if the current user has a Role by its name
+     * Checks if the current user has a role by its name
      *
      * @param string $name Role name.
      *
@@ -74,15 +71,15 @@ class Entrust
     }
 
     /**
-     * Filters a route for the name Role.
+     * Filters a route for a role or set of roles.
      *
-     * If the third parameter is null then return 403.
-     * Overwise the $result is returned.
+     * If the third parameter is null then abort with status code 403.
+     * Otherwise the $result is returned.
      *
      * @param string       $route      Route pattern. i.e: "admin/*"
-     * @param array|string $roles      The role(s) needed.
+     * @param array|string $roles      The role(s) needed
      * @param mixed        $result     i.e: Redirect::to('/')
-     * @param bool         $requireAll Must have all roles.
+     * @param bool         $requireAll User must have all roles
      *
      * @return mixed
      */
@@ -108,15 +105,15 @@ class Entrust
     }
 
     /**
-     * Filters a route for the permission.
+     * Filters a route for a permission or set of permissions.
      *
-     * If the third parameter is null then return 403.
-     * Overwise the $result is returned.
+     * If the third parameter is null then abort with status code 403.
+     * Otherwise the $result is returned.
      *
      * @param string       $route       Route pattern. i.e: "admin/*"
-     * @param array|string $permissions The permission needed.
+     * @param array|string $permissions The permission(s) needed
      * @param mixed        $result      i.e: Redirect::to('/')
-     * @param bool         $requireAll  Must have all permissions
+     * @param bool         $requireAll  User must have all permissions
      *
      * @return mixed
      */
@@ -142,16 +139,16 @@ class Entrust
     }
 
     /**
-     * Filters a route for the permission.
+     * Filters a route for role(s) and/or permission(s).
      *
-     * If the third parameter is null then return 403.
-     * Overwise the $result is returned.
+     * If the third parameter is null then abort with status code 403.
+     * Otherwise the $result is returned.
      *
      * @param string       $route       Route pattern. i.e: "admin/*"
-     * @param array|string $roles       The role(s) needed.
-     * @param array|string $permissions The permission needed.
+     * @param array|string $roles       The role(s) needed
+     * @param array|string $permissions The permission(s) needed
      * @param mixed        $result      i.e: Redirect::to('/')
-     * @param bool         $requireAll  Must have all permissions
+     * @param bool         $requireAll  User must have all roles and permissions
      *
      * @return void
      */

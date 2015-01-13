@@ -16,9 +16,10 @@ trait HasRole
     }
 
     /**
-     * Checks if the user has a Role by its name.
+     * Checks if the user has a role by its name.
      *
-     * @param string|array $name Role name or array of role names.
+     * @param string|array $name       Role name or array of role names.
+     * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
      */
@@ -54,6 +55,7 @@ trait HasRole
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
+     * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
      */
@@ -167,13 +169,15 @@ trait HasRole
      */
     public function attachRole($role)
     {
-        if( is_object($role))
+        if(is_object($role)) {
             $role = $role->getKey();
+        }
 
-        if( is_array($role))
+        if(is_array($role)) {
             $role = $role['id'];
+        }
 
-        $this->roles()->attach( $role );
+        $this->roles()->attach($role);
     }
 
     /**

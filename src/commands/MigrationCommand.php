@@ -2,8 +2,6 @@
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 
 class MigrationCommand extends Command
 {
