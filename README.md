@@ -2,7 +2,7 @@
 
 Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel4**.
 
-First and foremost I must give credit to the original developers of this package. Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent on the fundamental design and functionality. My fork is intended to:
+First and foremost I must give credit to the original developers of this package. Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work on the fundamental design and functionality. My fork is intended to:
 
 - Remove extra components not really relevant to role & permission management (in particular, Ardent).
 - Add extra functionality I felt was useful and particularly suited to this package.
@@ -182,8 +182,11 @@ $editUser->display_name = 'Edit Users'; // optional
 $editUser->description  = 'edit existing users'; // optional
 $editUser->save();
 
-$owner->perms()->sync(array($createPost->id, $editUser->id));
-$admin->perms()->sync(array($createPost->id));
+$admin->attachPermission($createPost);
+// Equivalent to $admin->perms()->sync(array($createPost->id));
+
+$owner->attachPermissions(array($createPost, $editUser));
+// Equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
 ```
 
 #### Checking for Roles & Permissions
