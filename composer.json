@@ -25,7 +25,8 @@
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "~0.9",
         "illuminate/database": "~4.0",
-        "symfony/process": "~2.3"
+        "symfony/process": "~2.3",
+        "sami/sami": "2.0.*"
     },
     "suggest": {
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
