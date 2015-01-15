@@ -36,20 +36,27 @@ class EntrustPermission extends Model
     }
 
     /**
-     * Before delete, remove all constrained foreign relations.
+     * Boot the permission model
+     * Attach event listener to remove the many-to-many records when trying to delete
+     * Will NOT delete any records if the permission model uses soft deletes.
      *
-     * @param bool $forced
-     *
-     * @return bool
+     * @return void|bool
      */
-    public function beforeDelete($forced = false)
+    public static function boot()
     {
-        try {
-            DB::table(Config::get('entrust::permission_role_table'))->where('permission_id', $this->id)->delete();
-        } catch (Exception $e) {
-            // do nothing
-        }
+        parent::boot();
 
-        return true;
+        static::deleting(function($permission) {
+            if (!method_exists(Config::get('entrust::permission'), 'bootSoftDeletingTrait')) {
+                try {
+                    DB::table(Config::get('entrust::permission_role_table'))
+                        ->where('permission_id', $permission->getKey())->delete();
+                } catch (Exception $e) {
+                    // do nothing
+                }
+            }
+
+            return true;
+        });
     }
 }

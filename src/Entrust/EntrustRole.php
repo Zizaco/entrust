@@ -47,22 +47,28 @@ class EntrustRole extends Model
     }
 
     /**
-     * Before delete, remove all constrained foreign relations.
+     * Boot the role model
+     * Attach event listener to remove the many-to-many records when trying to delete
+     * Will NOT delete any records if the role model uses soft deletes.
      *
-     * @param bool $forced
-     *
-     * @return bool
+     * @return void|bool
      */
-    public function beforeDelete($forced = false)
+    public static function boot()
     {
-        try {
-            DB::table(Config::get('entrust::role_user_table'))->where('role_id', $this->id)->delete();
-            DB::table(Config::get('entrust::permission_role_table'))->where('role_id', $this->id)->delete();
-        } catch (Exception $e) {
-            // do nothing
-        }
+        parent::boot();
 
-        return true;
+        static::deleting(function($role) {
+            if (!method_exists(Config::get('entrust::role'), 'bootSoftDeletingTrait')) {
+                try {
+                    DB::table(Config::get('entrust::role_user_table'))->where('role_id', $role->getKey())->delete();
+                    DB::table(Config::get('entrust::permission_role_table'))->where('role_id', $role->getKey())->delete();
+                } catch (Exception $e) {
+                    // do nothing
+                }
+            }
+
+            return true;
+        });
     }
 
     /**
