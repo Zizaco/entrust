@@ -102,9 +102,10 @@ php artisan migrate
 ```
 
 After the migration, four new tables will be present:
-- `roles` which stores roles.
-- `permissions` for storing permissions
-- `role_user` & `permission_role` which will represent the [Many-to-Many](http://laravel.com/docs/4.2/eloquent#many-to-many) relationship between `User`, `Role`, and `Permission`.
+- `roles` &mdash; stores role records
+- `permissions` &mdash; stores permission records
+- `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and users
+- `permission_role` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and permissions
 
 ### Models
 
@@ -123,9 +124,9 @@ class Role extends EntrustRole
 ```
 
 The `Role` model has three main attributes:
-- `name`: the name of the Role, the unique key used to represent the Role in your application. For example: "admin", "owner", "employee".
-- `display_name`: the human readable name for that role, it is not unique and may be used for display purposes. For example: "User Administrator", "Project Owner", "Widget  Co. Employee".
-- `description`: a longer form description of the role.
+- `name` &mdash; Unique name for the Role, used for looking up role information in the application layer. For example: "admin", "owner", "employee".
+- `display_name` &mdash; Human readable name for the Role. Not necessarily unique and optional. For example: "User Administrator", "Project Owner", "Widget  Co. Employee".
+- `description` &mdash; A more detailed explanation of what the Role does. Also optional.
 
 Both `display_name` and `description` are optional; their fields are nullable in the database.
 
@@ -144,11 +145,11 @@ class Permission extends EntrustPermission
 ```
 
 The `Permission` model has the same three attributes as the `Role`:
-- `name`: the name of the Permission, the unique key used to represent the Permission in your application. For example: "create-post", "edit-user", "post-payment", "mailing-list-subscribe".
-- `display_name`: the viewer friendly version of the permission string. For example "Create Posts", "Edit Users", "Post Payments", "Subscribe to mailing list".
-- `description` Description can be a more detailed explanation for the Permission. In general, it may be helpful to think of the attributes in the form of a sentence: "The permission `display_name` allows a user to `description`."
+- `name` &mdash; Unique name for the permission, used for looking up permission information in the application layer. For example: "create-post", "edit-user", "post-payment", "mailing-list-subscribe".
+- `display_name` &mdash; Human readable name for the permission. Not necessarily unique and optional. For example "Create Posts", "Edit Users", "Post Payments", "Subscribe to mailing list".
+- `description` &mdash; A more detailed explanation of the Permission.
 
-These three fields have the same general purpose as for your Roles, but instead applied to the Permission model.
+In general, it may be helpful to think of the last two attributes in the form of a sentence: "The permission `display_name` allows a user to `description`."
 
 #### User
 
