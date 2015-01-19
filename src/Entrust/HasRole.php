@@ -16,6 +16,26 @@ trait HasRole
     }
 
     /**
+     * Boot the user model
+     * Attach event listener to remove the many-to-many records when trying to delete
+     * Will NOT delete any records if the user model uses soft deletes.
+     *
+     * @return void|bool
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($user) {
+            if (!method_exists(Config::get('auth.model'), 'bootSoftDeletingTrait')) {
+                $user->roles()->sync([]);
+            }
+
+            return true;
+        });
+    }
+
+    /**
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.

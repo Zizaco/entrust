@@ -48,12 +48,7 @@ class EntrustPermission extends Model
 
         static::deleting(function($permission) {
             if (!method_exists(Config::get('entrust::permission'), 'bootSoftDeletingTrait')) {
-                try {
-                    DB::table(Config::get('entrust::permission_role_table'))
-                        ->where('permission_id', $permission->getKey())->delete();
-                } catch (Exception $e) {
-                    // do nothing
-                }
+                $permission->roles()->sync([]);
             }
 
             return true;
