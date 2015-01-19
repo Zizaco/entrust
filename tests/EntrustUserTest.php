@@ -1,11 +1,12 @@
 <?php
 
-use Bbatsche\Entrust\HasRole;
+use Bbatsche\Entrust\Contracts\EntrustUserInterface;
+use Bbatsche\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Mockery as m;
 
-class HasRoleTest extends PHPUnit_Framework_TestCase
+class EntrustUserTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
     {
@@ -946,9 +947,9 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class HasRoleUser
+class HasRoleUser implements EntrustUserInterface
 {
-    use HasRole;
+    use EntrustUserTrait;
 
     public $roles;
 
