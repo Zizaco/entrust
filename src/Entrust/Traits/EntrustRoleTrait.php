@@ -9,24 +9,6 @@ use Illuminate\Support\Facades\Config;
 trait EntrustRoleTrait
 {
     /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * Creates a new instance of the model.
-     *
-     * @return void
-     */
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-        $this->table = Config::get('entrust::roles_table');
-    }
-
-    /**
      * Many-to-Many relations with the user model.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
