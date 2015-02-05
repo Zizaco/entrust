@@ -18,8 +18,6 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('zizaco/entrust', 'entrust', __DIR__.'/../');
-
         $this->commands('command.entrust.migration');
     }
 
