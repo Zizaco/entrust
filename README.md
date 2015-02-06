@@ -67,10 +67,10 @@ After the migration, two new tables will be present: `roles` which contain the e
 
 ### Models
 
-Create a Role model following the example at `app/models/Role.php`:
+Create a Role model following the example at `app/Role.php`:
 
 ```php
-<?php
+<?php namespace App;
 
 use Zizaco\Entrust\EntrustRole;
 
@@ -86,10 +86,10 @@ The `permissions` field has been deprecated in preference for the permission tab
 It is an array that is automatically serialized and unserialized when the Model is saved. This array should contain the name of the permissions of the `Role`. For example: `array( "manage_posts", "manage_users", "manage_products" )`.
 
 
-Create a Permission model following the example at `app/models/Permission.php`:
+Create a Permission model following the example at `app/Permission.php`:
 
 ```php
-<?php
+<?php namespace App;
 
 use Zizaco\Entrust\EntrustPermission;
 

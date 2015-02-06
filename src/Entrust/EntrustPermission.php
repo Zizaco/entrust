@@ -4,9 +4,12 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use LaravelBook\Ardent\Ardent;
+use Illuminate\Console\AppNamespaceDetectorTrait;
 
 class EntrustPermission extends Ardent
 {
+    use AppNamespaceDetectorTrait;
+    
     /**
      * The database table used by the model.
      *
@@ -32,7 +35,7 @@ class EntrustPermission extends Ardent
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->table = Config::get('entrust::permissions_table');
+        $this->table = Config::get('zizaco_entrust.permissions_table');
     }
 
     /**
@@ -42,7 +45,7 @@ class EntrustPermission extends Ardent
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::permission_role_table'));
+        return $this->belongsToMany($this->getAppNamespace().Config::get('zizaco_entrust.role'), Config::get('zizaco_entrust.permission_role_table'));
     }
 
     /**
@@ -55,7 +58,7 @@ class EntrustPermission extends Ardent
     public function beforeDelete($forced = false)
     {
         try {
-            DB::table(Config::get('entrust::permission_role_table'))->where('permission_id', $this->id)->delete();
+            DB::table(Config::get('zizaco_entrust.permission_role_table'))->where('permission_id', $this->id)->delete();
         } catch (Exception $e) {
             // do nothing
         }

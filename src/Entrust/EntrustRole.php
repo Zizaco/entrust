@@ -4,9 +4,12 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use LaravelBook\Ardent\Ardent;
+use Illuminate\Console\AppNamespaceDetectorTrait;
 
 class EntrustRole extends Ardent
 {
+    use AppNamespaceDetectorTrait;
+    
     /**
      * The database table used by the model.
      *
@@ -31,7 +34,7 @@ class EntrustRole extends Ardent
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->table = Config::get('entrust::roles_table');
+        $this->table = Config::get('zizaco_entrust.roles_table');
     }
 
     /**
@@ -41,7 +44,7 @@ class EntrustRole extends Ardent
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust::assigned_roles_table'));
+        return $this->belongsToMany(Config::get('auth.model'), Config::get('zizaco_entrust.assigned_roles_table'));
     }
 
     /**
@@ -54,7 +57,7 @@ class EntrustRole extends Ardent
         // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
         // TODO remove in a future version.
         try {
-			return $this->belongsToMany(Config::get('entrust::permission'), Config::get('entrust::permission_role_table'));
+		return $this->belongsToMany($this->getAppNamespace().Config::get('zizaco_entrust.permission'), Config::get('zizaco_entrust.permission_role_table'));
         } catch (Exception $e) {
             // do nothing
         }
@@ -94,8 +97,8 @@ class EntrustRole extends Ardent
     public function beforeDelete($forced = false)
     {
         try {
-            DB::table(Config::get('entrust::assigned_roles_table'))->where('role_id', $this->id)->delete();
-            DB::table(Config::get('entrust::permission_role_table'))->where('role_id', $this->id)->delete();
+            DB::table(Config::get('zizaco_entrust.assigned_roles_table'))->where('role_id', $this->id)->delete();
+            DB::table(Config::get('zizaco_entrust.permission_role_table'))->where('role_id', $this->id)->delete();
         } catch (Exception $e) {
             // do nothing
         }

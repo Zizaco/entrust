@@ -2,9 +2,12 @@
 
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
+use Illuminate\Console\AppNamespaceDetectorTrait;
 
 trait HasRole
 {
+    use AppNamespaceDetectorTrait;
+    
     /**
      * Many-to-Many relations with Role.
      *
@@ -12,7 +15,7 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'), 'user_id', 'role_id');
+        return $this->belongsToMany($this->getAppNamespace().Config::get('zizaco_entrust.role'), Config::get('zizaco_entrust.assigned_roles_table'), 'user_id', 'role_id');
     }
 
     /**

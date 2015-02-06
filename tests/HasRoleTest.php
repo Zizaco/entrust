@@ -36,9 +36,9 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             ->andReturn($belongsToMany)
             ->once();
 
-        Config::shouldReceive('get')->once()->with('entrust::role')
+        Config::shouldReceive('get')->once()->with('zizaco_entrust.role')
             ->andReturn('role_table_name');
-        Config::shouldReceive('get')->once()->with('entrust::assigned_roles_table')
+        Config::shouldReceive('get')->once()->with('zizaco_entrust.assigned_roles_table')
             ->andReturn('assigned_roles_table_name');
 
         /*
