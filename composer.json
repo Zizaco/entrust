@@ -30,14 +30,10 @@
         "phpunit/phpunit": "~4.1",
         "mockery/mockery": "dev-master",
         "illuminate/database": "~5.0",
-        "symfony/process": "~2.3",
         "sami/sami": "dev-master"
     },
     "suggest": {
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
-    },
-    "replace": {
-        "zizaco/entrust": "1.*"
     },
     "autoload": {
         "classmap": [

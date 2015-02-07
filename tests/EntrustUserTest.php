@@ -3,7 +3,6 @@
 use MicheleAngioni\Entrust\Contracts\EntrustUserInterface;
 use MicheleAngioni\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Support\Facades\Config;
-use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Mockery as m;
 
 class EntrustUserTest extends PHPUnit_Framework_TestCase

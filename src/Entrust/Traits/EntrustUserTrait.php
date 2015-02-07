@@ -1,7 +1,7 @@
 <?php namespace MicheleAngioni\Entrust\Traits;
 
 use Illuminate\Support\Facades\Config;
-use Symfony\Component\Process\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
