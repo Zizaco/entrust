@@ -1,11 +1,11 @@
-<?php namespace Bbatsche\Entrust;
+<?php namespace MicheleAngioni\Entrust;
 
 /**
  * This class is the main entry point of entrust. Usually this the interaction
  * with this class will be done through the Entrust Facade
  *
  * @license MIT
- * @package Bbatsche\Entrust
+ * @package MicheleAngioni\Entrust
  */
 class Entrust
 {

@@ -1,4 +1,4 @@
-<?php namespace Bbatsche\Entrust;
+<?php namespace MicheleAngioni\Entrust;
 
 class EntrustFacade extends \Illuminate\Support\Facades\Facade
 {

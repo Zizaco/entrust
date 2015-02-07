@@ -1,6 +1,6 @@
 <?php
 
-use Bbatsche\Entrust\Entrust;
+use MicheleAngioni\Entrust\Entrust;
 use Illuminate\Support\Facades\Facade;
 use Mockery as m;
 
@@ -67,7 +67,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $entrust = m::mock('Bbatsche\Entrust\Entrust[user]', [$app]);
+        $entrust = m::mock('MicheleAngioni\Entrust\Entrust[user]', [$app]);
         $user = m::mock('_mockedUser');
 
         /*
@@ -111,7 +111,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $entrust = m::mock('Bbatsche\Entrust\Entrust[user]', [$app]);
+        $entrust = m::mock('MicheleAngioni\Entrust\Entrust[user]', [$app]);
         $user = m::mock('_mockedUser');
 
         /*
@@ -351,7 +351,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         // Mock Objects
         $app         = m::mock('Illuminate\Foundation\Application');
         $app->router = m::mock('Route');
-        $entrust     = m::mock("Bbatsche\Entrust\Entrust[$mockedMethod]", [$app]);
+        $entrust     = m::mock("MicheleAngioni\Entrust\Entrust[$mockedMethod]", [$app]);
 
         // Static values
         $route       = 'route';
@@ -401,7 +401,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
     ) {
         $app         = m::mock('Illuminate\Foundation\Application');
         $app->router = m::mock('Route');
-        $entrust     = m::mock('Bbatsche\Entrust\Entrust[hasRole, can]', [$app]);
+        $entrust     = m::mock('MicheleAngioni\Entrust\Entrust[hasRole, can]', [$app]);
 
         // Static values
         $route      = 'route';

@@ -1,16 +1,14 @@
-# Entrust (Laravel4 Package)
+# Entrust (Laravel5 Package)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel4**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel5**.
 
 First and foremost I must give credit to the original developers of this package.
 Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work on the fundamental design and functionality.
-My fork is intended to:
-- Remove extra components not really relevant to role & permission management (in particular, Ardent).
-- Add extra functionality I felt was useful and particularly suited to this package.
-- Make integrating the package more flexible and dynamic (eventually).
+Then Ben Batschelet(@bbatsche) forked the original repo in order to solve issues, merge pull requests and keep the package updated.
 
-Were my changes ever to be integrated back into the Zizaco version of this plugin, I think that would be lovely.
-Either way though, I hope to demonstrate some genuinely helpful features and options.
+I than forked Ben Batschelet's fork in order to provide a Laravel 5 version.
+
+**N.B.** : Docs are still to be updated!!!
 
 ## Contents
 

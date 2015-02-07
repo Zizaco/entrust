@@ -1,6 +1,4 @@
-<?php
-
-namespace Bbatsche\Entrust\Contracts;
+<?php namespace MicheleAngioni\Entrust\Contracts;
 
 interface EntrustRoleInterface
 {

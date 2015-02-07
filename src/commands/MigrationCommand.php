@@ -1,4 +1,4 @@
-<?php namespace Bbatsche\Entrust;
+<?php namespace MicheleAngioni\Entrust;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
@@ -28,10 +28,10 @@ class MigrationCommand extends Command
     {
         $this->laravel->view->addNamespace('entrust', substr(__DIR__, 0, -8).'views');
 
-        $rolesTable          = Config::get('entrust::roles_table');
-        $roleUserTable       = Config::get('entrust::role_user_table');
-        $permissionsTable    = Config::get('entrust::permissions_table');
-        $permissionRoleTable = Config::get('entrust::permission_role_table');
+        $rolesTable          = Config::get('ma_entrust.roles_table');
+        $roleUserTable       = Config::get('ma_entrust.role_user_table');
+        $permissionsTable    = Config::get('ma_entrust.permissions_table');
+        $permissionRoleTable = Config::get('ma_entrust.permission_role_table');
 
         $this->line('');
         $this->info( "Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable" );
@@ -79,7 +79,7 @@ class MigrationCommand extends Command
 
         $data = compact('rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
 
-        $output = $this->laravel->view->make('entrust::generators.migration')->with($data)->render();
+        $output = $this->laravel->view->make('ma_entrust.generators.migration')->with($data)->render();
 
         if (!file_exists($migrationFile) && $fs = fopen($migrationFile, 'x')) {
             fwrite($fs, $output);

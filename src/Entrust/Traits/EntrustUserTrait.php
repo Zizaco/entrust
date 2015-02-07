@@ -1,6 +1,4 @@
-<?php
-
-namespace Bbatsche\Entrust\Traits;
+<?php namespace MicheleAngioni\Entrust\Traits;
 
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
@@ -14,7 +12,7 @@ trait EntrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::role_user_table'), 'user_id', 'role_id');
+        return $this->belongsToMany(Config::get('ma_entrust.role'), Config::get('ma_entrust.role_user_table'), 'user_id', 'role_id');
     }
 
     /**
@@ -186,8 +184,6 @@ trait EntrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
-     *
-     * @return void
      */
     public function attachRole($role)
     {
@@ -206,8 +202,6 @@ trait EntrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
-     *
-     * @return void
      */
     public function detachRole($role)
     {
@@ -226,8 +220,6 @@ trait EntrustUserTrait
      * Attach multiple roles to a user
      *
      * @param mixed $roles
-     *
-     * @return void
      */
     public function attachRoles($roles)
     {
@@ -240,8 +232,6 @@ trait EntrustUserTrait
      * Detach multiple roles from a user
      *
      * @param mixed $roles
-     *
-     * @return void
      */
     public function detachRoles($roles)
     {
@@ -249,4 +239,5 @@ trait EntrustUserTrait
             $this->detachRole($role);
         }
     }
+
 }

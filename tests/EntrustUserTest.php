@@ -1,7 +1,7 @@
 <?php
 
-use Bbatsche\Entrust\Contracts\EntrustUserInterface;
-use Bbatsche\Entrust\Traits\EntrustUserTrait;
+use MicheleAngioni\Entrust\Contracts\EntrustUserInterface;
+use MicheleAngioni\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Mockery as m;
@@ -38,9 +38,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
             ->andReturn($belongsToMany)
             ->once();
 
-        Config::shouldReceive('get')->once()->with('entrust::role')
+        Config::shouldReceive('get')->once()->with('ma_entrust.role')
             ->andReturn('role_table_name');
-        Config::shouldReceive('get')->once()->with('entrust::role_user_table')
+        Config::shouldReceive('get')->once()->with('ma_entrust.role_user_table')
             ->andReturn('assigned_roles_table_name');
 
         /*

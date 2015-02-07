@@ -1,9 +1,7 @@
-<?php
+<?php namespace MicheleAngioni\Entrust;
 
-namespace Bbatsche\Entrust;
-
-use Bbatsche\Entrust\Contracts\EntrustRoleInterface;
-use Bbatsche\Entrust\Traits\EntrustRoleTrait;
+use MicheleAngioni\Entrust\Contracts\EntrustRoleInterface;
+use MicheleAngioni\Entrust\Traits\EntrustRoleTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
@@ -21,12 +19,12 @@ class EntrustRole extends Model implements EntrustRoleInterface
     /**
      * Creates a new instance of the model.
      *
-     * @return void
+     * @param array $attributes
      */
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->table = Config::get('entrust::roles_table');
+        $this->table = Config::get('ma_entrust.roles_table');
     }
 
 }

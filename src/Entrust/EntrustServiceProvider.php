@@ -1,4 +1,4 @@
-<?php namespace Bbatsche\Entrust;
+<?php namespace MicheleAngioni\Entrust;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -18,8 +18,12 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('bbatsche/entrust', 'entrust', __DIR__.'/../');
+        // Publish config files
+        $this->publishes([
+            __DIR__.'/../../config/config.php' => config_path('ma_entrust.php'),
+        ]);
 
+        // Register commands
         $this->commands('command.entrust.migration');
     }
 

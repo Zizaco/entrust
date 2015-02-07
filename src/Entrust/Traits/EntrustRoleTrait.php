@@ -1,6 +1,4 @@
-<?php
-
-namespace Bbatsche\Entrust\Traits;
+<?php namespace MicheleAngioni\Entrust\Traits;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +13,7 @@ trait EntrustRoleTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust::role_user_table'));
+        return $this->belongsToMany(Config::get('auth.model'), Config::get('ma_entrust.role_user_table'));
     }
 
     /**
@@ -26,7 +24,7 @@ trait EntrustRoleTrait
      */
     public function perms()
     {
-        return $this->belongsToMany(Config::get('entrust::permission'), Config::get('entrust::permission_role_table'));
+        return $this->belongsToMany(Config::get('ma_entrust.permission'), Config::get('ma_entrust.permission_role_table'));
     }
 
     /**
@@ -41,7 +39,7 @@ trait EntrustRoleTrait
         parent::boot();
 
         static::deleting(function($role) {
-            if (!method_exists(Config::get('entrust::role'), 'bootSoftDeletingTrait')) {
+            if (!method_exists(Config::get('ma_entrust.role'), 'bootSoftDeletingTrait')) {
                 $role->users()->sync([]);
                 $role->perms()->sync([]);
             }
