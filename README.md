@@ -45,9 +45,9 @@ to your composer.json. Then run `composer install` or `composer update`.
 
 Then in your `config/app.php` add 
 
-    'MicheleAngioni\Entrust\EntrustServiceProvider' in the  providers array:
-
-and 
+    'MicheleAngioni\Entrust\EntrustServiceProvider' 
+    
+in the providers array and
 
     'Entrust' => 'MicheleAngioni\Entrust\EntrustFacade'
     
@@ -421,6 +421,14 @@ SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter
 
 Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`.
 Match sure both are `INT(10)`.
+
+When trying to use the EntrustUserTrait methods, you encounter the error which looks like
+
+    Class name must be a valid object or a string
+
+then probably you don't have published Entrust assets or something went wrong when you did it. 
+First of all check that you have the `ma_entrust.php` file in your `app/config` directory.
+If you don't, then try `php artisan vendor:publish` and, if it does not apper, manually copy the `/vendor/michele-angioni/entrust/src/config/config.php` file in your config directory and rename it `ma_entrust.php`. 
 
 ## License
 
