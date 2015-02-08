@@ -1,18 +1,13 @@
 # ENTRUST (Laravel 5 Package)
 
-[![Build Status](https://travis-ci.org/micheleangioni/entrust.svg)](https://travis-ci.org/micheleangioni/entrust)
-[![License](https://poser.pugx.org/michele-angioni/entrust/license.svg)](https://packagist.org/packages/michele-angioni/entrust)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/c0d83e97-2165-4f98-9b96-bcf62fce14b3/small.png)](https://insight.sensiolabs.com/projects/c0d83e97-2165-4f98-9b96-bcf62fce14b3)
+[![Build Status](https://travis-ci.org/zizaco/entrust.svg)](https://travis-ci.org/zizaco/entrust)
+[![License](https://poser.pugx.org/zizaco/entrust/license.svg)](https://packagist.org/packages/zizaco/entrust)
+[![ProjectStatus](http://stillmaintained.com/Zizaco/entrust.png)](http://stillmaintained.com/Zizaco/entrust)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)
 
 Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
 
-First of all I want to give credit to the original developers of this package.  
-Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work on the fundamental design and functionality.  
-Then Ben Batschelet(@bbatsche) forked the original repo in order to solve issues, merge pull requests and keep the package updated.
-
-I than forked Ben Batschelet's fork in order to provide a Laravel 5 conversion.
-
-If you are looking for the Laravel 4 version, take a look at [Bbatsche's](https://github.com/bbatsche/entrust) and [Zizaco's](https://github.com/Zizaco/entrust) repositories.
+If you are looking for the Laravel 4 version, take a look [Release 1.3.x](https://github.com/Zizaco/entrust/tree/1.3.0) release tree.
 
 ## Contents
 
@@ -39,17 +34,17 @@ If you are looking for the Laravel 4 version, take a look at [Bbatsche's](https:
 
 In order to install Laravel 5 Entrust, just add 
 
-    "michele-angioni/entrust": "~3.0"
+    "zizaco/entrust": "~3.0"
 
 to your composer.json. Then run `composer install` or `composer update`.
 
 Then in your `config/app.php` add 
 
-    'MicheleAngioni\Entrust\EntrustServiceProvider' 
+    'Zizaco\Entrust\EntrustServiceProvider'
     
 in the providers array and
 
-    'Entrust' => 'MicheleAngioni\Entrust\EntrustFacade'
+    'Entrust' => 'Zizaco\Entrust\EntrustFacade'
     
 to the `aliases` array.
 
@@ -59,7 +54,7 @@ Set the property values in the `config/auth.php`.
 These values will be used by entrust to refer to the correct user table and model.
 
 You can also publish the configuration for this package to further customize table names and model namespaces.  
-Just use `php artisan vendor:publish` and a `ma_entrust.php` file will be created in your app/config directory.
+Just use `php artisan vendor:publish` and a `entrust.php` file will be created in your app/config directory.
 
 ### User relation to roles
 
@@ -91,7 +86,7 @@ Create a Role model inside `app/models/Role.php` using the following example:
 ```php
 <?php
 
-use MicheleAngioni\Entrust\EntrustRole;
+use Zizaco\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
@@ -112,7 +107,7 @@ Create a Permission model inside `app/models/Permission.php` using the following
 ```php
 <?php
 
-use MicheleAngioni\Entrust\EntrustPermission;
+use Zizaco\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
@@ -133,7 +128,7 @@ Next, use the `EntrustUserTrait` trait in your existing `User` model. For exampl
 ```php
 <?php
 
-use MicheleAngioni\Entrust\Traits\EntrustUserTrait;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Eloquent
 {
@@ -427,8 +422,8 @@ When trying to use the EntrustUserTrait methods, you encounter the error which l
     Class name must be a valid object or a string
 
 then probably you don't have published Entrust assets or something went wrong when you did it. 
-First of all check that you have the `ma_entrust.php` file in your `app/config` directory.
-If you don't, then try `php artisan vendor:publish` and, if it does not apper, manually copy the `/vendor/michele-angioni/entrust/src/config/config.php` file in your config directory and rename it `ma_entrust.php`. 
+First of all check that you have the `entrust.php` file in your `app/config` directory.
+If you don't, then try `php artisan vendor:publish` and, if it does not apper, manually copy the `/vendor/zizaco/entrust/src/config/config.php` file in your config directory and rename it `entrust.php`.
 
 ## License
 
@@ -440,9 +435,3 @@ Support follows PSR-1 and PSR-4 PHP coding standards, and semantic versioning.
 
 Please report any issue you find in the issues page.  
 Pull requests are welcome.
-
-## Additional information
-
-Current library documentation will be soon available at [GitHub Pages](http://micheleangioni.github.io/entrust/).
-
-Feel free to contact me or ask [here](http://laravel.io/forum/09-23-2014-package-zizaco-entrust).

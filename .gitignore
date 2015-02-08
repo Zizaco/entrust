@@ -11,7 +11,7 @@ composer.phar
 Thumbs.db
 
 /conf
-/.idea
+.idea
 /.settings
 .env.*.php
 .env.php

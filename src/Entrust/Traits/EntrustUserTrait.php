@@ -1,4 +1,12 @@
-<?php namespace MicheleAngioni\Entrust\Traits;
+<?php namespace Zizaco\Entrust\Traits;
+
+/**
+ * This file is part of Entrust,
+ * a role & permission management solution for Laravel.
+ *
+ * @license MIT
+ * @package Zizaco\Entrust
+ */
 
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
@@ -12,7 +20,7 @@ trait EntrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('ma_entrust.role'), Config::get('ma_entrust.role_user_table'), 'user_id', 'role_id');
+        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), 'user_id', 'role_id');
     }
 
     /**

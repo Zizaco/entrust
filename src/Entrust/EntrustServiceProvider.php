@@ -1,4 +1,12 @@
-<?php namespace MicheleAngioni\Entrust;
+<?php namespace Zizaco\Entrust;
+
+/**
+ * This file is part of Entrust,
+ * a role & permission management solution for Laravel.
+ *
+ * @license MIT
+ * @package Zizaco\Entrust
+ */
 
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +28,7 @@ class EntrustServiceProvider extends ServiceProvider
     {
         // Publish config files
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('ma_entrust.php'),
+            __DIR__.'/../config/config.php' => config_path('entrust.php'),
         ]);
 
         // Register commands
