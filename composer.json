@@ -40,10 +40,5 @@
             "MicheleAngioni\\Entrust\\": "src/Entrust/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.0"
-        }
-    },
     "minimum-stability": "stable"
 }
