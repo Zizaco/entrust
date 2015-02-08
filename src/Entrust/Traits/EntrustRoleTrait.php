@@ -1,7 +1,5 @@
 <?php namespace MicheleAngioni\Entrust\Traits;
 
-use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 
 trait EntrustRoleTrait

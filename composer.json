@@ -32,9 +32,6 @@
         "illuminate/database": "~5.0",
         "sami/sami": "dev-master"
     },
-    "suggest": {
-        "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"
-    },
     "autoload": {
         "classmap": [
             "src/commands"
@@ -45,8 +42,8 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.0"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }

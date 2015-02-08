@@ -1,19 +1,22 @@
-# Entrust (Laravel5 Package)
+# ENTRUST (Laravel 5 Package)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel5**.
+[![Build Status](https://travis-ci.org/micheleangioni/entrust.svg)](https://travis-ci.org/micheleangioni/entrust)
+[![License](https://poser.pugx.org/michele-angioni/entrust/license.svg)](https://packagist.org/packages/michele-angioni/entrust)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/c0d83e97-2165-4f98-9b96-bcf62fce14b3/small.png)](https://insight.sensiolabs.com/projects/c0d83e97-2165-4f98-9b96-bcf62fce14b3)
 
-First and foremost I must give credit to the original developers of this package.
-Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work on the fundamental design and functionality.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
+
+First of all I want to give credit to the original developers of this package.  
+Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work on the fundamental design and functionality.  
 Then Ben Batschelet(@bbatsche) forked the original repo in order to solve issues, merge pull requests and keep the package updated.
 
-I than forked Ben Batschelet's fork in order to provide a Laravel 5 version.
+I than forked Ben Batschelet's fork in order to provide a Laravel 5 conversion.
 
-**N.B.** : Docs are still to be updated!!!
+If you are looking for the Laravel 4 version, take a look at [Bbatsche's](https://github.com/bbatsche/entrust) and [Zizaco's](https://github.com/Zizaco/entrust) repositories.
 
 ## Contents
 
-- [Quick start](#quick-start)
-    - [Required setup](#required-setup)
+- [Installation](#installation)
 - [Configuration](#configuration)
     - [User relation to roles](#user-relation-to-roles)
     - [Models](#models)
@@ -29,60 +32,34 @@ I than forked Ben Batschelet's fork in order to provide a Laravel 5 version.
     - [Route filter](#route-filter)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
+- [Contribution guidelines](#contribution-guidelines)
 - [Additional information](#additional-information)
 
-## Quick start
+## Installation
 
-**PS:** Even though it's not needed, Entrust works very well with [Confide](https://github.com/Zizaco/confide) in order to eliminate repetitive tasks involving the management of users: account creation, login, logout, confirmation by e-mail, password reset, etc.
+In order to install Laravel 5 Entrust, just add 
 
-[Take a look at Confide](https://github.com/Zizaco/confide).
+    "michele-angioni/entrust": "~3.0",
 
-### Required setup
+to our composer.json. Then run `composer install` or `composer update`.
 
-In the `require` key of `composer.json` file add the following:
+Then in your `config/app.php` add 
 
-```json
-"bbatsche/entrust": "~2.0"
-```
+    `'MicheleAngioni\Entrust\EntrustServiceProvider'` in the  `providers` array:
 
-Run the Composer update command:
+and 
 
-```bash
-composer update
-```
-
-In your `config/app.php` add `'Bbatsche\Entrust\EntrustServiceProvider'` to the end of the `$providers` array:
-
-```php
-'providers' => array(
-    'Illuminate\Foundation\Providers\ArtisanServiceProvider',
-    'Illuminate\Auth\AuthServiceProvider',
-    ...
-    'Bbatsche\Entrust\EntrustServiceProvider',
-),
-```
-
-At the end of `config/app.php` add `'Entrust' => 'Bbatsche\Entrust\EntrustFacade'` to the `$aliases` array:
-
-```php
-'aliases' => array(
-    'App'        => 'Illuminate\Support\Facades\App',
-    'Artisan'    => 'Illuminate\Support\Facades\Artisan',
-    ...
-    'Entrust'    => 'Bbatsche\Entrust\EntrustFacade',
-),
-```
+    `'Entrust' => 'MicheleAngioni\Entrust\EntrustFacade'` 
+    
+to the `aliases` array.
 
 ## Configuration
 
 Set the property values in the `config/auth.php`.
 These values will be used by entrust to refer to the correct user table and model.
 
-You can also publish the configuration for this package to further customize table names and model namespaces:
-
-```bash
-php artisan config:publish bbatsche/entrust
-```
+You can also publish the configuration for this package to further customize table names and model namespaces.  
+Just use `php artisan vendor:publish` and a `ma_entrust.php` file will be created in your app/config directory.
 
 ### User relation to roles
 
@@ -114,7 +91,7 @@ Create a Role model inside `app/models/Role.php` using the following example:
 ```php
 <?php
 
-use Bbatsche\Entrust\EntrustRole;
+use MicheleAngioni\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
@@ -135,7 +112,7 @@ Create a Permission model inside `app/models/Permission.php` using the following
 ```php
 <?php
 
-use Bbatsche\Entrust\EntrustPermission;
+use MicheleAngioni\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
@@ -156,7 +133,7 @@ Next, use the `HasRole` trait in your existing `User` model. For example:
 ```php
 <?php
 
-use Bbatsche\Entrust\HasRole;
+use MicheleAngioni\Entrust\HasRole;
 
 class User extends Eloquent
 {
@@ -216,7 +193,7 @@ Next, with both roles created let's assign them to the users.
 Thanks to the `HasRole` trait this is as easy as:
 
 ```php
-$user = User::where('username', '=', 'bbatsche')->first();
+$user = User::where('username', '=', 'michele')->first();
 
 // role attach alias
 $user->attachRole($admin); // parameter can be an Role object, array, or id
@@ -351,7 +328,7 @@ var_dump($allValidations);
 
 ### Short syntax route filter
 
-To filter a route by permission or role you can call the following in your `app/filters.php`:
+To filter a route by permission or role you can call the following in your `app/routes.php`:
 
 ```php
 // only users with roles that have the 'manage_posts' permission will be able to access any route within admin/post
@@ -449,10 +426,15 @@ Match sure both are `INT(10)`.
 
 Entrust is free software distributed under the terms of the MIT license.
 
+## Contribution guidelines
+
+Support follows PSR-1 and PSR-4 PHP coding standards, and semantic versioning.
+
+Please report any issue you find in the issues page.  
+Pull requests are welcome.
+
 ## Additional information
 
-Current library documentation can be found on [GitHub Pages](http://bbatsche.github.io/entrust/).
+Current library documentation will be soon available at [GitHub Pages](http://micheleangioni.github.io/entrust/).
 
-Any questions, feel free to contact me or ask [here](http://laravel.io/forum/09-23-2014-package-zizaco-entrust).
-
-Any issues, please [report here](https://github.com/bbatsche/entrust/issues).
+Feel free to contact me or ask [here](http://laravel.io/forum/09-23-2014-package-zizaco-entrust).
