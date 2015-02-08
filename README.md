@@ -128,12 +128,12 @@ In general, it may be helpful to think of the last two attributes in the form of
 
 #### User
 
-Next, use the `HasRole` trait in your existing `User` model. For example:
+Next, use the `EntrustUserTrait` trait in your existing `User` model. For example:
 
 ```php
 <?php
 
-use MicheleAngioni\Entrust\HasRole;
+use MicheleAngioni\Entrust\Traits\EntrustUserTrait;
 
 class User extends Eloquent
 {
