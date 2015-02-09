@@ -79,7 +79,7 @@ class MigrationCommand extends Command
      */
     protected function createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
     {
-        $migrationFile = base_path()."/database/migrations/".date('Y_m_d_His')."_entrust_setup_tables.php";
+        $migrationFile = realpath(base_path()."/database/migrations")."/".date('Y_m_d_His')."_entrust_setup_tables.php";
 
         $usersTable  = Config::get('auth.table');
         $userModel   = Config::get('auth.model');
