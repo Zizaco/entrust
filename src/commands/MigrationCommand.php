@@ -36,7 +36,7 @@ class MigrationCommand extends Command
     {
         $this->laravel->view->addNamespace('entrust', substr(__DIR__, 0, -8).'views');
 
-        $rolesTable          = Config::get('entrust.roles_table');
+        $rolesTable          = Config::get('entrust::roles_table');
         $roleUserTable       = Config::get('entrust.role_user_table');
         $permissionsTable    = Config::get('entrust.permissions_table');
         $permissionRoleTable = Config::get('entrust.permission_role_table');
@@ -79,7 +79,7 @@ class MigrationCommand extends Command
      */
     protected function createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
     {
-        $migrationFile = realpath(base_path()."/database/migrations")."/".date('Y_m_d_His')."_entrust_setup_tables.php";
+        $migrationFile = base_path("/database/migrations")."/".date('Y_m_d_His')."_entrust_setup_tables.php";
 
         $usersTable  = Config::get('auth.table');
         $userModel   = Config::get('auth.model');

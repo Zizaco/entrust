@@ -45,6 +45,8 @@ class EntrustServiceProvider extends ServiceProvider
         $this->registerEntrust();
 
         $this->registerCommands();
+
+        $this->mergeConfig();
     }
 
     /**
@@ -69,6 +71,18 @@ class EntrustServiceProvider extends ServiceProvider
         $this->app->bindShared('command.entrust.migration', function ($app) {
             return new MigrationCommand();
         });
+    }
+
+    /**
+     * Merges user's and entrust's configs.
+     *
+     * @return void
+     */
+    private function mergeConfig()
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/config.php', 'entrust'
+        );
     }
 
     /**
