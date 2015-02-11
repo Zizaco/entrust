@@ -7,7 +7,7 @@
 
 Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
-For **Laravel 5** please use the branch `laravel-5`. This will soon be in master, but in the interm it's your best option for Laravel 5 support.
+For **Laravel 5** please use the branch [laravel-5](https://github.com/Zizaco/entrust/tree/laravel-5). This will soon be in master, but in the interm it's your best option for Laravel 5 support.
 
 ## Quick start
 
