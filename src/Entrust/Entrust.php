@@ -27,14 +27,14 @@ class Entrust
     /**
      * Checks if the current user has a Role by its name
      *
-     * @param string $name Role name.
+     * @param string $role Role name.
      *
      * @return bool
      */
-    public function hasRole($permission)
+    public function hasRole($role)
     {
         if ($user = $this->user()) {
-            return $user->hasRole($permission);
+            return $user->hasRole($role);
         }
 
         return false;
