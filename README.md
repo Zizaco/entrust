@@ -7,6 +7,8 @@
 
 Entrust provides a flexible way to add Role-based Permissions to **Laravel4**.
 
+For **Laravel 5** please use the branch `laravel-5`. This will soon be in master, but in the interm it's your best option for Laravel 5 support.
+
 ## Quick start
 
 **PS:** Even though it's not needed. Entrust works very well with [Confide](https://github.com/Zizaco/confide) in order to eliminate repetitive tasks involving the management of users: Account creation, login, logout, confirmation by e-mail, password reset, etc.
