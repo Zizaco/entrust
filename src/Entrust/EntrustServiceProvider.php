@@ -36,16 +36,16 @@ class EntrustServiceProvider extends ServiceProvider
     }
 
     /**
-	 * Register the application bindings.
-	 *
-	 * @return void
-	 */
-	private function registerEntrust()
-	{
-		$this->app->bind('entrust', function ($app) {
+     * Register the application bindings.
+     *
+     * @return void
+     */
+    private function registerEntrust()
+    {
+	$this->app->bind('entrust', function ($app) {
             return new Entrust($app);
         });
-	}
+    }
 
 	/**
 	 * Register the artisan commands.
@@ -57,7 +57,7 @@ class EntrustServiceProvider extends ServiceProvider
         $this->app->bindShared('command.entrust.migration', function ($app) {
             return new MigrationCommand();
         });
-	}
+    }
 
     /**
      * Get the services provided.
