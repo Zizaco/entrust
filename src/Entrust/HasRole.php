@@ -1,6 +1,7 @@
 <?php namespace Zizaco\Entrust;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 trait HasRole
@@ -12,7 +13,7 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'));
+      return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'), 'user_id', 'role_id')->withPivot('model_name', 'model_id')->withTimestamps();
     }
 
     /**
@@ -22,12 +23,60 @@ trait HasRole
      *
      * @return bool
      */
-    public function hasRole($name)
+    public function hasRole($name, $modelName=false, $modelId=false)
     {
         foreach ($this->roles as $role) {
             if ($role->name == $name) {
-                return true;
+                if ($this->_checkRole($role, $modelName, $modelId)) {
+                    return true;
+                }
             }
+        }
+
+        return false;
+    }
+
+    private function _checkRole($role, $modelName=false, $modelId=false)
+    {
+        $pivotModelName = $role->pivot->model_name;
+        // is the role check for a model class?
+        if ($modelName) {
+            $pivotModelId = $role->pivot->model_id;
+            // does this role's model class match the named class?
+            if ($pivotModelName == $modelName) {
+                if (!empty($modelId)) { // is the role check for a model instance?
+                    if ($pivotModelId == $modelId) {
+                        // error_log("MATCH: Instance level role permits instance level check on " . $role->name . ": '{$pivotModelName}[$pivotModelId]' vs '{$modelName}[$modelId]'");
+                        return true;
+                    } else if (empty($pivotModelId)) {
+                        // error_log("MATCH: Model level role permits instance level check on " . $role->name . ": '{$pivotModelName}[$pivotModelId]' vs '{$modelName}[$modelId]'");
+                        return true;
+                    } else {
+                        // error_log("NO MATCH: Instance level role does not permit instance level check on " . $role->name . ": '{$pivotModelName}[$pivotModelId]' vs '{$modelName}[$modelId]'");
+                    }
+                // if the role's model id is unset, this role applies to all instances of the class
+                } else if (empty($pivotModelId)) {
+                    // error_log("MATCH: Model level role permits instance level check on " . $role->name . ": '{$pivotModelName}[$pivotModelId]' vs '{$modelName}[$modelId]'");
+                    return true;
+                } else {
+                  // error_log("NO MATCH: Instance level role does not permit model level role " .$role->name . ": '{$pivotModelName}[$pivotModelId]' vs '{$modelName}[$modelId]'");
+                }
+            } else if (empty($pivotModelName)) {
+                // error_log("MATCH: Global level role permits model level check " .$role->name . ": '$pivotModelName' vs '$modelName'");
+                return true;
+            } else if ($pivotModelId) {
+                // error_log("NO MATCH: Instance level role does not permit model level check " .$role->name . ": '{$pivotModelName}[$pivotModelId]' vs '{$modelName}[$modelId]'");
+            } else {
+                // error_log("NO MATCH: Model level role does not permit model level check " .$role->name . ": '{$pivotModelName}[$pivotModelId]' vs '{$modelName}[$modelId]'");
+            }
+        // if the role's model is unset, this is a global role and returns true
+        } else if (empty($pivotModelName)) {
+            // error_log("MATCH: Global level role permits global level check " . $role->name );
+            return true;
+        } else if ($role->pivot->model_id) {
+            // error_log("NO MATCH: Instance level role does not permit global level check " . $role->name . ": '$pivotModelName' vs '$modelName'" );
+        } else {
+            // error_log("NO MATCH: Model level role does not permit global level check " . $role->name . ": '$pivotModelName' vs '$modelName'" );
         }
 
         return false;
@@ -40,18 +89,20 @@ trait HasRole
      *
      * @return bool
      */
-    public function can($permission)
+    public function can($permission, $modelName = false, $modelId = false)
     {
         foreach ($this->roles as $role) {
-            // Deprecated permission value within the role table.
-            if (is_array($role->permissions) && in_array($permission, $role->permissions) ) {
-                return true;
-            }
-
-            // Validate against the Permission table
-            foreach ($role->perms as $perm) {
-                if ($perm->name == $permission) {
+            if ($this->_checkRole($role, $modelName, $modelId)) {
+                // Deprecated permission value within the role table.
+                if (is_array($role->permissions) && in_array($permission, $role->permissions) ) {
                     return true;
+                }
+
+                // Validate against the Permission table
+                foreach ($role->perms as $perm) {
+                    if ($perm->name == $permission) {
+                        return true;
+                    }
                 }
             }
         }
@@ -80,6 +131,17 @@ trait HasRole
             $permissions = explode(',', $permissions);
         }
 
+        // check for model type and id
+        $modelName = false;
+        if (isset($options['model_name'])) {
+            $modelName = $options['model_name'];
+        }
+
+        $modelId = false;
+        if (isset($options['model_id'])) {
+            $modelId = $options['model_id'];
+        }
+
         // Set up default values and validate options.
         if (!isset($options['validate_all'])) {
             $options['validate_all'] = false;
@@ -102,10 +164,10 @@ trait HasRole
         $checkedRoles = array();
         $checkedPermissions = array();
         foreach ($roles as $role) {
-            $checkedRoles[$role] = $this->hasRole($role);
+            $checkedRoles[$role] = $this->hasRole($role, $modelName, $modelId);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->can($permission);
+            $checkedPermissions[$permission] = $this->can($permission, $modelName, $modelId);
         }
 
         // If validate all and there is a false in either
@@ -136,15 +198,17 @@ trait HasRole
      *
      * @return void
      */
-    public function attachRole($role)
+    public function attachRole($role, $modelName=null, $modelId=null)
     {
-        if( is_object($role))
+        if( is_object($role)) {
             $role = $role->getKey();
+        }
 
-        if( is_array($role))
+        if( is_array($role)) {
             $role = $role['id'];
+        }
 
-        $this->roles()->attach( $role );
+        $this->roles()->attach( $role, array( 'model_name' => $modelName, 'model_id' => $modelId ));
     }
 
     /**
@@ -154,7 +218,7 @@ trait HasRole
      *
      * @return void
      */
-    public function detachRole($role)
+    public function detachRole($role, $modelName=null, $modelId=null)
     {
         if (is_object($role)) {
             $role = $role->getKey();
@@ -164,7 +228,18 @@ trait HasRole
             $role = $role['id'];
         }
 
-        $this->roles()->detach($role);
+        // $sql = sprintf("delete from %s where role_id = %s AND model_name = '%s' AND model_id = %s",
+        //                Config::get('entrust::assigned_roles_table'),
+        //                $role,
+        //                $modelName,
+        //                $modelId);
+        // DB::delete($sql);
+        $this->roles()->newPivotStatementForId($role)
+             ->where('model_name', '=', $modelName)
+             ->where('model_id', '=', $modelId)
+             ->delete();
+
+        //$this->roles()->detach($role);
     }
 
     /**
@@ -174,10 +249,10 @@ trait HasRole
      *
      * @return void
      */
-    public function attachRoles($roles)
+    public function attachRoles($roles, $modelName=null, $modelId=null)
     {
         foreach ($roles as $role) {
-            $this->attachRole($role);
+            $this->attachRole($role, $modelName, $modelId);
         }
     }
 
@@ -188,10 +263,10 @@ trait HasRole
      *
      * @return void
      */
-    public function detachRoles($roles)
+    public function detachRoles($roles, $modelName=null, $modelId=null)
     {
         foreach ($roles as $role) {
-            $this->detachRole($role);
+            $this->detachRole($role, $modelName, $modelId);
         }
     }
 }
