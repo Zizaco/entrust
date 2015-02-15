@@ -165,7 +165,12 @@ $manageUsers->name = 'manage_users';
 $manageUsers->display_name = 'Manage Users';
 $manageUsers->save();
 
-$owner->perms()->sync(array($managePosts->id,$manageUsers->id));
+$banUsers = new Permission;
+$banUsers->name = 'ban_users';
+$banUsers->display_name = 'Ban Users';
+$banUsers->save();
+
+$owner->perms()->sync(array($managePosts->id,$manageUsers->id,$banUsers->id));
 $admin->perms()->sync(array($managePosts->id));
 ```
 
@@ -176,6 +181,18 @@ $user->hasRole("Owner");    // false
 $user->hasRole("Admin");    // true
 $user->can("manage_posts"); // true
 $user->can("manage_users"); // false
+$user->can("manage_*"); // true
+$user->can("*_users"); // true
+```
+
+You can also use placeholders (wildcards) to check any matching permission by doing:
+
+```php
+// match any permission about managing
+$user->can("manage*"); // true
+
+// match any permission about users
+$user->can("*_users"); // true
 ```
 
 You can have as many `Role`s as you want for each `User` and vice versa.
