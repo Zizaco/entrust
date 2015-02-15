@@ -181,8 +181,6 @@ $user->hasRole("Owner");    // false
 $user->hasRole("Admin");    // true
 $user->can("manage_posts"); // true
 $user->can("manage_users"); // false
-$user->can("manage_*"); // true
-$user->can("*_users"); // true
 ```
 
 You can also use placeholders (wildcards) to check any matching permission by doing:
