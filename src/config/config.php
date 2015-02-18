@@ -11,7 +11,7 @@ return array(
 	| the role if it is in a different namespace.
 	|
 	*/
-	'role' => '\Role',
+	'role' => 'App\Role',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ return array(
 	| the permission if it is in a different namespace.
 	|
 	*/
-	'permission' => '\Permission',
+	'permission' => 'App\Permission',
 
 	/*
 	|--------------------------------------------------------------------------
