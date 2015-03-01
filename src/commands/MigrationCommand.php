@@ -39,7 +39,7 @@ class MigrationCommand extends Command
         $this->comment( $message );
         $this->line('');
 
-        if ( $this->confirm("Proceed with the migration creation? [Yes|no]") ) {
+        if ( $this->option('force') || $this->confirm("Proceed with the migration creation? [Yes|no]") ) {
 
             $this->line('');
 
@@ -68,6 +68,7 @@ class MigrationCommand extends Command
     {
         return array(
             array('table', null, InputOption::VALUE_OPTIONAL, 'Roles table.', 'roles'),
+            array('force', null, InputOption::VALUE_NONE, 'Force creation without a prompt'),
         );
     }
 
