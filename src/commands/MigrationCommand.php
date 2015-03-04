@@ -18,7 +18,7 @@ class MigrationCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a migration following the Entrust especifications.';
+    protected $description = 'Creates a migration following the Entrust specifications.';
 
     /**
      * Execute the console command.
