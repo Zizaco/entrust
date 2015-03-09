@@ -129,9 +129,10 @@ Next, use the `EntrustUserTrait` trait in your existing `User` model. For exampl
 ```php
 <?php
 
+use Zizaco\Entrust\EntrustRole;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
-class User extends Eloquent
+class User extends EntrustRole
 {
     use EntrustUserTrait; // add this trait to your user model
 
