@@ -324,7 +324,7 @@ var_dump($allValidations);
 
 ### Short syntax route filter
 
-To filter a route by permission or role you can call the following in your `app/routes.php`:
+To filter a route by permission or role you can call the following in your `app/Http/routes.php`:
 
 ```php
 // only users with roles that have the 'manage_posts' permission will be able to access any route within admin/post
