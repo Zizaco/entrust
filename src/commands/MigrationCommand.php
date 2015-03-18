@@ -45,12 +45,12 @@ class MigrationCommand extends Command
         $this->info( "Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable" );
 
         $message = "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
-        " tables will be created in app/database/migrations directory";
+        " tables will be created in database/migrations directory";
 
         $this->comment($message);
         $this->line('');
 
-        if ($this->confirm("Proceed with the migration creation? [Yes|no]")) {
+        if ($this->confirm("Proceed with the migration creation? [Yes|no]", "Yes")) {
 
             $this->line('');
 
@@ -60,8 +60,8 @@ class MigrationCommand extends Command
                 $this->info("Migration successfully created!");
             } else {
                 $this->error(
-                    "Coudn't create migration.\n Check the write permissions".
-                    " within the app/database/migrations directory."
+                    "Couldn't create migration.\n Check the write permissions".
+                    " within the database/migrations directory."
                 );
             }
 
