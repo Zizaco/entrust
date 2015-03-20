@@ -38,8 +38,8 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
 
         Config::shouldReceive('get')->once()->with('entrust::role')
             ->andReturn('role_table_name');
-        Config::shouldReceive('get')->once()->with('entrust::assigned_roles_table')
-            ->andReturn('assigned_roles_table_name');
+        Config::shouldReceive('get')->once()->with('entrust::user_roles_table')
+            ->andReturn('user_roles_table_name');
 
         /*
         |------------------------------------------------------------

@@ -56,12 +56,12 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Entrust assigned_roles Table
+	| Entrust user_roles Table
 	|--------------------------------------------------------------------------
 	|
-	| This is the assigned_roles table used by Entrust to save assigned roles to the database.
+	| This is the user_roles table used by Entrust to save assigned roles to the database.
 	|
 	*/
-	'assigned_roles_table' => 'assigned_roles',
+	'user_roles_table' => 'user_roles',
 
 );
