@@ -43,7 +43,7 @@ Then in your `config/app.php` add
 
     'Zizaco\Entrust\EntrustServiceProvider'
     
-in the providers array and
+in the `providers` array and
 
     'Entrust' => 'Zizaco\Entrust\EntrustFacade'
     
