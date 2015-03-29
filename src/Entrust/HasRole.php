@@ -13,7 +13,7 @@ trait HasRole
      */
     public function roles()
     {
-      return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'), 'user_id', 'role_id')->withPivot('model_name', 'model_id')->withTimestamps();
+      return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'), 'user_id', 'role_id')->withPivot('model_name', 'model_id');
     }
 
     /**
@@ -201,14 +201,14 @@ trait HasRole
     public function attachRole($role, $modelName=null, $modelId=null)
     {
         if( is_object($role)) {
-            $role = $role->getKey();
+          $role_id = $role->getKey();
         }
 
         if( is_array($role)) {
-            $role = $role['id'];
+          $role_id = $role['id'];
         }
-
-        $this->roles()->attach( $role, array( 'model_name' => $modelName, 'model_id' => $modelId ));
+        
+        $this->roles()->attach( $role_id, array( 'model_name' => $modelName, 'model_id' => $modelId ));
     }
 
     /**
