@@ -21,7 +21,7 @@ In the `require` key of `composer.json` file add the following
 
 Run the Composer update comand
 
-    $ composer update
+    $ composer update zizaco/entrust
 
 In your `config/app.php` add `'Zizaco\Entrust\EntrustServiceProvider'` to the end of the `$providers` array
 
