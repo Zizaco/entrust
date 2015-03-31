@@ -207,7 +207,7 @@ trait HasRole
         if( is_array($role)) {
           $role_id = $role['id'];
         }
-        
+
         $this->roles()->attach( $role_id, array( 'model_name' => $modelName, 'model_id' => $modelId ));
     }
 
