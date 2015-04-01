@@ -320,14 +320,14 @@ class EntrustTest extends PHPUnit_Framework_TestCase
 
     public function simpleFilterDataProvider()
     {
-        return array(
+        return [
             // Filter passes, null is returned
-            array(true, 'nullFilterTest'),
+            [true, 'nullFilterTest'],
             // Filter fails, App::abort() is called
-            array(false, 'abortFilterTest', true),
+            [false, 'abortFilterTest', true],
             // Filter fails, custom response is returned
-            array(false, 'customResponseFilterTest', false, new stdClass())
-        );
+            [false, 'customResponseFilterTest', false, new stdClass()]
+        ];
     }
 
     /**
@@ -373,24 +373,24 @@ class EntrustTest extends PHPUnit_Framework_TestCase
 
     public function routeNeedsRoleOrPermissionFilterDataProvider()
     {
-        return array(
+        return [
             // Both role and permission pass, null is returned
-            array(true,  true,  'nullFilterTest'),
-            array(true,  true,  'nullFilterTest', true),
+            [true,  true,  'nullFilterTest'],
+            [true,  true,  'nullFilterTest', true],
             // Role OR permission fail, require all is false, null is returned
-            array(false, true,  'nullFilterTest'),
-            array(true,  false, 'nullFilterTest'),
+            [false, true,  'nullFilterTest'],
+            [true,  false, 'nullFilterTest'],
             // Role and/or permission fail, App::abort() is called
-            array(false, true,  'abortFilterTest', true,  true),
-            array(true,  false, 'abortFilterTest', true,  true),
-            array(false, false, 'abortFilterTest', false, true),
-            array(false, false, 'abortFilterTest', true,  true),
+            [false, true,  'abortFilterTest', true,  true],
+            [true,  false, 'abortFilterTest', true,  true],
+            [false, false, 'abortFilterTest', false, true],
+            [false, false, 'abortFilterTest', true,  true],
             // Role and/or permission fail, custom response is returned
-            array(false, true,  'customResponseFilterTest', true,  false, new stdClass()),
-            array(true,  false, 'customResponseFilterTest', true,  false, new stdClass()),
-            array(false, false, 'customResponseFilterTest', false, false, new stdClass()),
-            array(false, false, 'customResponseFilterTest', true,  false, new stdClass())
-        );
+            [false, true,  'customResponseFilterTest', true,  false, new stdClass()],
+            [true,  false, 'customResponseFilterTest', true,  false, new stdClass()],
+            [false, false, 'customResponseFilterTest', false, false, new stdClass()],
+            [false, false, 'customResponseFilterTest', true,  false, new stdClass()]
+        ];
     }
 
     /**
