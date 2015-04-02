@@ -41,6 +41,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
             ->andReturn('role_table_name');
         Config::shouldReceive('get')->once()->with('entrust.role_user_table')
             ->andReturn('assigned_roles_table_name');
+        Config::shouldReceive('get')->once()->with('entrust.user_foreign_key')
+            ->andReturn('user_id');
 
         /*
         |------------------------------------------------------------
