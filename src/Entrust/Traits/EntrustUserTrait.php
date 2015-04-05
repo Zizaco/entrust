@@ -51,32 +51,58 @@ trait EntrustUserTrait
      *
      * @return bool
      */
-    public function hasRole($name, $requireAll = false)
+    public function hasRole($role, $requireAll = false)
     {
-        if (is_array($name)) {
-            foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName);
+    	if(is_array($role))
+    		$this->hasRoles($role, $requireAll = false);
 
-                if ($hasRole && !$requireAll) {
-                    return true;
-                } elseif (!$hasRole && $requireAll) {
-                    return false;
-                }
-            }
+        foreach ($this->roles as $roles)
+        {
+        	if(is_object($role))
+        	{
+        		if($roles == $role)
+        		{
+        			return true;
+        		}
+        	}
 
-            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
-            // Return the value of $requireAll;
-            return $requireAll;
-        } else {
-            foreach ($this->roles as $role) {
-                if ($role->name == $name) {
-                    return true;
-                }
+        	if(is_int($role))
+        	{
+        		if ($roles->id == $role)
+	            {
+	                return true;
+	            }
+        	}
+
+            if ($roles->name == $role)
+            {
+                return true;
             }
         }
 
         return false;
+    }
+
+    public function hasRoles($roles, $requireAll = false)
+    {
+        foreach ($roles as $role)
+        {
+            $hasRole = $this->hasRole($role);
+
+            if ($hasRole && !$requireAll)
+            {
+                return true;
+            }
+            elseif (!$hasRole && $requireAll)
+            {
+                return false;
+            }
+        }
+
+        // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
+        // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
+        // Return the value of $requireAll;
+        return $requireAll;
     }
 
     /**
