@@ -82,7 +82,7 @@ class Entrust
     public function routeNeedsRole($route, $roles, $result = null, $cumulative=true)
     {
         if (!is_array($roles)) {
-            $roles = array($roles);
+            $roles = mb_split('[\s,]+', $roles);
         }
 
         $filter_name = implode('_',$roles).'_'.substr(md5($route),0,6);
@@ -133,7 +133,7 @@ class Entrust
     public function routeNeedsPermission($route, $permissions, $result = null, $cumulative=true)
     {
         if (!is_array($permissions)) {
-            $permissions = array($permissions);
+            $permissions = mb_split('[\s,]+', $permissions);
         }
 
         $filter_name = implode('_',$permissions).'_'.substr(md5($route),0,6);
@@ -186,10 +186,10 @@ class Entrust
     public function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = null, $cumulative=false)
     {
         if (!is_array($roles)) {
-            $roles = array($roles);
+            $roles = mb_split('[\s,]+', $roles);
         }
         if (!is_array($permissions)) {
-            $permissions = array($permissions);
+            $permissions = mb_split('[\s,]+', $permissions);
         }
 
         $filter_name = implode('_',$roles).'_'.implode('_',$permissions).'_'.substr(md5($route),0,6);

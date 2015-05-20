@@ -74,10 +74,10 @@ trait HasRole
     {
         // Convert string to array if that's what is passed in.
         if (!is_array($roles)) {
-            $roles = explode(',', $roles);
+            $roles = mb_split('[\s,]+', $roles);
         }
         if (!is_array($permissions)) {
-            $permissions = explode(',', $permissions);
+            $permissions = mb_split('[\s,]+', $permissions);
         }
 
         // Set up default values and validate options.
