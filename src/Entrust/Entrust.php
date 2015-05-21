@@ -43,14 +43,42 @@ class Entrust
     /**
      * Check if the current user has a permission by its name
      *
+     * If the Permission model have a method with permission name (camelcase)
+     * this method will call and his result will a result of
+     * permission check.
+     * If you use $params and it's not null the method should have a one parameter.
+     *
      * @param string $permission Permission string.
+     * @param string $params     (optional) Parameters used when permission checking.
      *
      * @return bool
      */
-    public function can($permission)
+    public function can($permission, $params = null)
     {
         if ($user = $this->user()) {
-            return $user->can( $permission );
+            return $user->can( $permission, $params );
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks role(s) and permission(s) for thr current user.
+     *
+     * @param string|array $roles       Array of roles or comma separated string
+     * @param string|array $permissions Array of permissions or comma separated string.
+     * @param array        $options     validate_all (true|false) and
+     *                                  return_type (boolean|array|both) and
+     *                                  parameters for checking permissions (key is permission name)
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return array|bool
+     */
+    public function ability($roles, $permissions, $options = array())
+    {
+        if ($user = $this->user()) {
+            return $user->ability($roles, $permissions, $options);
         }
 
         return false;

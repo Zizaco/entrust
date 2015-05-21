@@ -36,11 +36,16 @@ trait HasRole
     /**
      * Check if user has a permission by its name.
      *
+     * If the Permission model have a method with permission name (camelcase)
+     * this method will call and his result will a result of
+     * permission check.
+     * If you use $params and it's not null the method should have a one parameter.
+     *
      * @param string $permission Permission string.
      *
      * @return bool
      */
-    public function can($permission)
+    public function can($permission, $params = null)
     {
         foreach ($this->roles as $role) {
             // Deprecated permission value within the role table.
@@ -51,7 +56,12 @@ trait HasRole
             // Validate against the Permission table
             foreach ($role->perms as $perm) {
                 if ($perm->name == $permission) {
-                    return true;
+                    $method = camel_case($permission);
+                    if (method_exists(Config::get('entrust::permission'), $method)) {
+                        return is_null($params) ? $perm->$method() : $perm->$method($params);
+                    } else {
+                        return true;
+                    }
                 }
             }
         }
@@ -62,9 +72,16 @@ trait HasRole
     /**
      * Checks role(s) and permission(s).
      *
+     * If the Permission model have a method with permission name (camelcase)
+     * this method will call and his result will a result of
+     * permission check.
+     * If you use $params and it's not null the method should have a one parameter.
+     *
      * @param string|array $roles       Array of roles or comma separated string
      * @param string|array $permissions Array of permissions or comma separated string.
-     * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
+     * @param array        $options     validate_all (true|false) and
+     *                                  return_type (boolean|array|both) and
+     *                                  parameters for checking permissions (key is permission name)
      *
      * @throws \InvalidArgumentException
      *
@@ -105,7 +122,11 @@ trait HasRole
             $checkedRoles[$role] = $this->hasRole($role);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->can($permission);
+            $params = null;
+            if (isset($options[$permission])) {
+                $params = $options[$permission];
+            }
+            $checkedPermissions[$permission] = $this->can($permission, $params);
         }
 
         // If validate all and there is a false in either
