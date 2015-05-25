@@ -75,4 +75,11 @@ return [
     */
     'role_user_table' => 'role_user',
 
+    /*
+    |--------------------------------------------------------------------------
+    | User Foreign key on Entrust's role_user Table (Pivot)
+    |--------------------------------------------------------------------------
+    */
+    'user_foreign_key' => 'user_id',
+
 ];
