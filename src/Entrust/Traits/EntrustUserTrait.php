@@ -129,7 +129,7 @@ trait EntrustUserTrait
      *
      * @return array|bool
      */
-    public function ability($roles, $permissions, $options = array())
+    public function ability($roles, $permissions, $options = [])
     {
         // Convert string to array if that's what is passed in.
         if (!is_array($roles)) {
@@ -158,8 +158,8 @@ trait EntrustUserTrait
         }
 
         // Loop through roles and permissions and check each.
-        $checkedRoles = array();
-        $checkedPermissions = array();
+        $checkedRoles = [];
+        $checkedPermissions = [];
         foreach ($roles as $role) {
             $checkedRoles[$role] = $this->hasRole($role);
         }
@@ -181,9 +181,9 @@ trait EntrustUserTrait
         if ($options['return_type'] == 'boolean') {
             return $validateAll;
         } elseif ($options['return_type'] == 'array') {
-            return array('roles' => $checkedRoles, 'permissions' => $checkedPermissions);
+            return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
         } else {
-            return array($validateAll, array('roles' => $checkedRoles, 'permissions' => $checkedPermissions));
+            return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
         }
 
     }
