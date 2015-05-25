@@ -14,14 +14,12 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "~4.2"
+        "php": ">=5.4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "~0.9",
-        "illuminate/database": "~4.0",
-        "symfony/process": "~2.3"
+        "orchestra/testbench": "2.2.*"
     },
     "suggest": {
         "zizaco/confide":"Confide is an authentication solution for Laravel 4 that couples very well with Entrust"

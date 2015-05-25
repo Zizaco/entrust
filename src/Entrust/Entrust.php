@@ -32,35 +32,47 @@ class Entrust
     }
 
     /**
-     * Checks if the current user has a Role by its name
+     * Checks if a user has a Role by its name. Can optionally specify a class
+     * name and id to check for a role on a given class or class instance
+     * respectively.
      *
      * @param string $name Role name.
+     * @param string $modelName the name of the resource model to which the check for roles and permissions will apply
+     * @param mixed $modelId the instance identifier of the resource model
      *
      * @return bool
      */
-    public function hasRole($permission)
+    public function hasRole($name, $modelName=false, $modelId=false)
     {
-        if ($user = $this->user()) {
-            return $user->hasRole($permission);
+        $user = $this->user();
+
+        if (!empty($user)) {
+            return $user->hasRole($name, $modelName, $modelId);
         }
 
         return false;
     }
 
     /**
-     * Check if the current user has a permission by its name
+     * Check if the current user has a permission by its name. Can optionally
+     * specify a class name and id to check for a role on a given class or
+     * class instance respectively.
      *
      * @param string $permission Permission string.
+     * @param string $modelName the name of the resource model to which the check for roles and permissions will apply
+     * @param mixed $modelId the instance identifier of the resource model
      *
      * @return bool
      */
-    public function can($permission)
+    public function can($permission, $modelName=false, $modelId=false)
     {
-        if ($user = $this->user()) {
-            return $user->can($permission);
-        }
+      $user = $this->user();
 
-        return false;
+      if ($user) {
+          return $user->can($permission, $modelName, $modelId);
+      }
+
+      return false;
     }
 
     /**
@@ -98,7 +110,9 @@ class Entrust
             $result = function () use ($roles, $result, $cumulative) {
                 $hasARole = array();
                 foreach ($roles as $role) {
-                    if ($this->hasRole($role)) {
+                    list($roleName, $modelName, $modelId) = explode(':', $role);
+
+                    if ($this->hasRole($roleName, $modelName, $modelId)) {
                         $hasARole[] = true;
                     } else {
                         $hasARole[] = false;
@@ -151,7 +165,9 @@ class Entrust
             $result = function () use ($permissions, $result, $cumulative) {
                 $hasAPermission = array();
                 foreach ($permissions as $permission) {
-                    if ($this->can($permission)) {
+                    list($permissionName, $modelName, $modelId) = explode(':', $permission);
+
+                    if ($this->can($permissionName, $modelName, $modelId)) {
                         $hasAPermission[] = true;
                     } else {
                         $hasAPermission[] = false;
@@ -208,7 +224,9 @@ class Entrust
             $result = function () use ($roles, $permissions, $result, $cumulative) {
                 $hasARole = array();
                 foreach ($roles as $role) {
-                    if ($this->hasRole($role)) {
+                    list($roleName, $modelName, $modelId) = explode(':', $role);
+
+                    if ($this->hasRole($roleName, $modelName, $modelId)) {
                         $hasARole[] = true;
                     } else {
                         $hasARole[] = false;
@@ -217,7 +235,9 @@ class Entrust
 
                 $hasAPermission = array();
                 foreach ($permissions as $permission) {
-                    if ($this->can($permission)) {
+                    list($permissionName, $modelName, $modelId) = explode(':', $permission);
+
+                    if ($this->can($permissionName, $modelName, $modelId)) {
                         $hasAPermission[] = true;
                     } else {
                         $hasAPermission[] = false;

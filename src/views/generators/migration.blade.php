@@ -24,6 +24,8 @@ class EntrustSetupTables extends Migration
             $table->increments('id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->integer('role_id')->unsigned();
+            $table->string('model_name')->nullable();
+            $table->integer('model_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('{{ \Illuminate\Support\Facades\Config::get('auth.table') }}')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('role_id')->references('id')->on('roles');
@@ -54,6 +56,7 @@ class EntrustSetupTables extends Migration
      */
     public function down()
     {
+
         Schema::table('assigned_roles', function (Blueprint $table) {
             $table->dropForeign('assigned_roles_user_id_foreign');
             $table->dropForeign('assigned_roles_role_id_foreign');

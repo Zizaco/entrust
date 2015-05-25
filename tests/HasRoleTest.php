@@ -2,6 +2,7 @@
 
 use Zizaco\Entrust\HasRole;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Mockery as m;
 
@@ -19,7 +20,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $belongsToMany = new stdClass();
+        $belongsToMany = m::mock('BelongsToMany')->makePartial();
         $user = m::mock('HasRoleUser')->makePartial();
 
         $app = m::mock('app')->shouldReceive('instance')->getMock();
@@ -48,7 +49,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         */
         $this->assertSame($belongsToMany, $user->roles());
     }
-    
+
     public function testHasRole()
     {
         /*
@@ -58,10 +59,10 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         */
         $roleA = $this->mockRole('RoleA');
         $roleB = $this->mockRole('RoleB');
-        
+
         $user = new HasRoleUser();
         $user->roles = [$roleA, $roleB];
-        
+
         /*
         |------------------------------------------------------------
         | Assertion
@@ -70,6 +71,77 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($user->hasRole('RoleA'));
         $this->assertTrue($user->hasRole('RoleB'));
         $this->assertFalse($user->hasRole('RoleC'));
+    }
+
+    public function testHasRoleHandlesPrecidence()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = $this->mockRole('RoleA');
+        $roleB = $this->mockRole('RoleB', 'ResourceB');
+        $roleC1 = $this->mockRole('RoleC', 'ResourceC', 1);
+        $roleC2 = $this->mockRole('RoleC', 'ResourceC', 3);
+        $roleD = $this->mockRole('RoleD', 'ResourceC', 3);
+
+
+
+        $user = new HasRoleUser();
+        $user->roles = [$roleA, $roleB, $roleC1, $roleC2, $roleD];
+
+        $roleA->shouldReceive('pivot')
+              ->andReturn($roleA);
+
+        $roleB->shouldReceive('pivot')
+              ->andReturn($roleB);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->hasRole('RoleA'));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceA'));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceA', 1));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceA', 2));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceB'));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceB', 1));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceB', 2));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceC'));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceC', 1));
+        $this->assertTrue($user->hasRole('RoleA', 'ResourceC', 2));
+
+        $this->assertFalse($user->hasRole('RoleB'));
+        $this->assertFalse($user->hasRole('RoleB', 'ResourceA'));
+        $this->assertFalse($user->hasRole('RoleB', 'ResourceA', 1));
+        $this->assertFalse($user->hasRole('RoleB', 'ResourceA', 2));
+        $this->assertTrue($user->hasRole('RoleB', 'ResourceB'));
+        $this->assertTrue($user->hasRole('RoleB', 'ResourceB', 1));
+        $this->assertTrue($user->hasRole('RoleB', 'ResourceB', 2));
+        $this->assertFalse($user->hasRole('RoleB', 'ResourceC'));
+        $this->assertFalse($user->hasRole('RoleB', 'ResourceC', 1));
+        $this->assertFalse($user->hasRole('RoleB', 'ResourceC', 2));
+
+        $this->assertFalse($user->hasRole('RoleC'));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceA'));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceA', 1));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceA', 2));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceA', 3));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceB'));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceB', 1));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceB', 2));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceB', 3));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceC'));
+        $this->assertTrue($user->hasRole('RoleC', 'ResourceC', 1));
+        $this->assertFalse($user->hasRole('RoleC', 'ResourceC', 2));
+        $this->assertTrue($user->hasRole('RoleC', 'ResourceC', 3));
+        $this->assertFalse($user->hasRole('RoleD', 'ResourceC'));
+        $this->assertFalse($user->hasRole('RoleD', 'ResourceC', 1));
+        $this->assertFalse($user->hasRole('RoleD', 'ResourceC', 2));
+        $this->assertFalse($user->hasRole('RoleD', 'ResourceC', 2));
+        $this->assertTrue($user->hasRole('RoleD', 'ResourceC', 3));
     }
 
     public function testCan()
@@ -82,16 +154,16 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $permA = $this->mockPermission('manage_a');
         $permB = $this->mockPermission('manage_b');
         $permC = $this->mockPermission('manage_c');
-        
+
         $roleA = $this->mockRole('RoleA');
         $roleB = $this->mockRole('RoleB');
-        
+
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
         $user = new HasRoleUser();
         $user->roles = [$roleA, $roleB];
-        
+
         /*
         |------------------------------------------------------------
         | Assertion
@@ -102,7 +174,45 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($user->can('manage_c'));
         $this->assertFalse($user->can('manage_d'));
     }
-    
+
+    public function testCanHandlesPrecidence()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permA = $this->mockPermission('manage_a');
+        $permB = $this->mockPermission('manage_b');
+        $permC = $this->mockPermission('manage_c');
+
+        $roleA = $this->mockRole('RoleA', 'ResourceA', 1);
+        $roleB = $this->mockRole('RoleB', 'ResourceB');
+
+        $roleA->perms = [$permA];
+        $roleB->perms = [$permB, $permC];
+
+        $user = new HasRoleUser();
+        $user->roles = [$roleA, $roleB];
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertFalse($user->can('manage_a'));
+        $this->assertFalse($user->can('manage_a', 'ResourceA'));
+        $this->assertTrue($user->can('manage_a', 'ResourceA', 1));
+        $this->assertFalse($user->can('manage_a', 'ResourceA', 2));
+        $this->assertFalse($user->can('manage_b'));
+        $this->assertTrue($user->can('manage_b', 'ResourceB'));
+        $this->assertTrue($user->can('manage_b', 'ResourceB', 1));
+        $this->assertFalse($user->can('manage_c'));
+        $this->assertTrue($user->can('manage_c', 'ResourceB'));
+        $this->assertTrue($user->can('manage_c', 'ResourceB', 1));
+        $this->assertFalse($user->can('manage_d'));
+    }
+
     public function testCanShouldSupportDeprecatedPermissions()
     {
         /*
@@ -115,10 +225,10 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
 
         $roleA->permissions = 'manage_a';
         $roleB->permissions = ['manage_b', 'manage_c'];
-        
+
         $user = new HasRoleUser();
         $user->roles = [$roleA, $roleB];
-        
+
         /*
         |------------------------------------------------------------
         | Assertion
@@ -127,7 +237,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($user->can('manage_b'));
         $this->assertTrue($user->can('manage_c'));
         $this->assertFalse($user->can('manage_d'));
-        
+
         // Non-array permissions attribute is ignored.
         $this->assertFalse($user->can('manage_a'));
     }
@@ -148,20 +258,20 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $userRoleNameB = 'UserRoleB';
         $nonUserRoleNameA = 'NonUserRoleA';
         $nonUserRoleNameB = 'NonUserRoleB';
-        
+
         $permA = $this->mockPermission($userPermNameA);
         $permB = $this->mockPermission($userPermNameB);
         $permC = $this->mockPermission($userPermNameC);
-        
+
         $roleA = $this->mockRole($userRoleNameA);
         $roleB = $this->mockRole($userRoleNameB);
-        
+
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
-        
+
         /*
         |------------------------------------------------------------
         | Expectation
@@ -185,7 +295,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        // Case: User has everything. 
+        // Case: User has everything.
         $this->assertTrue(
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
@@ -199,7 +309,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                 ['validate_all' => true]
             )
         );
-            
+
         // Case: User lacks a role.
         $this->assertTrue(
             $user->ability(
@@ -214,7 +324,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                 ['validate_all' => true]
             )
         );
-        
+
         // Case: User lacks a permission.
         $this->assertTrue(
             $user->ability(
@@ -229,7 +339,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                 ['validate_all' => true]
             )
         );
-        
+
         // Case: User lacks everything.
         $this->assertFalse(
             $user->ability(
@@ -245,7 +355,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             )
         );
     }
-    
+
     public function testAbilityShouldReturnArray()
     {
         /*
@@ -262,20 +372,20 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $userRoleNameB = 'UserRoleB';
         $nonUserRoleNameA = 'NonUserRoleA';
         $nonUserRoleNameB = 'NonUserRoleB';
-        
+
         $permA = $this->mockPermission($userPermNameA);
         $permB = $this->mockPermission($userPermNameB);
         $permC = $this->mockPermission($userPermNameC);
-        
+
         $roleA = $this->mockRole($userRoleNameA);
         $roleB = $this->mockRole($userRoleNameB);
-        
+
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
-        
+
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
-        
+
         /*
         |------------------------------------------------------------
         | Expectation
@@ -293,18 +403,18 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $user->shouldReceive('can')
             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB))
             ->andReturn(false);
-        
+
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        // Case: User has everything. 
+        // Case: User has everything.
         $this->assertSame(
             [
                 'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
                 'permissions' => [$userPermNameA => true, $userPermNameB => true]
-            ], 
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
@@ -315,7 +425,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             [
                 'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
                 'permissions' => [$userPermNameA => true, $userPermNameB => true]
-            ], 
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
@@ -329,7 +439,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             [
                 'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
                 'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
@@ -340,7 +450,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             [
                 'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
                 'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
@@ -354,7 +464,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             [
                 'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
                 'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
-            ], 
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$nonUserPermNameA, $userPermNameB],
@@ -365,7 +475,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             [
                 'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
                 'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
-            ], 
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$nonUserPermNameA, $userPermNameB],
@@ -379,7 +489,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             [
                 'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
                 'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $nonUserRoleNameB],
                 [$nonUserPermNameA, $nonUserPermNameB],
@@ -390,7 +500,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             [
                 'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
                 'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $nonUserRoleNameB],
                 [$nonUserPermNameA, $nonUserPermNameB],
@@ -398,7 +508,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             )
         );
     }
-    
+
     public function testAbilityShouldReturnBoth()
     {
         /*
@@ -415,14 +525,14 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $userRoleNameB = 'UserRoleB';
         $nonUserRoleNameA = 'NonUserRoleA';
         $nonUserRoleNameB = 'NonUserRoleB';
-        
+
         $permA = $this->mockPermission($userPermNameA);
         $permB = $this->mockPermission($userPermNameB);
         $permC = $this->mockPermission($userPermNameC);
-        
+
         $roleA = $this->mockRole($userRoleNameA);
         $roleB = $this->mockRole($userRoleNameB);
-        
+
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
@@ -452,7 +562,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        // Case: User has everything. 
+        // Case: User has everything.
         $this->assertSame(
             [
                 true,
@@ -460,7 +570,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                     'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
                     'permissions' => [$userPermNameA => true, $userPermNameB => true]
                 ]
-            ], 
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
@@ -491,7 +601,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                     'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
                     'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
                 ]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
@@ -505,7 +615,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                     'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
                     'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
                 ]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $userRoleNameB],
                 [$userPermNameA, $userPermNameB],
@@ -522,7 +632,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                     'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
                     'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
                 ]
-            ], 
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$nonUserPermNameA, $userPermNameB],
@@ -536,7 +646,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                     'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
                     'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
                 ]
-            ], 
+            ],
             $user->ability(
                 [$userRoleNameA, $userRoleNameB],
                 [$nonUserPermNameA, $userPermNameB],
@@ -553,7 +663,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                     'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
                     'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
                 ]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $nonUserRoleNameB],
                 [$nonUserPermNameA, $nonUserPermNameB],
@@ -567,7 +677,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
                     'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
                     'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
                 ]
-            ], 
+            ],
             $user->ability(
                 [$nonUserRoleNameA, $nonUserRoleNameB],
                 [$nonUserPermNameA, $nonUserPermNameB],
@@ -575,7 +685,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             )
         );
     }
-    
+
     public function testAbilityShouldAcceptStrings()
     {
         /*
@@ -589,13 +699,13 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
 
         $roleA = $this->mockRole('UserRoleA');
         $roleB = $this->mockRole('UserRoleB');
-        
+
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
-        
+
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
-        
+
         /*
         |------------------------------------------------------------
         | Expectation
@@ -632,7 +742,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             )
         );
     }
-    
+
     public function testAbilityDefaultOptions()
     {
         /*
@@ -649,14 +759,14 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $userRoleNameB = 'UserRoleB';
         $nonUserRoleNameA = 'NonUserRoleA';
         $nonUserRoleNameB = 'NonUserRoleB';
-        
+
         $permA = $this->mockPermission($userPermNameA);
         $permB = $this->mockPermission($userPermNameB);
         $permC = $this->mockPermission($userPermNameC);
-        
+
         $roleA = $this->mockRole($userRoleNameA);
         $roleB = $this->mockRole($userRoleNameB);
-        
+
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
@@ -741,7 +851,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             )
         );
     }
-    
+
     public function testAbilityShouldThrowInvalidArgumentException()
     {
         /*
@@ -764,16 +874,16 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
             array $options
         ) {
             $isExceptionThrown = false;
-            
+
             try {
                 $user->ability($roles, $perms, $options);
             } catch (InvalidArgumentException $e) {
                 $isExceptionThrown = true;
             }
-            
+
             return $isExceptionThrown;
         }
-        
+
         /*
         |------------------------------------------------------------
         | Expectation
@@ -794,7 +904,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'both']));
         $this->assertTrue(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'potato']));
     }
-    
+
     public function testAttachRole()
     {
         /*
@@ -804,7 +914,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         */
         $roleObject = m::mock('Role');
         $roleArray = ['id' => 2];
-        
+
         $user = m::mock('HasRoleUser')->makePartial();
 
         /*
@@ -818,13 +928,13 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $user->shouldReceive('roles')
             ->andReturn($user);
         $user->shouldReceive('attach')
-            ->with(1)
+            ->with(1, array( 'model_name' => null, 'model_id' => null ))
             ->once()->ordered();
         $user->shouldReceive('attach')
-            ->with(2)
+            ->with(2, array( 'model_name' => null, 'model_id' => null ))
             ->once()->ordered();
         $user->shouldReceive('attach')
-            ->with(3)
+            ->with(3, array( 'model_name' => null, 'model_id' => null ))
             ->once()->ordered();
 
         /*
@@ -834,9 +944,9 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         */
         $user->attachRole($roleObject);
         $user->attachRole($roleArray);
-        $user->attachRole(3);   
+        $user->attachRole(3);
     }
-    
+
     public function testDetachRole()
     {
         /*
@@ -846,7 +956,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         */
         $roleObject = m::mock('Role');
         $roleArray = ['id' => 2];
-        
+
         $user = m::mock('HasRoleUser')->makePartial();
 
         /*
@@ -859,16 +969,26 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
 
         $user->shouldReceive('roles')
             ->andReturn($user);
-        $user->shouldReceive('detach')
+        $user->shouldReceive('where')
+            ->with('model_name', '=', null)
+            ->andReturn($user)
+            ->times(3);
+        $user->shouldReceive('where')
+            ->with('model_id', '=', null)
+            ->andReturn($user)
+            ->times(3);
+        $user->shouldReceive('newPivotStatementForId')
             ->with(1)
+            ->andReturn($user)
             ->once()->ordered();
-        $user->shouldReceive('detach')
+        $user->shouldReceive('newPivotStatementForId')
             ->with(2)
+            ->andReturn($user)
             ->once()->ordered();
-        $user->shouldReceive('detach')
+        $user->shouldReceive('newPivotStatementForId')
             ->with(3)
+            ->andReturn($user)
             ->once()->ordered();
-
 
         /*
         |------------------------------------------------------------
@@ -877,9 +997,9 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         */
         $user->detachRole($roleObject);
         $user->detachRole($roleArray);
-        $user->detachRole(3);       
+        $user->detachRole(3);
     }
-    
+
     public function testAttachRoles()
     {
         /*
@@ -887,21 +1007,21 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('HasRoleUser')->makePartial();   
-        
+        $user = m::mock('HasRoleUser')->makePartial();
+
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
         $user->shouldReceive('attachRole')
-            ->with(1)
+            ->with(1, null, null)
             ->once()->ordered();
         $user->shouldReceive('attachRole')
-            ->with(2)
+            ->with(2, null, null)
             ->once()->ordered();
         $user->shouldReceive('attachRole')
-            ->with(3)
+            ->with(3, null, null)
             ->once()->ordered();
 
         /*
@@ -911,7 +1031,7 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         */
         $user->attachRoles([1, 2, 3]);
     }
-    
+
     public function testDetachRoles()
     {
         /*
@@ -919,21 +1039,21 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('HasRoleUser')->makePartial();   
-        
+        $user = m::mock('HasRoleUser')->makePartial();
+
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
         $user->shouldReceive('detachRole')
-            ->with(1)
+            ->with(1, null, null)
             ->once()->ordered();
         $user->shouldReceive('detachRole')
-            ->with(2)
+            ->with(2, null, null)
             ->once()->ordered();
         $user->shouldReceive('detachRole')
-            ->with(3)
+            ->with(3, null, null)
             ->once()->ordered();
 
         /*
@@ -941,9 +1061,9 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->detachRoles([1, 2, 3]);    
+        $user->detachRoles([1, 2, 3]);
     }
-    
+
     protected function mockPermission($permName)
     {
         $permMock = m::mock('Permission');
@@ -952,13 +1072,17 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
 
         return $permMock;
     }
-    
-    protected function mockRole($roleName)
+
+    protected function mockRole($roleName, $modelName=null, $modelId=null)
     {
         $roleMock = m::mock('Role');
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];
+        $pivot = new stdClass();
+        $pivot->model_name = $modelName;
+        $pivot->model_id = $modelId;
+        $roleMock->pivot = $pivot;
 
         return $roleMock;
     }
@@ -967,11 +1091,40 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
 class HasRoleUser
 {
     use HasRole;
-    
+
     public $roles;
-    
+
     public function belongsToMany($role, $assignedRolesTable)
     {
-    
+      return new BelongsToMany();
     }
+
+    public function newPivotStatementForId() { return $this; }
+
+    public function where($field, $operator, $value) { return $this; }
+
+    public function delete() {}
+
+    public function attach() {}
+
+
+}
+
+class BelongsToMany
+{
+  public function withPivot($key=null, $key=null) {
+    return $this;
+  }
+
+  public function newPivotStatementForId() { return $this; }
+
+  public function where($field, $operator, $value) { return $this; }
+
+  public function delete() {}
+
+  public function attach() {}
+
+  public function withTimestamps() {
+    return $this;
+  }
 }
