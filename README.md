@@ -348,6 +348,11 @@ So you can use it like:
 
 ```php
 Entrust::routeNeedsRole('admin/advanced*', 'owner', Redirect::to('/home'));
+
+// You may use a closure for the result parameter which will only be executed when access is denied.
+Entrust::routeNeedsRole('admin/advanced*', 'owner', function () {
+    Redirect::to('/home')->withErrors('Access Denied');
+});
 ```
 
 Furthermore both of these methods accept a fourth parameter.

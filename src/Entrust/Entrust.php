@@ -93,6 +93,10 @@ class Entrust
             $hasRole = $this->hasRole($roles, $requireAll);
 
             if (!$hasRole) {
+                // if result is a closure, then call it and use the returned value
+                if (!empty($result) && !is_string($result) && is_callable($result)) {
+                    $result = $result();
+                }
                 return empty($result) ? $this->app->abort(403) : $result;
             }
         };
@@ -127,6 +131,10 @@ class Entrust
             $hasPerm = $this->can($permissions, $requireAll);
 
             if (!$hasPerm) {
+                // if result is a closure, then call it and use the returned value
+                if (!empty($result) && !is_string($result) && is_callable($result)) {
+                    $result = $result();
+                }
                 return empty($result) ? $this->app->abort(403) : $result;
             }
         };
@@ -170,6 +178,10 @@ class Entrust
             }
 
             if (!$hasRolePerm) {
+                // if result is a closure, then call it and use the returned value
+                if (!empty($result) && !is_string($result) && is_callable($result)) {
+                    $result = $result();
+                }
                 return empty($result) ? $this->app->abort(403) : $result;
             }
         };
