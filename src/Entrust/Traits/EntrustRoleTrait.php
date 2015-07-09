@@ -62,15 +62,15 @@ trait EntrustRoleTrait
      *
      * @return bool
      */
-    public function hasPerm($name, $requireAll = false)
+    public function hasPermission($name, $requireAll = false)
     {
         if (is_array($name)) {
-            foreach ($name as $permName) {
-                $hasPerm = $this->hasPerm($permName);
+            foreach ($name as $permissionName) {
+                $hasPermission = $this->hasPermission($permissionName);
 
-                if ($hasPerm && !$requireAll) {
+                if ($hasPermission && !$requireAll) {
                     return true;
-                } elseif (!$hasPerm && $requireAll) {
+                } elseif (!$hasPermission && $requireAll) {
                     return false;
                 }
             }
@@ -80,8 +80,8 @@ trait EntrustRoleTrait
             // Return the value of $requireAll;
             return $requireAll;
         } else {
-            foreach ($this->perms as $perm) {
-                if ($perm->name == $name) {
+            foreach ($this->perms as $permission) {
+                if ($permission->name == $name) {
                     return true;
                 }
             }
