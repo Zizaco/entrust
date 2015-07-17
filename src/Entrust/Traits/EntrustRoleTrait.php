@@ -18,8 +18,9 @@ trait EntrustRoleTrait
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users()
-    {        
-		return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust::assigned_roles_table'),'role_id','user_id');
+    {
+        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust.role_user_table'),'role_id','user_id');
+       // return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust.role_user_table'));
     }
 
     /**
