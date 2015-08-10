@@ -1,4 +1,4 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Zizaco\Entrust\Middleware;
 
 /**
  * This file is part of Entrust,
@@ -8,14 +8,16 @@
  * @package Zizaco\Entrust
  */
 
+use Closure;
+
  class EntrustRole
  {
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
-     * @param null $roles
+     * @param  Closure $next
+     * @param  $roles
      * @return mixed
      */
     public function handle($request, Closure $next, $roles)
