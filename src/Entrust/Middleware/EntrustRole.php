@@ -10,22 +10,22 @@
 
 use Closure;
 
- class EntrustRole
- {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  Closure $next
-     * @param  $roles
-     * @return mixed
-     */
-    public function handle($request, Closure $next, $roles)
-    {
-        if (! $request->user()->hasRole(explode('|', $roles))) {
-            abort(403);
-        }
+class EntrustRole
+{
+	/**
+	 * Handle an incoming request.
+	 *
+	 * @param  \Illuminate\Http\Request $request
+	 * @param  Closure $next
+	 * @param  $roles
+	 * @return mixed
+	 */
+	public function handle($request, Closure $next, $roles)
+	{
+		if (! $request->user()->hasRole(explode('|', $roles))) {
+			abort(403);
+		}
 
-        return $next($request);
-    }
+		return $next($request);
+	}
 }

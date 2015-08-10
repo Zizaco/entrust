@@ -10,22 +10,22 @@
 
 use Closure;
 
- class EntrustPermission
- {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  Closure $next
-     * @param  $permissions
-     * @return mixed
-     */
-    public function handle($request, Closure $next, $permissions)
-    {
-        if (! $request->user()->can(explode('|', $permissions))) {
-            abort(403);
-        }
+class EntrustPermission
+{
+	/**
+	 * Handle an incoming request.
+	 *
+	 * @param  \Illuminate\Http\Request $request
+	 * @param  Closure $next
+	 * @param  $permissions
+	 * @return mixed
+	 */
+	public function handle($request, Closure $next, $permissions)
+	{
+		if (! $request->user()->can(explode('|', $permissions))) {\
+			abort(403);
+		}
 
-        return $next($request);
-    }
+		return $next($request);
+	}
 }
