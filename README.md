@@ -27,6 +27,7 @@ contains the latest entrust version for Laravel 4.
     - [Concepts](#concepts)
         - [Checking for Roles & Permissions](#checking-for-roles--permissions)
         - [User ability](#user-ability)
+    - [Middleware](#middleware)
     - [Short syntax route filter](#short-syntax-route-filter)
     - [Route filter](#route-filter)
 - [Troubleshooting](#troubleshooting)
@@ -36,21 +37,29 @@ contains the latest entrust version for Laravel 4.
 
 ## Installation
 
-In order to install Laravel 5 Entrust, just add 
+In order to install Laravel 5 Entrust, just add
 
     "zizaco/entrust": "dev-laravel-5"
 
 to your composer.json. Then run `composer install` or `composer update`.
 
-Then in your `config/app.php` add 
+Then in your `config/app.php` add
 ```php
     'Zizaco\Entrust\EntrustServiceProvider'
-```    
+```
 in the `providers` array and
 ```php
     'Entrust' => 'Zizaco\Entrust\EntrustFacade'
 ```
 to the `aliases` array.
+
+If you are going to use [Middleware](#middleware) you also need to add
+```php
+    'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
+    'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
+    'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
+```
+to `routeMiddleware` array in `app/Http/Kernel.php`.
 
 ## Configuration
 
@@ -325,6 +334,31 @@ var_dump($allValidations);
 // }
 ```
 
+### Middleware
+
+You can use a middleware to filter routes and route groups by permission or role
+```php
+Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
+    Route::get('/', 'AdminController@welcome');
+    Route::get('/manage', ['middleware' => ['permission:manage-admins'], 'uses' => 'AdminController@manageAdmins']);
+});
+```
+
+It is possible to use pipe symbol as *OR* operator:
+```php
+'middleware' => ['role:admin|root']
+```
+
+To emulate *AND* functionality just use multiple instances of middleware
+```php
+'middleware' => ['permission:owner', 'permission:writer']
+```
+
+For more complex situations use `ability` middleware which accepts 3 parameters: roles, permissions, validate_all
+```php
+'middleware' => ['ability:admin|owner,create-post|edit-user,true']
+```
+
 ### Short syntax route filter
 
 To filter a route by permission or role you can call the following in your `app/Http/routes.php`:
@@ -425,7 +459,7 @@ When trying to use the EntrustUserTrait methods, you encounter the error which l
 
     Class name must be a valid object or a string
 
-then probably you don't have published Entrust assets or something went wrong when you did it. 
+then probably you don't have published Entrust assets or something went wrong when you did it.
 First of all check that you have the `entrust.php` file in your `app/config` directory.
 If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/zizaco/entrust/src/config/config.php` file in your config directory and rename it `entrust.php`.
 
