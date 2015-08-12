@@ -325,7 +325,7 @@ var_dump($allValidations);
 // }
 
 ```
-The `Entrust` class has shortcuts to `ability()` for the currently logged in user:
+The `Entrust` class has a shortcut to `ability()` for the currently logged in user:
 
 ```php
 Entrust::ability('admin,owner', 'create-post,edit-user');
