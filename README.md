@@ -323,6 +323,16 @@ var_dump($allValidations);
 //     ['create-post'] => bool(true)
 //     ['edit-user'] => bool(false)
 // }
+
+```
+The `Entrust` class has shortcuts to `ability()` for the currently logged in user:
+
+```php
+Entrust::ability('admin,owner', 'create-post,edit-user');
+
+// is identical to
+
+Auth::user()->ability('admin,owner', 'create-post,edit-user');
 ```
 
 ### Short syntax route filter
