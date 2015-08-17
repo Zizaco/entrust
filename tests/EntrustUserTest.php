@@ -116,6 +116,40 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->can(['manage_d', 'manage_e']));
     }
 
+
+    public function testCanWithPlaceholderSupport ()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permA = $this->mockPermission('admin.posts');
+        $permB = $this->mockPermission('admin.pages');
+        $permC = $this->mockPermission('admin.users');
+
+        $role = $this->mockRole('Role');
+
+        $role->perms = [$permA, $permB, $permC];
+
+        $user = new HasRoleUser();
+        $user->roles = [$role];
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->can('admin.posts'));
+        $this->assertTrue($user->can('admin.pages'));
+        $this->assertTrue($user->can('admin.users'));
+        $this->assertFalse($user->can('admin.config'));
+
+        $this->assertTrue($user->can(['admin.*']));
+        $this->assertFalse($user->can(['site.*']));
+    }
+    
+    
     public function testAbilityShouldReturnBoolean()
     {
         /*
