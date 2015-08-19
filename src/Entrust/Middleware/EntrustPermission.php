@@ -9,9 +9,22 @@
  */
 
 use Closure;
+use Illuminate\Contracts\Auth\Guard;
 
 class EntrustPermission
 {
+	protected $auth;
+
+	/**
+	 * Creates a new instance of the middleware.
+	 *
+	 * @param Guard $auth
+	 */
+	public function __construct(Guard $auth)
+	{
+		$this->auth = $auth;
+	}
+
 	/**
 	 * Handle an incoming request.
 	 *
@@ -22,7 +35,7 @@ class EntrustPermission
 	 */
 	public function handle($request, Closure $next, $permissions)
 	{
-		if (! $request->user()->can(explode('|', $permissions))) {\
+		if ($this->auth->guest() || !$request->user()->can(explode('|', $permissions))) {\
 			abort(403);
 		}
 

@@ -9,9 +9,22 @@
  */
 
 use Closure;
+use Illuminate\Contracts\Auth\Guard;
 
 class EntrustRole
 {
+	protected $auth;
+
+	/**
+	 * Creates a new instance of the middleware.
+	 *
+	 * @param Guard $auth
+	 */
+	public function __construct(Guard $auth)
+	{
+		$this->auth = $auth;
+	}
+
 	/**
 	 * Handle an incoming request.
 	 *
@@ -22,7 +35,7 @@ class EntrustRole
 	 */
 	public function handle($request, Closure $next, $roles)
 	{
-		if (! $request->user()->hasRole(explode('|', $roles))) {
+		if ($this->auth->guest() || !$request->user()->hasRole(explode('|', $roles))) {
 			abort(403);
 		}
 
