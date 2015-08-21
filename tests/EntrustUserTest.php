@@ -928,6 +928,43 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $user->detachRoles([1, 2, 3]);
     }
 
+    public function testDetachAllRoles()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = $this->mockRole('RoleA');
+        $roleB = $this->mockRole('RoleB');
+
+        $user = m::mock('HasRoleUser')->makePartial();
+        $user->roles = [$roleA, $roleB];
+
+        $relationship = m::mock('BelongsToMany');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $relationship->shouldReceive('get')
+                     ->andReturn($user->roles)->once();
+
+        $user->shouldReceive('belongsToMany')
+                    ->andReturn($relationship)->once();
+
+        $user->shouldReceive('detachRole')->twice();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $user->detachRoles();
+
+    }
+
     protected function mockPermission($permName)
     {
         $permMock = m::mock('Permission');
