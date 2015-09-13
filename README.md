@@ -267,6 +267,17 @@ Auth::user()->hasRole('role-name');
 Auth::user()->can('permission-name);
 ```
 
+You can also use placeholders (wildcards) to check any matching permission by doing:
+
+```php
+// match any admin permission
+$user->can("admin.*"); // true
+
+// match any permission about users
+$user->can("*_users"); // true
+```
+
+
 #### User ability
 
 More advanced checking can be done using the awesome `ability` function.
