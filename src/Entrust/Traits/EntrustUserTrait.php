@@ -87,7 +87,7 @@ trait EntrustUserTrait
      *
      * @return bool
      */
-    public function can2($permission, $requireAll = false)
+    public function can($permission, $requireAll = false)
     {
         if (is_array($permission)) {
             foreach ($permission as $permName) {
