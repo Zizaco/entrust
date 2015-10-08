@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/MiddlewareTest.php';
-
 use Zizaco\Entrust\Middleware\EntrustPermission;
 use Mockery as m;
 
