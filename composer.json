@@ -34,7 +34,8 @@
     },
     "autoload": {
         "classmap": [
-            "src/commands"
+            "src/commands",
+            "tests/Middleware/MiddlewareTest.php"
         ],
         "psr-4": {
             "Zizaco\\Entrust\\": "src/Entrust/"
