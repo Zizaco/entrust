@@ -27,6 +27,7 @@ contains the latest entrust version for Laravel 4.
     - [Concepts](#concepts)
         - [Checking for Roles & Permissions](#checking-for-roles--permissions)
         - [User ability](#user-ability)
+    - [Blade templates](#blade-templates)
     - [Middleware](#middleware)
     - [Short syntax route filter](#short-syntax-route-filter)
     - [Route filter](#route-filter)
@@ -353,6 +354,24 @@ Entrust::ability('admin,owner', 'create-post,edit-user');
 // is identical to
 
 Auth::user()->ability('admin,owner', 'create-post,edit-user');
+```
+
+### Blade templates
+
+Three directives are available for use within your Blade templates. What you give as the directive arguments will be directly passed to the corresponding `Entrust` function.
+
+```php
+@role('admin')
+    <p>This is visible to users with the admin role. Gets translated to \Entrust::role('admin')</p>
+@endrole
+
+@permission('manage-admins')
+    <p>This is visible to users with the given permissions. Gets translated to \Entrust::can('manage-admins'). The @can directive is already taken by core laravel authorization package, hence the @permission directive instead.</p>
+@endpermission
+
+@ability('admin,owner', 'create-post,edit-user')
+    <p>This is visible to users with the given abilities. Gets translated to \Entrust::ability('admin,owner', 'create-post,edit-user')</p>
+@endability
 ```
 
 ### Middleware
