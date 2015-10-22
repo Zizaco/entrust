@@ -141,9 +141,9 @@ trait EntrustUserTrait
 
         // Set up default values and validate options.
         if (!isset($options['validate_all'])) {
-            $options['validate_all'] = false;
+            $options['validate_all'] = 'false';
         } else {
-            if ($options['validate_all'] !== true && $options['validate_all'] !== false) {
+            if ($options['validate_all'] !== 'true' && $options['validate_all'] !== 'false') {
                 throw new InvalidArgumentException();
             }
         }
