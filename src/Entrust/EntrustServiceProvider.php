@@ -33,6 +33,7 @@ class EntrustServiceProvider extends ServiceProvider
 
         // Register commands
         $this->commands('command.entrust.migration');
+        $this->commands('command.entrust.classes');
     }
 
     /**
@@ -73,6 +74,9 @@ class EntrustServiceProvider extends ServiceProvider
         $this->app->singleton('command.entrust.migration', function ($app) {
             return new MigrationCommand();
         });
+        $this->app->bindShared('command.entrust.classes', function ($app) {
+            return new ClassCreatorCommand();
+        });
     }
 
     /**
@@ -95,7 +99,8 @@ class EntrustServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'command.entrust.migration'
+            'command.entrust.migration',
+            'command.entrust.classes'
         ];
     }
 }
