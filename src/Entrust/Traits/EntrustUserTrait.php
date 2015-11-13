@@ -13,6 +13,13 @@ use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
+
+    /**
+     * Store permission set for one request.
+     * @var
+     */
+    protected $permissionSet;
+
     /**
      * Many-to-Many relations with Role.
      *
@@ -34,7 +41,7 @@ trait EntrustUserTrait
     {
         parent::boot();
 
-        static::deleting(function($user) {
+        static::deleting(function ($user) {
             if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
                 $user->roles()->sync([]);
             }
@@ -46,8 +53,8 @@ trait EntrustUserTrait
     /**
      * Checks if the user has a role by its name.
      *
-     * @param string|array $name       Role name or array of role names.
-     * @param bool         $requireAll All roles in the array are required.
+     * @param string|array $name Role name or array of role names.
+     * @param bool $requireAll All roles in the array are required.
      *
      * @return bool
      */
@@ -83,7 +90,7 @@ trait EntrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param bool         $requireAll All permissions in the array are required.
+     * @param bool $requireAll All permissions in the array are required.
      *
      * @return bool
      */
@@ -105,7 +112,7 @@ trait EntrustUserTrait
             // Return the value of $requireAll;
             return $requireAll;
         } else {
-            foreach ($this->roles as $role) {
+            foreach ($this->getPermissionSet() as $role) {
                 // Validate against the Permission table
                 foreach ($role->perms as $perm) {
                     if (str_is( $permission, $perm->name) ) {
@@ -118,12 +125,29 @@ trait EntrustUserTrait
         return false;
     }
 
+
+    /**
+     * Retrive the user role(s) and permission(s).
+     * @return mixed
+     */
+    public function getPermissionSet()
+    {
+        // If we already get the permission set we will return that back
+        // or else we will get permission set from Database.
+        if (!is_null($this->permissionSet)) {
+            return $this->permissionSet;
+        }
+
+        // getting the permissionSet roles and permission by eager loading.
+        return $this->permissionSet = $this->roles()->with('perms')->get();
+    }
+
     /**
      * Checks role(s) and permission(s).
      *
-     * @param string|array $roles       Array of roles or comma separated string
+     * @param string|array $roles Array of roles or comma separated string
      * @param string|array $permissions Array of permissions or comma separated string.
-     * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
+     * @param array $options validate_all (true|false) or return_type (boolean|array|both)
      *
      * @throws \InvalidArgumentException
      *
@@ -152,7 +176,8 @@ trait EntrustUserTrait
         } else {
             if ($options['return_type'] != 'boolean' &&
                 $options['return_type'] != 'array' &&
-                $options['return_type'] != 'both') {
+                $options['return_type'] != 'both'
+            ) {
                 throw new InvalidArgumentException();
             }
         }
@@ -170,8 +195,9 @@ trait EntrustUserTrait
         // If validate all and there is a false in either
         // Check that if validate all, then there should not be any false.
         // Check that if not validate all, there must be at least one true.
-        if(($options['validate_all'] && !(in_array(false,$checkedRoles) || in_array(false,$checkedPermissions))) ||
-            (!$options['validate_all'] && (in_array(true,$checkedRoles) || in_array(true,$checkedPermissions)))) {
+        if (($options['validate_all'] && !(in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) ||
+            (!$options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))
+        ) {
             $validateAll = true;
         } else {
             $validateAll = false;
@@ -195,11 +221,11 @@ trait EntrustUserTrait
      */
     public function attachRole($role)
     {
-        if(is_object($role)) {
+        if (is_object($role)) {
             $role = $role->getKey();
         }
 
-        if(is_array($role)) {
+        if (is_array($role)) {
             $role = $role['id'];
         }
 
