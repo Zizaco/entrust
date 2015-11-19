@@ -8,11 +8,37 @@
  * @package Zizaco\Entrust
  */
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
+    //Big block of caching functionality.
+    public function cachedRoles()
+    {
+        $userPrimaryKey = $this->primaryKey;
+        $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
+        return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+            return $this->roles()->get();
+        });
+    }
+    public function save(array $options = [])
+    {   //both inserts and updates
+        parent::save($options);
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+    }
+    public function delete(array $options = [])
+    {   //soft or hard
+        parent::delete($options);
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+    }
+    public function restore()
+    {   //soft delete undo's
+        parent::restore();
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+    }
+    
     /**
      * Many-to-Many relations with Role.
      *
@@ -69,7 +95,7 @@ trait EntrustUserTrait
             // Return the value of $requireAll;
             return $requireAll;
         } else {
-            foreach ($this->roles as $role) {
+            foreach ($this->cachedRoles() as $role) {
                 if ($role->name == $name) {
                     return true;
                 }
@@ -105,9 +131,9 @@ trait EntrustUserTrait
             // Return the value of $requireAll;
             return $requireAll;
         } else {
-            foreach ($this->roles as $role) {
+            foreach ($this->cachedRoles() as $role) {
                 // Validate against the Permission table
-                foreach ($role->perms as $perm) {
+                foreach ($role->cachedPermissions() as $perm) {
                     if (str_is( $permission, $perm->name) ) {
                         return true;
                     }
