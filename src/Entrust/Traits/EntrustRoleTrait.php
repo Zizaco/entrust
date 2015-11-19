@@ -8,10 +8,36 @@
  * @package Zizaco\Entrust
  */
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
 trait EntrustRoleTrait
 {
+    //Big block of caching functionality.
+    public function cachedPermissions()
+    {
+        $rolePrimaryKey = $this->primaryKey;
+        $cacheKey = 'entrust_permissions_for_role_'.$this->$rolePrimaryKey;
+        return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+            return $this->perms()->get();
+        });
+    }
+    public function save(array $options = [])
+    {   //both inserts and updates
+        parent::save($options);
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+    }
+    public function delete(array $options = [])
+    {   //soft or hard
+        parent::delete($options);
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+    }
+    public function restore()
+    {   //soft delete undo's
+        parent::restore();
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+    }
+    
     /**
      * Many-to-Many relations with the user model.
      *
@@ -81,7 +107,7 @@ trait EntrustRoleTrait
             // Return the value of $requireAll;
             return $requireAll;
         } else {
-            foreach ($this->perms as $permission) {
+            foreach ($this->cachedPermissions() as $permission) {
                 if ($permission->name == $name) {
                     return true;
                 }
