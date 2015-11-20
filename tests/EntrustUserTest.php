@@ -3,10 +3,31 @@
 use Zizaco\Entrust\Contracts\EntrustUserInterface;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
+use Zizaco\Entrust\Permission;
+use Zizaco\Entrust\Role;
 use Mockery as m;
 
 class EntrustUserTest extends PHPUnit_Framework_TestCase
 {
+    private $facadeMocks = array();
+    
+    public function setUp()
+    {
+        parent::setUp();
+        
+        $app = m::mock('app')->shouldReceive('instance')->getMock();
+        
+        $this->facadeMocks['config'] = m::mock('config');
+        $this->facadeMocks['cache'] = m::mock('cache');
+        
+        Config::setFacadeApplication($app);
+        Config::swap($this->facadeMocks['config']);
+        
+        Cache::setFacadeApplication($app);
+        Cache::swap($this->facadeMocks['cache']);
+    }
+    
     public function tearDown()
     {
         m::close();
@@ -21,11 +42,6 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         */
         $belongsToMany = new stdClass();
         $user = m::mock('HasRoleUser')->makePartial();
-
-        $app = m::mock('app')->shouldReceive('instance')->getMock();
-        $config = m::mock('config');
-        Config::setFacadeApplication($app);
-        Config::swap($config);
 
         /*
         |------------------------------------------------------------
@@ -69,6 +85,15 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         /*
         |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(9)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(9)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(9)->andReturn($user->roles);
+
+        /*
+        |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
@@ -104,6 +129,17 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         /*
         |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $roleA->shouldReceive('cachedPermissions')->times(11)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(7)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(11)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(11)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(11)->andReturn($user->roles);
+
+        /*
+        |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
@@ -136,6 +172,16 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = new HasRoleUser();
         $user->roles = [$role];
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(6)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(6)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(6)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
@@ -181,12 +227,20 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
+        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(32)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
+        
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
             ->andReturn(true);
@@ -295,12 +349,21 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
+
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
+        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(32)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
+        
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
             ->andReturn(true);
@@ -448,12 +511,20 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
+        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(32)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
+        
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
             ->andReturn(true);
@@ -615,12 +686,20 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
+        $roleA->shouldReceive('cachedPermissions')->times(4)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(2)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(8)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(8)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(8)->andReturn($user->roles);
+        
         $user->shouldReceive('hasRole')
             ->with(m::anyOf('UserRoleA', 'UserRoleB'), m::anyOf(true, false))
             ->andReturn(true);
@@ -682,12 +761,20 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
+        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(32)->andReturn('role_user');
+        Config::shouldReceive('get')->with('cache.ttl')->times(32)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(32)->andReturn($user->roles);
+        
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
             ->andReturn(true);
@@ -776,6 +863,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         function isExceptionThrown(
             HasRoleUser $user,
@@ -984,6 +1073,11 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('entrust.role')->once()->andReturn('App\Role');
+        Config::shouldReceive('get')->with('entrust.role_user_table')->once()->andReturn('role_user');
+        Config::shouldReceive('get')->with('entrust.user_foreign_key')->once()->andReturn('user_id');
+        Config::shouldReceive('get')->with('entrust.role_foreign_key')->once()->andReturn('role_id');
+
         $relationship->shouldReceive('get')
                      ->andReturn($user->roles)->once();
 
@@ -1003,19 +1097,21 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
     protected function mockPermission($permName)
     {
-        $permMock = m::mock('Permission');
+        $permMock = m::mock('Zizaco\Entrust\Permission');
         $permMock->name = $permName;
         $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
+        $permMock->id = 1;
 
         return $permMock;
     }
 
     protected function mockRole($roleName)
     {
-        $roleMock = m::mock('Role');
+        $roleMock = m::mock('Zizaco\Entrust\Role');
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];
+        $roleMock->id = 1;
 
         return $roleMock;
     }
@@ -1026,6 +1122,13 @@ class HasRoleUser implements EntrustUserInterface
     use EntrustUserTrait;
 
     public $roles;
+    public $primaryKey;
+    public $id;
+    
+    public function __construct() {
+        $this->primaryKey = 'id';
+        $this->id = 4;
+    }
 
     public function belongsToMany($role, $assignedRolesTable)
     {
