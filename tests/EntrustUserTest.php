@@ -3,6 +3,8 @@
 use Zizaco\Entrust\Contracts\EntrustUserInterface;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Support\Facades\Config;
+//use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Cache;
 use Mockery as m;
 
 class EntrustUserTest extends PHPUnit_Framework_TestCase
@@ -10,6 +12,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         m::close();
+        //Facade::setFacadeApplication(null);
+        //Facade::clearResolvedInstances();
     }
 
     public function testRoles()
@@ -66,6 +70,12 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = new HasRoleUser();
         $user->roles = [$roleA, $roleB];
+        
+
+        //Cache::setFacadeApplication(['cache' => m::mock('Illuminate\Support\Facades\Cache')]);
+        $app = m::mock('app')->shouldReceive('instance')->getMock();
+        Cache::setFacadeApplication($app);
+        Cache::shouldReceive('tags->remember')->times(7)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
@@ -181,6 +191,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
@@ -295,6 +307,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
+
 
         /*
         |------------------------------------------------------------
@@ -448,6 +463,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
@@ -615,6 +632,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
@@ -682,6 +701,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         /*
         |------------------------------------------------------------
@@ -776,6 +797,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA];
+        $user->id = 4;
+        $user->primaryKey = 'id';
 
         function isExceptionThrown(
             HasRoleUser $user,
@@ -1006,6 +1029,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $permMock = m::mock('Permission');
         $permMock->name = $permName;
         $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
+        $permMock->id = 1;
 
         return $permMock;
     }
@@ -1016,6 +1040,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];
+        $roleMock->id = 1;
 
         return $roleMock;
     }
@@ -1026,6 +1051,13 @@ class HasRoleUser implements EntrustUserInterface
     use EntrustUserTrait;
 
     public $roles;
+    public $primaryKey;
+    public $id;
+    
+    public function __construct() {
+        $this->primaryKey = 'id';
+        $this->id = 4;
+    }
 
     public function belongsToMany($role, $assignedRolesTable)
     {
