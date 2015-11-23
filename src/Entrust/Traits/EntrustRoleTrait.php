@@ -131,6 +131,7 @@ trait EntrustRoleTrait
         } else {
             $this->perms()->detach();
         }
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
     }
 
     /**
@@ -151,6 +152,7 @@ trait EntrustRoleTrait
         }
 
         $this->perms()->attach($permission);
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush(); 
     }
 
     /**
@@ -169,6 +171,7 @@ trait EntrustRoleTrait
             $permission = $permission['id'];
 
         $this->perms()->detach($permission);
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush(); 
     }
 
     /**

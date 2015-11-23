@@ -230,6 +230,7 @@ trait EntrustUserTrait
         }
 
         $this->roles()->attach($role);
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
 
     /**
@@ -248,6 +249,7 @@ trait EntrustUserTrait
         }
 
         $this->roles()->detach($role);
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
 
     /**
@@ -260,6 +262,7 @@ trait EntrustUserTrait
         foreach ($roles as $role) {
             $this->attachRole($role);
         }
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
 
     /**
@@ -274,6 +277,7 @@ trait EntrustUserTrait
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
 
 }
