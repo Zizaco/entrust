@@ -15,8 +15,8 @@ class Entrust
      *
      * @var \Illuminate\Foundation\Application
      */
-    public $app;
-    private $filterName = '';
+    public  $app;
+    private $filterName;
 
     /**
      * Create a new confide instance.
@@ -65,9 +65,9 @@ class Entrust
     /**
      * Check if the current user has a role or permission by its name
      *
-     * @param array|string $roles The role(s) needed.
+     * @param array|string $roles       The role(s) needed.
      * @param array|string $permissions The permission(s) needed.
-     * @param array $options The Options.
+     * @param array $options            The Options.
      *
      * @return bool
      */
@@ -96,28 +96,16 @@ class Entrust
      * If the third parameter is null then abort with status code 403.
      * Otherwise the $result is returned.
      *
-     * @param string $route Route pattern. i.e: "admin/*"
+     * @param string $route       Route pattern. i.e: "admin/*"
      * @param array|string $roles The role(s) needed
-     * @param mixed $result i.e: Redirect::to('/')
-     * @param bool $requireAll User must have all roles
+     * @param mixed $result       i.e: Redirect::to('/')
+     * @param bool $requireAll    User must have all roles
      *
      * @return mixed
      */
-    public function routeNeedsRole($route, $roles, $result = null, $requireAll = true)
+    public function routeNeedsRole($route, $roles, $result = false, $requireAll = true)
     {
-        $this->filterName = '';
-        $this->addToFilterName($roles);
-        $this->addToFilterName(substr(md5($route), 0, 6));
-
-        $closure = function () use ($roles, $result, $requireAll) {
-            $hasRole = $this->hasRole($roles, $requireAll);
-
-            if (!$hasRole) {
-                return empty($result) ? $this->app->abort(403) : $result;
-            }
-        };
-
-        $this->applyRouteFilters($route, $closure);
+        $this->routeNeeds('hasRole', $route, $roles, $result, $requireAll);
     }
 
     /**
@@ -126,29 +114,16 @@ class Entrust
      * If the third parameter is null then abort with status code 403.
      * Otherwise the $result is returned.
      *
-     * @param string $route Route pattern. i.e: "admin/*"
+     * @param string $route             Route pattern. i.e: "admin/*"
      * @param array|string $permissions The permission(s) needed
-     * @param mixed $result i.e: Redirect::to('/')
-     * @param bool $requireAll User must have all permissions
+     * @param mixed $result             i.e: Redirect::to('/')
+     * @param bool $requireAll          User must have all permissions
      *
      * @return mixed
      */
-    public function routeNeedsPermission($route, $permissions, $result = null, $requireAll = true)
+    public function routeNeedsPermission($route, $permissions, $result = false, $requireAll = true)
     {
-        $this->filterName = '';
-        $this->addToFilterName($permissions);
-        $this->addToFilterName(substr(md5($route), 0, 6));
-
-        $closure = function () use ($permissions, $result, $requireAll) {
-
-            $hasPerm = $this->can($permissions, $requireAll);
-
-            if (!$hasPerm) {
-                return empty($result) ? $this->app->abort(403) : $result;
-            }
-        };
-
-        $this->applyRouteFilters($route, $closure);
+        $this->routeNeeds('can', $route, $permissions, $result, $requireAll);
     }
 
     /**
@@ -157,24 +132,21 @@ class Entrust
      * If the third parameter is null then abort with status code 403.
      * Otherwise the $result is returned.
      *
-     * @param string $route Route pattern. i.e: "admin/*"
-     * @param array|string $roles The role(s) needed
+     * @param string $route             Route pattern. i.e: "admin/*"
+     * @param array|string $roles       The role(s) needed
      * @param array|string $permissions The permission(s) needed
-     * @param mixed $result i.e: Redirect::to('/')
-     * @param bool $requireAll User must have all roles and permissions
+     * @param mixed $result             i.e: Redirect::to('/')
+     * @param bool $requireAll          User must have all roles and permissions
      *
      * @return void
      */
-    public function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = null, $requireAll = false)
+    public function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = false, $requireAll = false)
     {
-        $this->filterName = '';
-        $this->addToFilterName($roles);
-        $this->addToFilterName($permissions);
-        $this->addToFilterName(substr(md5($route), 0, 6));
+        $this->makeFilterNameFor([$roles, $permissions],$route);
 
         $closure = function () use ($roles, $permissions, $result, $requireAll) {
-            $hasRole = $this->hasRole($roles, $requireAll);
             $hasPerms = $this->can($permissions, $requireAll);
+            $hasRole  = $this->hasRole($roles, $requireAll);
 
             if ($requireAll) {
                 $hasRolePerm = $hasRole && $hasPerms;
@@ -183,21 +155,24 @@ class Entrust
             }
 
             if (!$hasRolePerm) {
-                return empty($result) ? $this->app->abort(403) : $result;
+                return $result?$result : $this->app->abort(403);
             }
         };
 
         $this->applyRouteFilters($route, $closure);
     }
 
+    public function routeNeedsRoleAndPermission($route, $roles, $permissions, $result = false)
+    {
+        $this->routeNeedsRoleOrPermission($route, $roles, $permissions, $result = false, true);
+    }
+
     private function addToFilterName($param)
     {
-
         if ($this->filterName) {
             $this->filterName .= '_';
         }
-
-        $this->filterName .= is_array($param) ? implode('_', $param) : $param;
+        $this->filterName .= is_array($param)?implode('_', $param) : $param;
     }
 
     /**
@@ -209,4 +184,32 @@ class Entrust
         $this->app->router->filter($this->filterName, $closure);
         $this->app->router->when($route, $this->filterName);
     }
+
+    /**
+     * @param $has string
+     * @param $route
+     * @param $need
+     * @param bool|false $result
+     * @param bool|true $requireAll
+     */
+    private function routeNeeds($has, $route, $need, $result = false, $requireAll = true)
+    {
+        $this->makeFilterNameFor([$need],$route);
+        $closure = function () use ($has, $need, $result, $requireAll) {
+            if (!$this->$has($need, $requireAll)) {
+                return $result?$result : $this->app->abort(403);
+            }
+        };
+        $this->applyRouteFilters($route, $closure);
+    }
+
+    private function makeFilterNameFor($needs,$route)
+    {
+        $this->filterName = '';
+        foreach($needs as $need){
+            $this->addToFilterName($need);
+        }
+        $this->addToFilterName(substr(md5($route), 0, 6));
+    }
+
 }
