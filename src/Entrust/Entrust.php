@@ -16,7 +16,11 @@ class Entrust
      * @var \Illuminate\Foundation\Application
      */
     public  $app;
-    private $filterName;
+    private $filterNameStr;
+    private $route;
+    private $privilegesArr;
+    private $result;
+    private $requireAll = false;
 
     /**
      * Create a new confide instance.
@@ -37,13 +41,23 @@ class Entrust
      *
      * @return bool
      */
-    public function hasRole($role, $requireAll = false)
+    public function hasRole($role)
     {
         if ($user = $this->user()) {
-            return $user->hasRole($role, $requireAll);
+            return $user->hasRole($role, $this->requireAll);
         }
 
         return false;
+    }
+
+    private function checkUserPrivileges()
+    {
+        $res = [];
+        foreach ($this->privilegesArr as $method => $value) {
+            $res[] = $this->$method($value, $this->requireAll);
+        }
+
+        return $res;
     }
 
     /**
@@ -53,10 +67,10 @@ class Entrust
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function can($permission)
     {
         if ($user = $this->user()) {
-            return $user->can($permission, $requireAll);
+            return $user->can($permission, $this->requireAll);
         }
 
         return false;
@@ -105,7 +119,13 @@ class Entrust
      */
     public function routeNeedsRole($route, $roles, $result = false, $requireAll = true)
     {
-        $this->routeNeeds('hasRole', $route, $roles, $result, $requireAll);
+        $this->privilegesArr = ['hasRole' => $roles];
+        $this->route         = $route;
+        $this->result        = $result;
+        $this->requireAll    = $requireAll;
+
+
+        $this->applyRouteFilters();
     }
 
     /**
@@ -123,7 +143,12 @@ class Entrust
      */
     public function routeNeedsPermission($route, $permissions, $result = false, $requireAll = true)
     {
-        $this->routeNeeds('can', $route, $permissions, $result, $requireAll);
+        $this->privilegesArr = ['can' => $permissions];
+        $this->route         = $route;
+        $this->result        = $result;
+        $this->requireAll    = $requireAll;
+
+        $this->applyRouteFilters();
     }
 
     /**
@@ -142,47 +167,40 @@ class Entrust
      */
     public function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = false, $requireAll = false)
     {
-        $this->makeFilterNameFor([$roles, $permissions],$route);
+        $this->privilegesArr = ['hasRole' => $roles, 'can' => $permissions];
+        $this->route         = $route;
+        $this->result        = $result;
+        $this->requireAll    = $requireAll;
 
-        $closure = function () use ($roles, $permissions, $result, $requireAll) {
-            $hasPerms = $this->can($permissions, $requireAll);
-            $hasRole  = $this->hasRole($roles, $requireAll);
-
-            if ($requireAll) {
-                $hasRolePerm = $hasRole && $hasPerms;
-            } else {
-                $hasRolePerm = $hasRole || $hasPerms;
-            }
-
-            if (!$hasRolePerm) {
-                return $result?$result : $this->app->abort(403);
-            }
-        };
-
-        $this->applyRouteFilters($route, $closure);
+        $this->applyRouteFilters();
     }
 
     public function routeNeedsRoleAndPermission($route, $roles, $permissions, $result = false)
     {
-        $this->routeNeedsRoleOrPermission($route, $roles, $permissions, $result = false, true);
+        $this->routeNeedsRoleOrPermission($route, $roles, $permissions, $result, true);
     }
 
     private function addToFilterName($param)
     {
-        if ($this->filterName) {
-            $this->filterName .= '_';
+        if ($this->filterNameStr) {
+            $this->filterNameStr .= '_';
         }
-        $this->filterName .= is_array($param)?implode('_', $param) : $param;
+        $this->filterNameStr .= is_array($param)?implode('_', $param) : $param;
     }
 
     /**
-     * @param $route
      * @param $closure
+     * @param $filterName
+     *
+     * @internal param $route
      */
-    private function applyRouteFilters($route, $closure)
+    private function applyRouteFilters()
     {
-        $this->app->router->filter($this->filterName, $closure);
-        $this->app->router->when($route, $this->filterName);
+        $filterName = $this->makeFilterName();
+        $closure    = $this->makeClosure();
+
+        $this->app->router->filter($filterName, $closure);
+        $this->app->router->when($this->route, $filterName);
     }
 
     /**
@@ -192,24 +210,47 @@ class Entrust
      * @param bool|false $result
      * @param bool|true $requireAll
      */
-    private function routeNeeds($has, $route, $need, $result = false, $requireAll = true)
+    private function makeClosure()
     {
-        $this->makeFilterNameFor([$need],$route);
-        $closure = function () use ($has, $need, $result, $requireAll) {
-            if (!$this->$has($need, $requireAll)) {
-                return $result?$result : $this->app->abort(403);
+        $closure = function () {
+            $hasPerms = $this->checkUserPrivileges();
+
+            $hasRolePerm = false;
+            if ($this->requireAll) {
+                $hasRolePerm = true;
             }
+
+            foreach ($hasPerms as $hasPerms) {
+                if ($hasPerms and !$this->requireAll) {
+                    $hasRolePerm = true;
+                    break;
+                }
+                if (!$hasPerms and $this->requireAll) {
+                    $hasRolePerm = false;
+                    break;
+                }
+            }
+
+            if ($hasRolePerm) {
+                return null;
+            }
+            if ($this->result) {
+                return $this->result;
+            }
+            $this->app->abort(403);
         };
-        $this->applyRouteFilters($route, $closure);
+
+        return $closure;
     }
 
-    private function makeFilterNameFor($needs,$route)
+    private function makeFilterName()
     {
-        $this->filterName = '';
-        foreach($needs as $need){
+        $this->filterNameStr = '';
+        foreach ($this->privilegesArr as $need) {
             $this->addToFilterName($need);
         }
-        $this->addToFilterName(substr(md5($route), 0, 6));
-    }
+        $this->addToFilterName(substr(md5($this->route), 0, 6));
 
+        return $this->filterNameStr;
+    }
 }
