@@ -18,27 +18,30 @@ trait EntrustUserTrait
     public function cachedRoles()
     {
         $userPrimaryKey = $this->primaryKey;
-        $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
+        $cacheKey = 'entrust_roles_for_user_' . $this->$userPrimaryKey;
         return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
             return $this->roles()->get();
         });
     }
+
     public function save(array $options = [])
     {   //both inserts and updates
         parent::save($options);
         Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
+
     public function delete(array $options = [])
     {   //soft or hard
         parent::delete($options);
         Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
+
     public function restore()
     {   //soft delete undo's
         parent::restore();
         Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
-    
+
     /**
      * Many-to-Many relations with Role.
      *
@@ -60,7 +63,7 @@ trait EntrustUserTrait
     {
         parent::boot();
 
-        static::deleting(function($user) {
+        static::deleting(function ($user) {
             if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
                 $user->roles()->sync([]);
             }
@@ -72,36 +75,23 @@ trait EntrustUserTrait
     /**
      * Checks if the user has a role by its name.
      *
-     * @param string|array $name       Role name or array of role names.
-     * @param bool         $requireAll All roles in the array are required.
+     * @param string|array $name Role name or array of role names.
+     * @param bool $requireAll All roles in the array are required.
      *
      * @return bool
      */
     public function hasRole($name, $requireAll = false)
     {
-        if (is_array($name)) {
-            foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName);
-
-                if ($hasRole && !$requireAll) {
-                    return true;
-                } elseif (!$hasRole && $requireAll) {
-                    return false;
-                }
-            }
-
-            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
-            // Return the value of $requireAll;
-            return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                if ($role->name == $name) {
-                    return true;
-                }
-            }
+        if (is_array($name))
+        {
+            return $this->has('hasRole',$name, $requireAll);
         }
 
+        foreach ($this->cachedRoles() as $role) {
+            if ($role->name == $name) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -109,47 +99,36 @@ trait EntrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param bool         $requireAll All permissions in the array are required.
+     * @param bool $requireAll All permissions in the array are required.
      *
      * @return bool
      */
     public function can($permission, $requireAll = false)
     {
-        if (is_array($permission)) {
-            foreach ($permission as $permName) {
-                $hasPerm = $this->can($permName);
+        if (is_array($permission))
+        {
+            return $this->has('can',$permission, $requireAll);
+        }
 
-                if ($hasPerm && !$requireAll) {
+        foreach ($this->cachedRoles() as $role) {
+            // Validate against the Permission table
+            foreach ($role->cachedPermissions() as $perm) {
+                if (str_is($permission, $perm->name)) {
                     return true;
-                } elseif (!$hasPerm && $requireAll) {
-                    return false;
-                }
-            }
-
-            // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
-            // Return the value of $requireAll;
-            return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                // Validate against the Permission table
-                foreach ($role->cachedPermissions() as $perm) {
-                    if (str_is( $permission, $perm->name) ) {
-                        return true;
-                    }
                 }
             }
         }
-
         return false;
+
     }
+
 
     /**
      * Checks role(s) and permission(s).
      *
-     * @param string|array $roles       Array of roles or comma separated string
+     * @param string|array $roles Array of roles or comma separated string
      * @param string|array $permissions Array of permissions or comma separated string.
-     * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
+     * @param array $options validate_all (true|false) or return_type (boolean|array|both)
      *
      * @throws \InvalidArgumentException
      *
@@ -158,30 +137,24 @@ trait EntrustUserTrait
     public function ability($roles, $permissions, $options = [])
     {
         // Convert string to array if that's what is passed in.
-        if (!is_array($roles)) {
-            $roles = explode(',', $roles);
-        }
-        if (!is_array($permissions)) {
-            $permissions = explode(',', $permissions);
-        }
+        $permissions = $this->seprateBycomma($permissions);
+        $roles = $this->seprateBycomma($roles);
 
         // Set up default values and validate options.
         if (!isset($options['validate_all'])) {
             $options['validate_all'] = false;
-        } else {
-            if ($options['validate_all'] !== true && $options['validate_all'] !== false) {
-                throw new InvalidArgumentException();
-            }
         }
+        if (!is_bool($options['validate_all'])) {
+            throw new InvalidArgumentException();
+        }
+
         if (!isset($options['return_type'])) {
             $options['return_type'] = 'boolean';
-        } else {
-            if ($options['return_type'] != 'boolean' &&
-                $options['return_type'] != 'array' &&
-                $options['return_type'] != 'both') {
-                throw new InvalidArgumentException();
-            }
         }
+        if ( !in_array($options['return_type'], ['boolean','array','both',] )) {
+            throw new InvalidArgumentException();
+        }
+
 
         // Loop through roles and permissions and check each.
         $checkedRoles = [];
@@ -193,24 +166,25 @@ trait EntrustUserTrait
             $checkedPermissions[$permission] = $this->can($permission);
         }
 
+        $validateAll = false;
         // If validate all and there is a false in either
         // Check that if validate all, then there should not be any false.
         // Check that if not validate all, there must be at least one true.
-        if(($options['validate_all'] && !(in_array(false,$checkedRoles) || in_array(false,$checkedPermissions))) ||
-            (!$options['validate_all'] && (in_array(true,$checkedRoles) || in_array(true,$checkedPermissions)))) {
+        if (($options['validate_all'] && $this->hasAllRolesAndPermissions($checkedRoles, $checkedPermissions))  ||
+            (!$options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))
+        ) {
             $validateAll = true;
-        } else {
-            $validateAll = false;
         }
 
         // Return based on option
         if ($options['return_type'] == 'boolean') {
             return $validateAll;
-        } elseif ($options['return_type'] == 'array') {
-            return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
-        } else {
-            return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
         }
+        if ($options['return_type'] == 'array') {
+            return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
+        }
+        return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
+
 
     }
 
@@ -221,14 +195,7 @@ trait EntrustUserTrait
      */
     public function attachRole($role)
     {
-        if(is_object($role)) {
-            $role = $role->getKey();
-        }
-
-        if(is_array($role)) {
-            $role = $role['id'];
-        }
-
+        $role = $this->getRole($role);
         $this->roles()->attach($role);
     }
 
@@ -239,14 +206,7 @@ trait EntrustUserTrait
      */
     public function detachRole($role)
     {
-        if (is_object($role)) {
-            $role = $role->getKey();
-        }
-
-        if (is_array($role)) {
-            $role = $role['id'];
-        }
-
+        $role = $this->getRole($role);
         $this->roles()->detach($role);
     }
 
@@ -267,13 +227,77 @@ trait EntrustUserTrait
      *
      * @param mixed $roles
      */
-    public function detachRoles($roles=null)
+    public function detachRoles($roles = null)
     {
         if (!$roles) $roles = $this->roles()->get();
-        
+
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
+    }
+
+    /**
+     * @param $checkedRoles
+     * @param $checkedPermissions
+     * @return bool
+     */
+    private function hasAllRolesAndPermissions($checkedRoles, $checkedPermissions)
+    {
+        return !in_array(false, $checkedRoles) and !in_array(false, $checkedPermissions);
+    }
+
+    /**
+     * @param $permissions
+     * @return array
+     */
+    private function seprateBycomma($permissions)
+    {
+        if (!is_array($permissions)) {
+            $permissions = explode(',', $permissions);
+            return $permissions;
+        }
+        return $permissions;
+    }
+
+    /**
+     * @param $role
+     * @return mixed
+     */
+    private function getRole($role)
+    {
+        if (is_object($role)) {
+            $role = $role->getKey();
+        }
+
+        if (is_array($role)) {
+            $role = $role['id'];
+            return $role;
+        }
+        return $role;
+    }
+
+    /**
+     * @param $permission
+     * @param $requireAll
+     * @return bool
+     */
+    private function has($method,$permission, $requireAll)
+    {
+        foreach ($permission as $permName) {
+            $hasPerm = $this->$method($permName);
+
+            if ($hasPerm && !$requireAll) {
+                return true;
+            }
+            if (!$hasPerm && $requireAll) {
+                return false;
+            }
+        }
+
+        // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found
+        // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
+        // Return the value of $requireAll;
+        return $requireAll;
     }
 
 }
