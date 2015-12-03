@@ -1009,9 +1009,6 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('entrust.role_user_table')->times(1)->andReturn('role_user');
-        Cache::shouldReceive('tags->flush')->times(1);
-
         $user->shouldReceive('attachRole')
             ->with(1)
             ->once()->ordered();
@@ -1044,9 +1041,6 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('entrust.role_user_table')->times(1)->andReturn('role_user');
-        Cache::shouldReceive('tags->flush')->times(1);
-
         $user->shouldReceive('detachRole')
             ->with(1)
             ->once()->ordered();
@@ -1086,10 +1080,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         Config::shouldReceive('get')->with('entrust.role')->once()->andReturn('App\Role');
-        Config::shouldReceive('get')->with('entrust.role_user_table')->times(2)->andReturn('role_user');
+        Config::shouldReceive('get')->with('entrust.role_user_table')->once()->andReturn('role_user');
         Config::shouldReceive('get')->with('entrust.user_foreign_key')->once()->andReturn('user_id');
         Config::shouldReceive('get')->with('entrust.role_foreign_key')->once()->andReturn('role_id');
-        Cache::shouldReceive('tags->flush')->times(1);
 
         $relationship->shouldReceive('get')
                      ->andReturn($user->roles)->once();

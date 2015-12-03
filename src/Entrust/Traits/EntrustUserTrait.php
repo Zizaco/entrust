@@ -26,17 +26,17 @@ trait EntrustUserTrait
     public function save(array $options = [])
     {   //both inserts and updates
         parent::save($options);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $this->clearRoleUserCache();
     }
     public function delete(array $options = [])
     {   //soft or hard
         parent::delete($options);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $this->clearRoleUserCache();
     }
     public function restore()
     {   //soft delete undo's
         parent::restore();
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $this->clearRoleUserCache();
     }
     
     /**
@@ -230,7 +230,7 @@ trait EntrustUserTrait
         }
 
         $this->roles()->attach($role);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $this->clearRoleUserCache();
     }
 
     /**
@@ -249,7 +249,7 @@ trait EntrustUserTrait
         }
 
         $this->roles()->detach($role);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $this->clearRoleUserCache();
     }
 
     /**
@@ -262,7 +262,6 @@ trait EntrustUserTrait
         foreach ($roles as $role) {
             $this->attachRole($role);
         }
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
 
     /**
@@ -277,7 +276,9 @@ trait EntrustUserTrait
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
     }
 
+    private function clearRoleUserCache() {
+        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+    }
 }
