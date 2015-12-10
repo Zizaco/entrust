@@ -17,28 +17,26 @@ trait EntrustUserTrait
     //Big block of caching functionality.
     public function cachedRoles()
     {
-        $userPrimaryKey = $this->primaryKey;
-        $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
-        return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+        return Cache::remember('entrust_roles_for_user_'.$this->{$this->primaryKey}, Config::get('cache.ttl'), function () {
             return $this->roles()->get();
         });
     }
     public function save(array $options = [])
     {   //both inserts and updates
         parent::save($options);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        Cache::forget('entrust_roles_for_user_'.$this->{$this->primaryKey});
     }
     public function delete(array $options = [])
     {   //soft or hard
         parent::delete($options);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        Cache::forget('entrust_roles_for_user_'.$this->{$this->primaryKey});
     }
     public function restore()
     {   //soft delete undo's
         parent::restore();
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        Cache::forget('entrust_roles_for_user_'.$this->{$this->primaryKey});
     }
-    
+
     /**
      * Many-to-Many relations with Role.
      *
