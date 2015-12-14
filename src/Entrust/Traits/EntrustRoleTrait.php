@@ -67,10 +67,8 @@ trait EntrustRoleTrait
      *
      * @return void|bool
      */
-    public static function boot()
+    public static function bootEntrustRoleTrait()
     {
-        parent::boot();
-
         static::deleting(function($role) {
             if (!method_exists(Config::get('entrust.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
