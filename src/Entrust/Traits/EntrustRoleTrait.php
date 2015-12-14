@@ -26,36 +26,6 @@ trait EntrustRoleTrait
         }
         else return $this->perms()->get();
     }
-    public function save(array $options = [])
-    {   //both inserts and updates
-        if(!parent::save($options)){
-            return false;
-        }
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-        }
-        return true;
-    }
-    public function delete(array $options = [])
-    {   //soft or hard
-        if(!parent::delete($options)){
-            return false;
-        }
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-        }
-        return true;
-    }
-    public function restore()
-    {   //soft delete undo's
-        if(!parent::restore()){
-            return false;
-        }
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-        }
-        return true;
-    }
 
     /**
      * Many-to-Many relations with the user model.
@@ -89,6 +59,16 @@ trait EntrustRoleTrait
     public static function boot()
     {
         parent::boot();
+
+        $flushCache = function() {
+            if(Cache::getStore() instanceof TaggableStore) {
+                Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+            }
+        };
+
+        static::restored($flushCache);
+        static::deleted($flushCache);
+        static::saved($flushCache);
 
         static::deleting(function($role) {
             if (!method_exists(Config::get('entrust.role'), 'bootSoftDeletes')) {

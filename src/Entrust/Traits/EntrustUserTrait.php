@@ -27,27 +27,6 @@ trait EntrustUserTrait
         }
         else return $this->roles()->get();
     }
-    public function save(array $options = [])
-    {   //both inserts and updates
-        parent::save($options);
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
-    }
-    public function delete(array $options = [])
-    {   //soft or hard
-        parent::delete($options);
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
-    }
-    public function restore()
-    {   //soft delete undo's
-        parent::restore();
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
-    }
 
     /**
      * Many-to-Many relations with Role.
@@ -69,6 +48,16 @@ trait EntrustUserTrait
     public static function boot()
     {
         parent::boot();
+
+        $flushCache = function() {
+            if(Cache::getStore() instanceof TaggableStore) {
+                Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            }
+        };
+
+        static::restored($flushCache);
+        static::deleted($flushCache);
+        static::saved($flushCache);
 
         static::deleting(function($user) {
             if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
