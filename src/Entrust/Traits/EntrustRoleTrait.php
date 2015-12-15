@@ -16,24 +16,24 @@ trait EntrustRoleTrait
     //Big block of caching functionality.
     public function cachedPermissions()
     {
-        return Cache::remember('entrust_permissions_for_role_'.$this->{$this->primaryKey}, Config::get('cache.ttl'), function () {
+        return Cache::remember('entrust_permissions_for_role_'.$this->getKey(), Config::get('cache.ttl'), function () {
             return $this->perms()->get();
         });
     }
     public function save(array $options = [])
     {   //both inserts and updates
         parent::save($options);
-        Cache::forget('entrust_permissions_for_role_'.$this->{$this->primaryKey});
+        Cache::forget('entrust_permissions_for_role_'.$this->getKey());
     }
     public function delete(array $options = [])
     {   //soft or hard
         parent::delete($options);
-        Cache::forget('entrust_permissions_for_role_'.$this->{$this->primaryKey});
+        Cache::forget('entrust_permissions_for_role_'.$this->getKey());
     }
     public function restore()
     {   //soft delete undo's
         parent::restore();
-        Cache::forget('entrust_permissions_for_role_'.$this->{$this->primaryKey});
+        Cache::forget('entrust_permissions_for_role_'.$this->getKey());
     }
 
     /**
@@ -78,7 +78,7 @@ trait EntrustRoleTrait
             return true;
         });
     }
-    
+
     /**
      * Checks if the role has a permission by its name.
      *
