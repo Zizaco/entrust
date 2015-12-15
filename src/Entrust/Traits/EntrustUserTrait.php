@@ -17,24 +17,24 @@ trait EntrustUserTrait
     //Big block of caching functionality.
     public function cachedRoles()
     {
-        return Cache::remember('entrust_roles_for_user_'.$this->{$this->primaryKey}, Config::get('cache.ttl'), function () {
+        return Cache::remember('entrust_roles_for_user_'.$this->getKey(), Config::get('cache.ttl'), function () {
             return $this->roles()->get();
         });
     }
     public function save(array $options = [])
     {   //both inserts and updates
         parent::save($options);
-        Cache::forget('entrust_roles_for_user_'.$this->{$this->primaryKey});
+        Cache::forget('entrust_roles_for_user_'.$this->getKey());
     }
     public function delete(array $options = [])
     {   //soft or hard
         parent::delete($options);
-        Cache::forget('entrust_roles_for_user_'.$this->{$this->primaryKey});
+        Cache::forget('entrust_roles_for_user_'.$this->getKey());
     }
     public function restore()
     {   //soft delete undo's
         parent::restore();
-        Cache::forget('entrust_roles_for_user_'.$this->{$this->primaryKey});
+        Cache::forget('entrust_roles_for_user_'.$this->getKey());
     }
 
     /**
@@ -268,7 +268,7 @@ trait EntrustUserTrait
     public function detachRoles($roles=null)
     {
         if (!$roles) $roles = $this->roles()->get();
-        
+
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
