@@ -50,7 +50,7 @@ Then in your `config/app.php` add
 ```
 in the `providers` array and
 ```php
-    'Entrust' => Zizaco\Entrust\EntrustFacade::class
+    Zizaco\Entrust\EntrustFacade::class
 ```
 to the `aliases` array.
 
