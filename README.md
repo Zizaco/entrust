@@ -50,15 +50,15 @@ Then in your `config/app.php` add
 ```
 in the `providers` array and
 ```php
-    'Entrust' => 'Zizaco\Entrust\EntrustFacade'
+    'Entrust' => Zizaco\Entrust\EntrustFacade::class
 ```
 to the `aliases` array.
 
 If you are going to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add
 ```php
-    'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
-    'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
-    'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
+    'role' => Zizaco\Entrust\Middleware\EntrustRole::class,
+    'permission' => Zizaco\Entrust\Middleware\EntrustPermission::class,
+    'ability' => Zizaco\Entrust\Middleware\EntrustAbility::class,
 ```
 to `routeMiddleware` array in `app/Http/Kernel.php`.
 
