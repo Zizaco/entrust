@@ -69,10 +69,10 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function registerCommands()
     {
-        $this->app->bindShared('command.entrust.migration', function ($app) {
+        $this->app->singleton('command.entrust.migration', function ($app) {
             return new MigrationCommand();
         });
-        $this->app->bindShared('command.entrust.classes', function ($app) {
+        $this->app->singleton('command.entrust.classes', function ($app) {
             return new ClassCreatorCommand();
         });
     }
