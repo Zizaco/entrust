@@ -2,6 +2,7 @@
 
 use Zizaco\Entrust\Contracts\EntrustUserInterface;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Zizaco\Entrust\Permission;
@@ -1109,7 +1110,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class HasRoleUser implements EntrustUserInterface
+class HasRoleUser extends Model implements EntrustUserInterface
 {
     use EntrustUserTrait;
 
