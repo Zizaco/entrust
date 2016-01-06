@@ -15,3 +15,6 @@ Thumbs.db
 /.settings
 .env.*.php
 .env.php
+
+# sublime phpintel plugin
+/.phpintel
