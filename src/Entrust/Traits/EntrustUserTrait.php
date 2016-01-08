@@ -21,21 +21,6 @@ trait EntrustUserTrait
             return $this->roles()->get();
         });
     }
-    public function save(array $options = [])
-    {   //both inserts and updates
-        parent::save($options);
-        Cache::forget('entrust_roles_for_user_'.$this->getKey());
-    }
-    public function delete(array $options = [])
-    {   //soft or hard
-        parent::delete($options);
-        Cache::forget('entrust_roles_for_user_'.$this->getKey());
-    }
-    public function restore()
-    {   //soft delete undo's
-        parent::restore();
-        Cache::forget('entrust_roles_for_user_'.$this->getKey());
-    }
 
     /**
      * Many-to-Many relations with Role.
@@ -57,6 +42,15 @@ trait EntrustUserTrait
     public static function boot()
     {
         parent::boot();
+
+        $flushCache = function ($user) {
+            $user->flushCache();
+            return true;
+        };
+
+        static::restored($flushCache);
+        static::deleted($flushCache);
+        static::saved($flushCache);
 
         static::deleting(function($user) {
             if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
@@ -228,6 +222,7 @@ trait EntrustUserTrait
         }
 
         $this->roles()->attach($role);
+        $this->flushCache();
     }
 
     /**
@@ -246,6 +241,7 @@ trait EntrustUserTrait
         }
 
         $this->roles()->detach($role);
+        $this->flushCache();
     }
 
     /**
@@ -258,6 +254,7 @@ trait EntrustUserTrait
         foreach ($roles as $role) {
             $this->attachRole($role);
         }
+        $this->flushCache();
     }
 
     /**
@@ -272,6 +269,17 @@ trait EntrustUserTrait
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
+        $this->flushCache();
+    }
+
+    /**
+     * Flush user's cache
+     *
+     * @return void
+     */
+    public function flushCache()
+    {
+        Cache::forget('entrust_roles_for_user_' . $this->getKey());
     }
 
 }

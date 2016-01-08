@@ -929,6 +929,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
             ->with(3)
             ->once()->ordered();
 
+        Cache::shouldReceive('forget')
+            ->times(3);
+
         /*
         |------------------------------------------------------------
         | Assertion
@@ -971,6 +974,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
             ->with(3)
             ->once()->ordered();
 
+        Cache::shouldReceive('forget')
+            ->times(3);
+
 
         /*
         |------------------------------------------------------------
@@ -1006,6 +1012,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
             ->with(3)
             ->once()->ordered();
 
+        Cache::shouldReceive('forget')
+            ->once();
+
         /*
         |------------------------------------------------------------
         | Assertion
@@ -1038,6 +1047,8 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
             ->with(3)
             ->once()->ordered();
 
+        Cache::shouldReceive('forget')
+            ->once();
         /*
         |------------------------------------------------------------
         | Assertion
@@ -1079,6 +1090,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
         $user->shouldReceive('detachRole')->twice();
 
+        Cache::shouldReceive('forget')
+            ->once();
+
         /*
         |------------------------------------------------------------
         | Assertion
@@ -1116,11 +1130,15 @@ class HasRoleUser extends Model implements EntrustUserInterface
 
     public $roles;
     public $primaryKey;
-    public $id;
 
     public function __construct() {
         $this->primaryKey = 'id';
-        $this->id = 4;
+        $this->setAttribute('id', 4);
+    }
+
+    public function getKey()
+    {
+        return $this->id;
     }
 
     public function belongsToMany($role, $assignedRolesTable)
