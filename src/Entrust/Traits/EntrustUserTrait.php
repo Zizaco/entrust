@@ -23,22 +23,7 @@ trait EntrustUserTrait
             return $this->roles()->get();
         });
     }
-    public function save(array $options = [])
-    {   //both inserts and updates
-        parent::save($options);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
-    }
-    public function delete(array $options = [])
-    {   //soft or hard
-        parent::delete($options);
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
-    }
-    public function restore()
-    {   //soft delete undo's
-        parent::restore();
-        Cache::tags(Config::get('entrust.role_user_table'))->flush();
-    }
-    
+
     /**
      * Many-to-Many relations with Role.
      *
@@ -59,6 +44,14 @@ trait EntrustUserTrait
     public static function boot()
     {
         parent::boot();
+
+        $flushCache = function() {
+                     Cache::tags(Config::get('entrust.role_user_table'))->flush();
+                 };
+
+                 static::restored($flushCache);
+                 static::deleted($flushCache);
+                 static::saved($flushCache);
 
         static::deleting(function($user) {
             if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
@@ -270,7 +263,7 @@ trait EntrustUserTrait
     public function detachRoles($roles=null)
     {
         if (!$roles) $roles = $this->roles()->get();
-        
+
         foreach ($roles as $role) {
             $this->detachRole($role);
         }

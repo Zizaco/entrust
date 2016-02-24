@@ -22,22 +22,7 @@ trait EntrustRoleTrait
             return $this->perms()->get();
         });
     }
-    public function save(array $options = [])
-    {   //both inserts and updates
-        parent::save($options);
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-    }
-    public function delete(array $options = [])
-    {   //soft or hard
-        parent::delete($options);
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-    }
-    public function restore()
-    {   //soft delete undo's
-        parent::restore();
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-    }
-    
+
     /**
      * Many-to-Many relations with the user model.
      *
@@ -71,6 +56,14 @@ trait EntrustRoleTrait
     {
         parent::boot();
 
+        $flushCache = function() {
+                    Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+                };
+
+                static::restored($flushCache);
+                static::deleted($flushCache);
+                static::saved($flushCache);\
+
         static::deleting(function($role) {
             if (!method_exists(Config::get('entrust.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
@@ -80,7 +73,7 @@ trait EntrustRoleTrait
             return true;
         });
     }
-    
+
     /**
      * Checks if the role has a permission by its name.
      *
