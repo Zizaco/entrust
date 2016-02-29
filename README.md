@@ -40,7 +40,7 @@ contains the latest entrust version for Laravel 4.
 
 In order to install Laravel 5 Entrust, just add
 
-    "zizaco/entrust": "dev-laravel-5"
+    "zizaco/entrust": "5.2.x-dev"
 
 to your composer.json. Then run `composer install` or `composer update`.
 
@@ -228,7 +228,7 @@ $editUser->display_name = 'Edit Users'; // optional
 $editUser->description  = 'edit existing users'; // optional
 $editUser->save();
 
-$admin->attachPermission($createPost);
+$admin->attachPermissions($createPost);
 // equivalent to $admin->perms()->sync(array($createPost->id));
 
 $owner->attachPermissions(array($createPost, $editUser));
