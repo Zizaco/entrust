@@ -62,6 +62,23 @@ class Entrust
     }
 
     /**
+     * Check if the current user has a role or permission by its name
+     *
+     * @param array|string $roles            The role(s) needed.
+     * @param array|string $permissions      The permission(s) needed.
+     * @param array $options                 The Options.
+     *
+     * @return bool
+     */
+    public function ability($roles, $permissions, $options = [])
+    {
+        if ($user = $this->user()) {
+            return $user->ability($roles, $permissions, $options);
+        }
+        return false;
+    }
+
+    /**
      * Get the currently authenticated user or null.
      *
      * @return Illuminate\Auth\UserInterface|null
