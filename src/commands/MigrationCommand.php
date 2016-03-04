@@ -81,12 +81,8 @@ class MigrationCommand extends Command
     {
         $migrationFile = base_path("/database/migrations")."/".date('Y_m_d_His')."_entrust_setup_tables.php";
 
-        $defaultGuard = Config::get('auth.defaults.guard');
-        $providerName = Config::get('auth.guards.'.$defaultGuard);
-        $UserClass    = Config::get('auth.providers.'.$providerName["provider"]);
-
-        $usersTable  = $providerName['provider'];
-        $userModel   = $UserClass['model'];
+        $usersTable  = Config::get('auth.providers.users.table');
+        $userModel   = Config::get('auth.providers.users.model');
         $userKeyName = (new $userModel())->getKeyName();
 
         $data = compact('rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
