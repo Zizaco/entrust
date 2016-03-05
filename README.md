@@ -131,12 +131,19 @@ Next, use the `EntrustUserTrait` trait in your existing `User` model. For exampl
 
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
-class User extends Eloquent
+class User extends Model implements AuthenticatableContract,
+                                    AuthorizableContract,
+                                    CanResetPasswordContract
 {
-    use EntrustUserTrait; // add this trait to your user model
-
-    ...
-}
+    use Authenticatable,
+        Authorizable,
+        CanResetPassword,
+        EntrustUserTrait // add this trait to your user model
+        {
+            EntrustUserTrait ::can insteadof Authorizable; //add insteadof avoid php trait conflict resolution
+        }
+        
+        ...
 ```
 
 This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`, `can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
