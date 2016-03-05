@@ -41,11 +41,11 @@ to your composer.json. Then run `composer install` or `composer update`.
 
 Then in your `config/app.php` add 
 
-    'Zizaco\Entrust\EntrustServiceProvider'
+    Zizaco\Entrust\EntrustServiceProvider::class
     
 in the `providers` array and
 
-    'Entrust' => 'Zizaco\Entrust\EntrustFacade'
+    'Entrust' => Zizaco\Entrust\EntrustFacade::class
     
 to the `aliases` array.
 
