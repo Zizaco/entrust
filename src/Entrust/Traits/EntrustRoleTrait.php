@@ -25,17 +25,17 @@ trait EntrustRoleTrait
     public function save(array $options = [])
     {   //both inserts and updates
         parent::save($options);
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        
     }
     public function delete(array $options = [])
     {   //soft or hard
         parent::delete($options);
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        $this->clearPermissionRoleCache();
     }
     public function restore()
     {   //soft delete undo's
         parent::restore();
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        $this->clearPermissionRoleCache();
     }
     
     /**
@@ -131,6 +131,7 @@ trait EntrustRoleTrait
         } else {
             $this->perms()->detach();
         }
+        $this->clearPermissionRoleCache();
     }
 
     /**
@@ -151,6 +152,7 @@ trait EntrustRoleTrait
         }
 
         $this->perms()->attach($permission);
+        $this->clearPermissionRoleCache();
     }
 
     /**
@@ -169,6 +171,7 @@ trait EntrustRoleTrait
             $permission = $permission['id'];
 
         $this->perms()->detach($permission);
+        $this->clearPermissionRoleCache();
     }
 
     /**
@@ -197,5 +200,9 @@ trait EntrustRoleTrait
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
+    }
+    
+    private function clearPermissionRoleCache() {
+        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
     }
 }

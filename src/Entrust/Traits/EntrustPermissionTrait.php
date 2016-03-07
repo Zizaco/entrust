@@ -37,7 +37,7 @@ trait EntrustPermissionTrait
             if (!method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
             }
-
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
             return true;
         });
     }

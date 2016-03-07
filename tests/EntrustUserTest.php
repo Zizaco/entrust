@@ -921,6 +921,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(3)->andReturn('role_user');
+        Cache::shouldReceive('tags->flush')->times(3);
+        
         $roleObject->shouldReceive('getKey')
             ->andReturn(1);
 
@@ -963,6 +966,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('entrust.role_user_table')->times(3)->andReturn('role_user');
+        Cache::shouldReceive('tags->flush')->times(3);
+
         $roleObject->shouldReceive('getKey')
             ->andReturn(1);
 
