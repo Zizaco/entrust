@@ -24,18 +24,27 @@ trait EntrustRoleTrait
     }
     public function save(array $options = [])
     {   //both inserts and updates
-        parent::save($options);
+        if(!parent::save($options)){
+            return false;
+        }
         Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        return true;
     }
     public function delete(array $options = [])
     {   //soft or hard
-        parent::delete($options);
+        if(!parent::delete($options)){
+            return false;
+        }
         Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        return true;
     }
     public function restore()
     {   //soft delete undo's
-        parent::restore();
+        if(!parent::restore()){
+            return false;
+        }
         Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        return true;
     }
     
     /**
