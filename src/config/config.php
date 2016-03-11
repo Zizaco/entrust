@@ -19,7 +19,7 @@ return [
     | the role if it is in a different namespace.
     |
     */
-    'role' => 'App\Role',
+    'role' => 'App\Models\Acl\Role',
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +40,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'permission' => 'App\Permission',
+    'permission' => 'App\Models\Acl\Permission',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,15 +84,9 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Role Foreign key on Entrust's role_user and permission_role Tables (Pivot)
+    | Role Foreign key on Entrust's role_user Table (Pivot)
     |--------------------------------------------------------------------------
     */
     'role_foreign_key' => 'role_id',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Permission Foreign key on Entrust's permission_role Table (Pivot)
-    |--------------------------------------------------------------------------
-    */
-    'permission_foreign_key' => 'permission_id',
 ];

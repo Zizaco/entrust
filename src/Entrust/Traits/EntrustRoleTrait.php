@@ -24,27 +24,18 @@ trait EntrustRoleTrait
     }
     public function save(array $options = [])
     {   //both inserts and updates
-        if(!parent::save($options)){
-            return false;
-        }
+        parent::save($options);
         Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-        return true;
     }
     public function delete(array $options = [])
     {   //soft or hard
-        if(!parent::delete($options)){
-            return false;
-        }
+        parent::delete($options);
         Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-        return true;
     }
     public function restore()
     {   //soft delete undo's
-        if(!parent::restore()){
-            return false;
-        }
+        parent::restore();
         Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-        return true;
     }
     
     /**
@@ -54,6 +45,7 @@ trait EntrustRoleTrait
      */
     public function users()
     {
+// orginal       return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust.role_user_table'),Config::get('entrust.role_foreign_key'),Config::get('entrust.user_foreign_key'));
         return $this->belongsToMany(Config::get('auth.providers.users.model'), Config::get('entrust.role_user_table'),Config::get('entrust.role_foreign_key'),Config::get('entrust.user_foreign_key'));
        // return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust.role_user_table'));
     }
@@ -66,7 +58,7 @@ trait EntrustRoleTrait
      */
     public function perms()
     {
-        return $this->belongsToMany(Config::get('entrust.permission'), Config::get('entrust.permission_role_table'), Config::get('entrust.role_foreign_key'), Config::get('entrust.permission_foreign_key'));
+        return $this->belongsToMany(Config::get('entrust.permission'), Config::get('entrust.permission_role_table'));
     }
 
     /**
@@ -207,4 +199,5 @@ trait EntrustRoleTrait
             $this->detachPermission($permission);
         }
     }
+   
 }

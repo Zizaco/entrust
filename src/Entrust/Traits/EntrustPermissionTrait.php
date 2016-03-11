@@ -22,6 +22,13 @@ trait EntrustPermissionTrait
         return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.permission_role_table'));
     }
 
+    public function groupPermissions()
+    {
+         return $this->hasMany(Config::get('entrust.permission'),'permission_id');
+    }
+
+    
+
     /**
      * Boot the permission model
      * Attach event listener to remove the many-to-many records when trying to delete
