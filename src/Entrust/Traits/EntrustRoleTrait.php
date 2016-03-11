@@ -199,10 +199,5 @@ trait EntrustRoleTrait
             $this->detachPermission($permission);
         }
     }
-    public function groupPermissions($permissions)
-    {
-        foreach ($permissions as $permission) {
-            $this->detachPermission($permission);
-        }
-    }
+   
 }

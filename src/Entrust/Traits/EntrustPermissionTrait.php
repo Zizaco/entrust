@@ -27,6 +27,8 @@ trait EntrustPermissionTrait
          return $this->hasMany(Config::get('entrust.permission'),'permission_id');
     }
 
+    
+
     /**
      * Boot the permission model
      * Attach event listener to remove the many-to-many records when trying to delete
