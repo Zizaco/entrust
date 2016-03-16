@@ -8,6 +8,7 @@
  * @package Zizaco\Entrust
  */
 
+use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 
@@ -18,16 +19,21 @@ trait EntrustRoleTrait
     {
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_permissions_for_role_'.$this->$rolePrimaryKey;
-        return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
-            return $this->perms()->get();
-        });
+        if(Cache::getStore() instanceof TaggableStore) {
+            return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+                return $this->perms()->get();
+            });
+        }
+        else return $this->perms()->get();
     }
     public function save(array $options = [])
     {   //both inserts and updates
         if(!parent::save($options)){
             return false;
         }
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        if(Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        }
         return true;
     }
     public function delete(array $options = [])
@@ -35,7 +41,9 @@ trait EntrustRoleTrait
         if(!parent::delete($options)){
             return false;
         }
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        if(Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        }
         return true;
     }
     public function restore()
@@ -43,10 +51,12 @@ trait EntrustRoleTrait
         if(!parent::restore()){
             return false;
         }
-        Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        if(Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        }
         return true;
     }
-    
+
     /**
      * Many-to-Many relations with the user model.
      *
