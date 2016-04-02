@@ -211,8 +211,10 @@ trait EntrustRoleTrait
      *
      * @return void
      */
-    public function detachPermissions($permissions)
+    public function detachPermissions($permissions = null)
     {
+        if (!$permissions) $permissions = $this->perms()->get();
+
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
