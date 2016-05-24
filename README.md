@@ -394,7 +394,7 @@ It is possible to use pipe symbol as *OR* operator:
 
 To emulate *AND* functionality just use multiple instances of middleware
 ```php
-'middleware' => ['permission:owner', 'permission:writer']
+'middleware' => ['role:owner', 'role:writer']
 ```
 
 For more complex situations use `ability` middleware which accepts 3 parameters: roles, permissions, validate_all
