@@ -277,7 +277,7 @@ Entrust::can('permission-name');
 // is identical to
 
 Auth::user()->hasRole('role-name');
-Auth::user()->can('permission-name);
+Auth::user()->can('permission-name');
 ```
 
 You can also use placeholders (wildcards) to check any matching permission by doing:
