@@ -83,7 +83,11 @@ class MigrationCommand extends Command
 
         $usersTable  = Config::get('auth.providers.users.table');
         $userModel   = Config::get('auth.providers.users.model');
-        $userKeyName = (new $userModel())->getKeyName();
+        $userModel   = new $userModel();
+        $userKeyName = $userModel->getKeyName();
+        if(!empty($usersTable)) {
+            $usersTable = $userModel->getTable();
+        }
 
         $data = compact('rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
 
