@@ -71,7 +71,7 @@ Set the property values in the `config/auth.php`.
 These values will be used by entrust to refer to the correct user table and model.
 
 You can also publish the configuration for this package to further customize table names and model namespaces.  
-Just use `php artisan vendor:publish` and a `entrust.php` file will be created in your app/config directory.
+Just use `php artisan vendor:publish` and a `entrust.php` file will be created in your config directory.
 
 ### User relation to roles
 
@@ -507,7 +507,7 @@ When trying to use the EntrustUserTrait methods, you encounter the error which l
     Class name must be a valid object or a string
 
 then probably you don't have published Entrust assets or something went wrong when you did it.
-First of all check that you have the `entrust.php` file in your `app/config` directory.
+First of all check that you have the `entrust.php` file in your `config` directory.
 If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/zizaco/entrust/src/config/config.php` file in your config directory and rename it `entrust.php`.
 
 ## License
