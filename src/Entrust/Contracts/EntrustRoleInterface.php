@@ -16,7 +16,7 @@ interface EntrustRoleInterface
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users();
-    
+
     /**
      * Many-to-Many relations with the permission model.
      * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
@@ -24,7 +24,7 @@ interface EntrustRoleInterface
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function perms();
-    
+
     /**
      * Save the inputted permissions.
      *
@@ -33,7 +33,7 @@ interface EntrustRoleInterface
      * @return void
      */
     public function savePermissions($inputPermissions);
-    
+
      /**
      * Attach permission to current role.
      *
@@ -42,7 +42,7 @@ interface EntrustRoleInterface
      * @return void
      */
     public function attachPermission($permission);
-    
+
     /**
      * Detach permission form current role.
      *
@@ -51,7 +51,7 @@ interface EntrustRoleInterface
      * @return void
      */
     public function detachPermission($permission);
-    
+
     /**
      * Attach multiple permissions to current role.
      *
@@ -60,7 +60,7 @@ interface EntrustRoleInterface
      * @return void
      */
     public function attachPermissions($permissions);
-    
+
     /**
      * Detach multiple permissions from current role
      *
