@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use App\Role;
 use App\Permission;
 
-class SeedRolesTable extends Migration
+class SeedRolesAndPermissionsTable extends Migration
 {
     /**
      * Run the migrations.
