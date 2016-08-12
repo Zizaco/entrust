@@ -237,7 +237,7 @@ $admin->attachPermission($createPost);
 $owner->attachPermissions(array($createPost, $editUser));
 // equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
 ```
-
+To add roles and permissons you can utilize seed_roles_and_permissions_table.php ( Just create new migration and put content of file.) 
 #### Checking for Roles & Permissions
 
 Now we can check for roles and permissions simply by doing:
