@@ -74,10 +74,10 @@ class SeedRolesAndPermissionsTable extends Migration
 		$downloadFiles->description  = 'Able to download Own Files'; // optional
 		$downloadFiles->save();
 		
-		$superadmin->attachPermission(array($listUser));
+		$superadmin->attachPermissions(array($listUser));
 		
 	
-		$admin->attachPermission(array($createUser, $editUser, $listUser, $manageOptions, $uploadFiles));
+		$admin->attachPermissions(array($createUser, $editUser, $listUser, $manageOptions, $uploadFiles));
 		// equivalent to $admin->perms()->sync(array($createUser->id));
 	
 		$member->attachPermissions(array($uploadFiles, $downloadFiles));
