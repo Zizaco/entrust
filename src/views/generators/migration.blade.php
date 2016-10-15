@@ -12,7 +12,6 @@ class EntrustSetupTables extends Migration
      */
     public function up()
     {
-
         DB::beginTransaction();
 
         // Create table for storing roles
