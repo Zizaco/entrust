@@ -11,6 +11,10 @@
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 
+/**
+ * Class MigrationCommand
+ * @package Zizaco\Entrust
+ */
 class MigrationCommand extends Command
 {
     /**
@@ -42,21 +46,18 @@ class MigrationCommand extends Command
         $permissionRoleTable = Config::get('entrust.permission_role_table');
 
         $this->line('');
-        $this->info( "Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable" );
+        $this->info("Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable");
 
-        $message = "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
-        " tables will be created in database/migrations directory";
+        $message = "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', 
+            '$permissionRoleTable'" . " tables will be created in database/migrations directory";
 
         $this->comment($message);
         $this->line('');
 
         if ($this->confirm("Proceed with the migration creation? [Yes|no]", "Yes")) {
-
             $this->line('');
-
             $this->info("Creating migration...");
             if ($this->createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)) {
-
                 $this->info("Migration successfully created!");
             } else {
                 $this->error(
@@ -66,20 +67,21 @@ class MigrationCommand extends Command
             }
 
             $this->line('');
-
         }
     }
 
     /**
      * Create the migration.
      *
-     * @param string $name
-     *
+     * @param $rolesTable
+     * @param $roleUserTable
+     * @param $permissionsTable
+     * @param $permissionRoleTable
      * @return bool
      */
     protected function createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
     {
-        $migrationFile = base_path("/database/migrations")."/".date('Y_m_d_His')."_entrust_setup_tables.php";
+        $migrationFile = base_path("/database/migrations") . "/" . date('Y_m_d_His')."_entrust_setup_tables.php";
 
         $usersTable  = Config::get('auth.table');
         $userModel   = Config::get('auth.model');

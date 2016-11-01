@@ -27,13 +27,13 @@ trait EntrustPermissionTrait
      * Attach event listener to remove the many-to-many records when trying to delete
      * Will NOT delete any records if the permission model uses soft deletes.
      *
-     * @return void|bool
+     * @return void
      */
     public static function boot()
     {
         parent::boot();
 
-        static::deleting(function($permission) {
+        static::deleting(function ($permission) {
             if (!method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
             }

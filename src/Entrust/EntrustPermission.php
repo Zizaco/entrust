@@ -34,5 +34,4 @@ class EntrustPermission extends Model implements EntrustPermissionInterface
         parent::__construct($attributes);
         $this->table = Config::get('entrust.permissions_table');
     }
-
 }

@@ -13,6 +13,10 @@ use Zizaco\Entrust\Traits\EntrustRoleTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
+/**
+ * Class EntrustRole
+ * @package Zizaco\Entrust
+ */
 class EntrustRole extends Model implements EntrustRoleInterface
 {
     use EntrustRoleTrait;
@@ -34,5 +38,4 @@ class EntrustRole extends Model implements EntrustRoleInterface
         parent::__construct($attributes);
         $this->table = Config::get('entrust.roles_table');
     }
-
 }

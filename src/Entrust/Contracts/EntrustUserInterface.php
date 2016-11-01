@@ -8,6 +8,10 @@
  * @package Zizaco\Entrust
  */
 
+/**
+ * Interface EntrustUserInterface
+ * @package Zizaco\Entrust\Contracts
+ */
 interface EntrustUserInterface
 {
     /**
