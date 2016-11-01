@@ -10,6 +10,10 @@
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * Class EntrustFacade
+ * @package Zizaco\Entrust
+ */
 class EntrustFacade extends Facade
 {
     /**

@@ -8,6 +8,10 @@
  * @package Zizaco\Entrust
  */
 
+/**
+ * Interface EntrustPermissionInterface
+ * @package Zizaco\Entrust\Contracts
+ */
 interface EntrustPermissionInterface
 {
     

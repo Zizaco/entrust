@@ -8,6 +8,10 @@
  * @package Zizaco\Entrust
  */
 
+/**
+ * Class Entrust
+ * @package Zizaco\Entrust
+ */
 class Entrust
 {
     /**
@@ -21,8 +25,6 @@ class Entrust
      * Create a new confide instance.
      *
      * @param \Illuminate\Foundation\Application $app
-     *
-     * @return void
      */
     public function __construct($app)
     {
