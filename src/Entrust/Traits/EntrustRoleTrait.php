@@ -150,6 +150,10 @@ trait EntrustRoleTrait
         } else {
             $this->perms()->detach();
         }
+
+        if(Cache::getStore() instanceof TaggableStore) {
+             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+         }
     }
 
     /**
