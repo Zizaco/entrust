@@ -99,7 +99,7 @@ trait EntrustRoleTrait
             return true;
         });
     }
-    
+
     /**
      * Checks if the role has a permission by its name.
      *

@@ -33,7 +33,7 @@ class EntrustServiceProvider extends ServiceProvider
 
         // Register commands
         $this->commands('command.entrust.migration');
-        
+
         // Register blade directives
         $this->bladeDirectives();
     }
@@ -99,7 +99,7 @@ class EntrustServiceProvider extends ServiceProvider
         $this->app->bind('entrust', function ($app) {
             return new Entrust($app);
         });
-        
+
         $this->app->alias('entrust', 'Zizaco\Entrust\Entrust');
     }
 

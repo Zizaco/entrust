@@ -280,7 +280,7 @@ trait EntrustUserTrait
     public function detachRoles($roles=null)
     {
         if (!$roles) $roles = $this->roles()->get();
-        
+
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
