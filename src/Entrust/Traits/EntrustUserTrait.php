@@ -29,10 +29,10 @@ trait EntrustUserTrait
     }
     public function save(array $options = [])
     {   //both inserts and updates
-        parent::save($options);
         if(Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
+        return parent::save($options);
     }
     public function delete(array $options = [])
     {   //soft or hard
