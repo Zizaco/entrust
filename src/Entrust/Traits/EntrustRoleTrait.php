@@ -170,7 +170,7 @@ trait EntrustRoleTrait
         }
 
         if (is_array($permission)) {
-            $permission = $permission['id'];
+            return $this->attachPermissions($permission);
         }
 
         $this->perms()->attach($permission);
@@ -185,11 +185,13 @@ trait EntrustRoleTrait
      */
     public function detachPermission($permission)
     {
-        if (is_object($permission))
+        if (is_object($permission)) {
             $permission = $permission->getKey();
+        }
 
-        if (is_array($permission))
-            $permission = $permission['id'];
+        if (is_array($permission)) {
+            return $this->detachPermissions($permission);
+        }
 
         $this->perms()->detach($permission);
     }
