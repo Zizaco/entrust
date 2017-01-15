@@ -42,7 +42,13 @@ class EntrustPermission
 		}
 
 		if ($this->auth->guest() || !$request->user()->can($permissions)) {
-			abort(403);
+
+	    	if ($request->ajax() || $request->wantsJson()) {
+        		return response('Unauthorized.', 401);
+			} else {
+        		abort(403);
+			}
+
 		}
 
 		return $next($request);
