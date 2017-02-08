@@ -97,5 +97,19 @@ return [
     */
     'role_user_table' => 'role_user',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust permissions cache TTL
+    |--------------------------------------------------------------------------
+    |
+    | 
+    | If cache_ttl is a positive integer,
+    | Entrust will cache permissions in a configured cache storage.
+    |
+    | cache_ttl should be set in minutes and by default equals to null,
+    | which mean no caching
+    |
+    */
+    'cache_ttl' => null,
 
 ];
