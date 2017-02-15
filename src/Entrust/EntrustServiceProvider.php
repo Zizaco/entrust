@@ -28,11 +28,14 @@ class EntrustServiceProvider extends ServiceProvider
     {
         // Publish config files
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('entrust.php'),
+            __DIR__.'/../config/config.php' => app()->basePath() . '/config/entrust.php',
         ]);
 
         // Register commands
         $this->commands('command.entrust.migration');
+
+        // Register blade directives
+        $this->bladeDirectives();
     }
 
     /**
@@ -50,6 +53,43 @@ class EntrustServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the blade directives
+     *
+     * @return void
+     */
+    private function bladeDirectives()
+    {
+        if (!class_exists('\Blade')) return;
+
+        // Call to Entrust::hasRole
+        \Blade::directive('role', function($expression) {
+            return "<?php if (\\Entrust::hasRole({$expression})) : ?>";
+        });
+
+        \Blade::directive('endrole', function($expression) {
+            return "<?php endif; // Entrust::hasRole ?>";
+        });
+
+        // Call to Entrust::can
+        \Blade::directive('permission', function($expression) {
+            return "<?php if (\\Entrust::can({$expression})) : ?>";
+        });
+
+        \Blade::directive('endpermission', function($expression) {
+            return "<?php endif; // Entrust::can ?>";
+        });
+
+        // Call to Entrust::ability
+        \Blade::directive('ability', function($expression) {
+            return "<?php if (\\Entrust::ability({$expression})) : ?>";
+        });
+
+        \Blade::directive('endability', function($expression) {
+            return "<?php endif; // Entrust::ability ?>";
+        });
+    }
+
+    /**
      * Register the application bindings.
      *
      * @return void
@@ -59,6 +99,8 @@ class EntrustServiceProvider extends ServiceProvider
         $this->app->bind('entrust', function ($app) {
             return new Entrust($app);
         });
+
+        $this->app->alias('entrust', 'Zizaco\Entrust\Entrust');
     }
 
     /**
@@ -68,7 +110,7 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function registerCommands()
     {
-        $this->app->bindShared('command.entrust.migration', function ($app) {
+        $this->app->singleton('command.entrust.migration', function ($app) {
             return new MigrationCommand();
         });
     }

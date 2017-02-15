@@ -1,7 +1,7 @@
 <?php namespace Zizaco\Entrust;
 
 /**
- * This class is the main entry point of entrust. Usually this the interaction
+ * This class is the main entry point of entrust. Usually the interaction
  * with this class will be done through the Entrust Facade
  *
  * @license MIT
@@ -56,6 +56,24 @@ class Entrust
     {
         if ($user = $this->user()) {
             return $user->can($permission, $requireAll);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the current user has a role or permission by its name
+     *
+     * @param array|string $roles            The role(s) needed.
+     * @param array|string $permissions      The permission(s) needed.
+     * @param array $options                 The Options.
+     *
+     * @return bool
+     */
+    public function ability($roles, $permissions, $options = [])
+    {
+        if ($user = $this->user()) {
+            return $user->ability($roles, $permissions, $options);
         }
 
         return false;

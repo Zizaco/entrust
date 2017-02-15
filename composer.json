@@ -22,9 +22,10 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.0",
         "illuminate/console": "~5.0",
-        "illuminate/support": "~5.0"
+        "illuminate/support": "~5.0",
+        "illuminate/cache": "~5.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.1",
@@ -39,6 +40,11 @@
         "psr-4": {
             "Zizaco\\Entrust\\": "src/Entrust/"
         }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/Middleware/MiddlewareTest.php"
+        ]
     },
     "minimum-stability": "dev"
 }

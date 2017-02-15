@@ -10,7 +10,7 @@
 
 interface EntrustPermissionInterface
 {
-    
+
     /**
      * Many-to-Many relations with role model.
      *
