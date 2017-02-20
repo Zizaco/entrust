@@ -35,7 +35,9 @@ class EntrustServiceProvider extends ServiceProvider
         $this->commands('command.entrust.migration');
 
         // Register blade directives
-        $this->bladeDirectives();
+        if (!($this->app instanceof \Laravel\Lumen\Application)) {
+            $this->bladeDirectives();
+        }
     }
 
     /**
