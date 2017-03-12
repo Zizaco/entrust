@@ -115,10 +115,10 @@ After the migration, four new tables will be present:
 
 #### Role
 
-Create a Role model inside `app/models/Role.php` using the following example:
+Create a Role model inside `app/Models/Role.php` using the following example:
 
 ```php
-<?php namespace App;
+<?php namespace App/Models;
 
 use Zizaco\Entrust\EntrustRole;
 
@@ -136,10 +136,10 @@ Both `display_name` and `description` are optional; their fields are nullable in
 
 #### Permission
 
-Create a Permission model inside `app/models/Permission.php` using the following example:
+Create a Permission model inside `app/Models/Permission.php` using the following example:
 
 ```php
-<?php namespace App;
+<?php namespace App/Models;
 
 use Zizaco\Entrust\EntrustPermission;
 
