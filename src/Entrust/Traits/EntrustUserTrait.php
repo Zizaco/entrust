@@ -174,6 +174,15 @@ trait EntrustUserTrait
         if (!is_array($permissions)) {
             $permissions = explode(',', $permissions);
         }
+       
+         // convert the string provided into a boolean
+         // (bool) will return true if value is not null or 0 so ...
+        if($options['validate_all'] === 'false'){
+            $options['validate_all'] = false;
+        }
+        if($options['validate_all'] === 'true'){
+            $options['validate_all'] = true;
+        }
 
         // Set up default values and validate options.
         if (!isset($options['validate_all'])) {
