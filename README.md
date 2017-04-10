@@ -429,7 +429,7 @@ To filter a route by permission or role you can call the following in your `app/
 
 ```php
 // only users with roles that have the 'manage_posts' permission will be able to access any route within admin/post
-Entrust::routeNeedsPermission('admin/post*', 'create-post');
+Entrust::routeNeedsPermission('admin/post*', 'manage_posts');
 
 // only owners will have access to routes within admin/advanced
 Entrust::routeNeedsRole('admin/advanced*', 'owner');
