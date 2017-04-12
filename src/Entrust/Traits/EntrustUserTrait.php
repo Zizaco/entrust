@@ -99,12 +99,18 @@ trait EntrustUserTrait
                     return false;
                 }
             }
+			
 
             // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
             // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
+		}else {
+			if (is_object($name)){
+				// Allows to pass to hasRole() role as object 
+				// Like $user->hasRole($role)
+				$name = $name->name;
+			}
             foreach ($this->cachedRoles() as $role) {
                 if ($role->name == $name) {
                     return true;
@@ -141,6 +147,9 @@ trait EntrustUserTrait
             // Return the value of $requireAll;
             return $requireAll;
         } else {
+			if (is_object($permission)){
+				$permission = $permission->name;
+			}
             foreach ($this->cachedRoles() as $role) {
                 // Validate against the Permission table
                 foreach ($role->cachedPermissions() as $perm) {
