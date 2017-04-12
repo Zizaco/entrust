@@ -527,6 +527,14 @@ then probably you don't have published Entrust assets or something went wrong wh
 First of all check that you have the `entrust.php` file in your `config` directory.
 If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/zizaco/entrust/src/config/config.php` file in your config directory and rename it `entrust.php`.
 
+If your app uses a custom namespace then you'll need to tell entrust where your `permission` and `role` models are, you can do this by editing the config file in `config/entrust.php`
+
+```
+'role' => 'Custom\Namespace\Role'
+```
+```
+'permission' => 'Custom\Namespace\permission'
+```
 ## License
 
 Entrust is free software distributed under the terms of the MIT license.
