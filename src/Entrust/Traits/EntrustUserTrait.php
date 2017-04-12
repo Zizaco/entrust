@@ -147,6 +147,9 @@ trait EntrustUserTrait
             // Return the value of $requireAll;
             return $requireAll;
         } else {
+			if (is_object($permission)){
+				$permission = $permission->name;
+			}
             foreach ($this->cachedRoles() as $role) {
                 // Validate against the Permission table
                 foreach ($role->cachedPermissions() as $perm) {
