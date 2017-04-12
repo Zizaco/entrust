@@ -105,8 +105,6 @@ trait EntrustUserTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
             // Return the value of $requireAll;
             return $requireAll;
-        
-		
 		}else {
 			if (is_object($name)){
 				// Allows to pass to hasRole() role as object 

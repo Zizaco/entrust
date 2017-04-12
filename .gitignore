@@ -1,0 +1,20 @@
+### Docs ###
+build/
+cache/
+
+### PHP ###
+
+/bootstrap/compiled.php
+/vendor
+composer.phar
+.DS_Store
+Thumbs.db
+
+/conf
+.idea
+/.settings
+.env.*.php
+.env.php
+
+# sublime phpintel plugin
+/.phpintel
