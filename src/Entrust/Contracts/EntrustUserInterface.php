@@ -35,7 +35,7 @@ interface EntrustUserInterface
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false);
+    public function permission($permission, $requireAll = false);
 
     /**
      * Checks role(s) and permission(s).

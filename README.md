@@ -172,7 +172,7 @@ class User extends Eloquent
 }
 ```
 
-This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`, `can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
+This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`, `permission($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
 
 Don't forget to dump composer autoload
 
@@ -262,15 +262,15 @@ Now we can check for roles and permissions simply by doing:
 ```php
 $user->hasRole('owner');   // false
 $user->hasRole('admin');   // true
-$user->can('edit-user');   // false
-$user->can('create-post'); // true
+$user->permission('edit-user');   // false
+$user->permission('create-post'); // true
 ```
 
-Both `hasRole()` and `can()` can receive an array of roles & permissions to check:
+Both `hasRole()` and `permission()` can receive an array of roles & permissions to check:
 
 ```php
 $user->hasRole(['owner', 'admin']);       // true
-$user->can(['edit-user', 'create-post']); // true
+$user->permission(['edit-user', 'create-post']); // true
 ```
 
 By default, if any of the roles or permissions are present for a user then the method will return true.
@@ -279,32 +279,32 @@ Passing `true` as a second parameter instructs the method to require **all** of 
 ```php
 $user->hasRole(['owner', 'admin']);             // true
 $user->hasRole(['owner', 'admin'], true);       // false, user does not have admin role
-$user->can(['edit-user', 'create-post']);       // true
-$user->can(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
+$user->permission(['edit-user', 'create-post']);       // true
+$user->permission(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
 ```
 
 You can have as many `Role`s as you want for each `User` and vice versa.
 
-The `Entrust` class has shortcuts to both `can()` and `hasRole()` for the currently logged in user:
+The `Entrust` class has shortcuts to both `permission()` and `hasRole()` for the currently logged in user:
 
 ```php
 Entrust::hasRole('role-name');
-Entrust::can('permission-name');
+Entrust::permission('permission-name');
 
 // is identical to
 
 Auth::user()->hasRole('role-name');
-Auth::user()->can('permission-name');
+Auth::user()->permission('permission-name');
 ```
 
 You can also use placeholders (wildcards) to check any matching permission by doing:
 
 ```php
 // match any admin permission
-$user->can("admin.*"); // true
+$user->permission("admin.*"); // true
 
 // match any permission about users
-$user->can("*_users"); // true
+$user->permission("*_users"); // true
 ```
 
 
@@ -388,7 +388,7 @@ Three directives are available for use within your Blade templates. What you giv
 
 @permission('manage-admins')
     <p>This is visible to users with the given permissions. Gets translated to 
-    \Entrust::can('manage-admins'). The @can directive is already taken by core 
+    \Entrust::permission('manage-admins'). The @can directive is already taken by core 
     laravel authorization package, hence the @permission directive instead.</p>
 @endpermission
 
@@ -479,7 +479,7 @@ Entrust roles/permissions can be used in filters by simply using the `can` and `
 Route::filter('manage_posts', function()
 {
     // check the current user
-    if (!Entrust::can('create-post')) {
+    if (!Entrust::permission('create-post')) {
         return Redirect::to('admin');
     }
 });
@@ -503,7 +503,7 @@ Route::filter('owner_role', function()
 Route::when('admin/advanced*', 'owner_role');
 ```
 
-As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged in, and then if he or she has the role or permission.
+As you can see `Entrust::hasRole()` and `Entrust::permission()` checks if the user is logged in, and then if he or she has the role or permission.
 If the user is not logged the return will also be `false`.
 
 ## Troubleshooting
