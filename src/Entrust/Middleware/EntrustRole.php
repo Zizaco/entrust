@@ -42,7 +42,7 @@ class EntrustRole
 		}
 
 		if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
-			abort(403);
+			return back();
 		}
 
 		return $next($request);
