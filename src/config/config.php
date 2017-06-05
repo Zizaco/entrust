@@ -129,4 +129,8 @@ return [
     |
     */
     'permission_foreign_key' => 'permission_id',
+
+
+
+    'user_permission_table'=>'user_permission',
 ];
