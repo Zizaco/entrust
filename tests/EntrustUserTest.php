@@ -33,7 +33,75 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
     {
         m::close();
     }
+    public function testPermissions(){
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $belongsToMany = new stdClass();
+        $user = m::mock('HasPermissionUser')->makePartial();
 
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('belongsToMany')
+            ->with('permission_table_name', 'assigned_permissions_table_name')
+            ->andReturn($belongsToMany)
+            ->once();
+
+        Config::shouldReceive('get')->once()->with('entrust.permission')
+            ->andReturn('permission_table_name');
+        Config::shouldReceive('get')->once()->with('entrust.user_permission_table')
+            ->andReturn('assigned_permissions_table_name');
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertSame($belongsToMany, $user->permissions());
+    }
+
+    public function testHasPermission()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permA=$this->mockPermission('manage_a');
+        $permB=$this->mockPermission('manage_b');
+
+        $user = new HasPermissionUser();
+        $user->permissions = [$permA, $permB];
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('entrust.user_permission_table')->times(9)->andReturn('user_permission');
+        Config::shouldReceive('get')->with('cache.ttl')->times(9)->andReturn('1440');
+        Cache::shouldReceive('tags->remember')->times(9)->andReturn($user->roles);
+        Cache::shouldReceive('getStore')->times(9)->andReturn(new ArrayStore);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->hasRole('RoleA'));
+        $this->assertTrue($user->hasRole('RoleB'));
+        $this->assertFalse($user->hasRole('RoleC'));
+
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleB']));
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleC']));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
+        $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
+    }
     public function testRoles()
     {
         /*
@@ -1140,6 +1208,27 @@ class HasRoleUser implements EntrustUserInterface
     }
 
     public function belongsToMany($role, $assignedRolesTable)
+    {
+
+    }
+}
+class HasPermissionUser implements EntrustUserInterface{
+    use EntrustUserTrait;
+
+    public $permissions;
+    public $primaryKey;
+    public $id;
+
+    /**
+     * HasPermissionUser constructor.
+     */
+    public function __construct()
+    {
+        $this->primaryKey='id';
+        $this->id=4;
+    }
+
+    public function belongsToMany($permission, $assignedPermissionsTable)
     {
 
     }

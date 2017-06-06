@@ -356,7 +356,7 @@ trait EntrustUserTrait
 	 *
 	 * @param mixed $permissions
 	 */
-	public function attachPermissions($permissions)
+	public function attachPermissions(array $permissions)
 	{
 		foreach ($permissions as $permission) {
 			$this->attachPermission($permission);
