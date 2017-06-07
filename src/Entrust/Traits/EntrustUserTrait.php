@@ -137,6 +137,9 @@ trait EntrustUserTrait
         return false;
     }
 
+    public function hasPermission($permission,$requireAll=false){
+        return $this->can($permission,$requireAll);
+    }
     /**
      * Check if user has a permission by its name.
      *
