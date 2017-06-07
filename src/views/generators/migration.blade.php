@@ -57,6 +57,17 @@ class EntrustSetupTables extends Migration
 
             $table->primary(['permission_id', 'role_id']);
         });
+        Schema::create('{{ $userPermissionTable }}', function (Blueprint $table) {
+            $table->integer('user_id')->unsigned();
+            $table->integer('permission_id')->unsigned();
+
+            $table->foreign('user_id')->references('id')->on('{{ $usersTable }}')
+            ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('permission_id')->references('id')->on('{{ $permissionsTable }}')
+            ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->primary(['user_id', 'permission_id']);
+        });
 
         DB::commit();
     }
@@ -72,5 +83,7 @@ class EntrustSetupTables extends Migration
         Schema::drop('{{ $permissionsTable }}');
         Schema::drop('{{ $roleUserTable }}');
         Schema::drop('{{ $rolesTable }}');
+        Schema::drop('{{ $userPermissionTable }}');
+
     }
 }
