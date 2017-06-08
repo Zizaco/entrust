@@ -58,7 +58,7 @@ Zizaco\Entrust\EntrustServiceProvider::class,
 4) Run the command below to publish the package config file `config/entrust.php`:
 
 ```shell
-php artisan vendor:publish
+php artisan vendor:publish --provider="Zizaco\Entrust\EntrustServiceProvider"
 ```
 
 5) Open your `config/auth.php` and add the following to it:
