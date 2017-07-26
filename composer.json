@@ -41,6 +41,16 @@
             "Zizaco\\Entrust\\": "src/Entrust/"
         }
     },
+    "extra":{
+        "laravel":{
+            "providers":[
+                "Zizaco\\Entrust\\EntrustServiceProvider"
+            ],
+            "aliases":{
+                "Entrust": "Zizaco\\Entrust\\EntrustFacade"
+            }
+        }
+    },
     "autoload-dev": {
         "classmap": [
             "tests/Middleware/MiddlewareTest.php"
