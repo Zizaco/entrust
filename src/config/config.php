@@ -184,4 +184,26 @@ return [
     |
     */
     'menu_foreign_key' => 'menu_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust menu foreign key (parent-child structure)
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu foreign key used by Entrust to make a proper
+    | relation between menu and its decendants
+    |
+    */
+    'menu_child_key' => 'slug',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust menu foreign key (parent-child structure)
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu foreign key used by Entrust to make a proper
+    | relation between menu and its ancestor
+    |
+    */
+    'menu_parent_key' => 'parent',
 ];
