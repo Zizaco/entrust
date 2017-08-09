@@ -26,6 +26,13 @@ interface EntrustRoleInterface
     public function perms();
 
     /**
+     * Many-to-Many relations with the menu model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function menus();
+
+    /**
      * Save the inputted permissions.
      *
      * @param mixed $inputPermissions
@@ -69,4 +76,41 @@ interface EntrustRoleInterface
      * @return void
      */
     public function detachPermissions($permissions);
+
+    /**
+     * Sync multiple permissions to current role.
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function syncPermissions($permissions);
+
+    /**
+    * Attach menu to current role.
+    *
+    * @param object|array $menu
+    *
+    * @return void
+    */
+    public function attachMenu($menu);
+
+    /**
+     * Attach multiple menus to current role.
+     *
+     * @param mixed $menus
+     *
+     * @return void
+     */
+    public function attachMenus($menus);
+
+    /**
+     * Sync multiple menus to current role.
+     *
+     * @param mixed $menus
+     *
+     * @return void
+     */
+    public function syncMenus($menus);
+
 }
