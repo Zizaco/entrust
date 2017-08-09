@@ -1,6 +1,6 @@
 {
     "name": "adesr/entrust",
-    "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
+    "description": "This package provides a flexible way to add Navigation and Role-based Permissions to Laravel",
     "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
     "license": "MIT",
     "authors": [
@@ -50,5 +50,5 @@
             "tests/Middleware/MiddlewareTest.php"
         ]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "master"
 }
