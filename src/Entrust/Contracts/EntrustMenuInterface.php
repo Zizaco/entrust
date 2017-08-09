@@ -31,7 +31,7 @@ interface EntrustMenuInterface
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function child();
+    public function children();
 
     /**
      * One-to-Many relations with itself.
