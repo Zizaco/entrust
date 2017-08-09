@@ -1,5 +1,5 @@
 {
-    "name": "zizaco/entrust",
+    "name": "adesr/entrust",
     "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
     "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
     "license": "MIT",
@@ -42,7 +42,7 @@
             "src/commands"
         ],
         "psr-4": {
-            "Zizaco\\Entrust\\": "src/Entrust/"
+            "Adesr\\Entrust\\": "src/Entrust/"
         }
     },
     "autoload-dev": {
@@ -50,5 +50,5 @@
             "tests/Middleware/MiddlewareTest.php"
         ]
     },
-    "minimum-stability": "master"
+    "minimum-stability": "dev"
 }

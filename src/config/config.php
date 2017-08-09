@@ -5,7 +5,7 @@
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Adesr\Entrust
  */
 
 return [

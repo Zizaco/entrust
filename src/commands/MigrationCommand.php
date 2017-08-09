@@ -1,11 +1,11 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Adesr\Entrust;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Adesr\Entrust
  */
 
 use Illuminate\Console\Command;

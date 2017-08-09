@@ -1,11 +1,11 @@
-<?php namespace Zizaco\Entrust\Middleware;
+<?php namespace Adesr\Entrust\Middleware;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Adesr\Entrust
  */
 
 use Closure;
