@@ -50,5 +50,5 @@
             "tests/Middleware/MiddlewareTest.php"
         ]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "master"
 }
