@@ -19,6 +19,10 @@
         {
             "name": "Michele Angioni",
             "email": "michele.angioni@gmail.com"
+        },
+        {
+            "name": "AdeSR",
+            "homepage": "http://github.com/adesr"
         }
     ],
     "require": {
