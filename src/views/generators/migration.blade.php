@@ -57,7 +57,7 @@ class EntrustSetupTables extends Migration
         });
 
         // Create table for storing menus
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::create('{{ $menusTable }}', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('slug')->unique();
@@ -69,7 +69,7 @@ class EntrustSetupTables extends Migration
         });
 
         // Create table for associating menus to roles (Many-to-Many)
-        Schema::create('role_menu', function (Blueprint $table) {
+        Schema::create('{{ $menuRoleTable }}', function (Blueprint $table) {
             $table->integer('role_id')->unsigned();
             $table->integer('menu_id')->unsigned();
 
@@ -82,7 +82,7 @@ class EntrustSetupTables extends Migration
         });
 
         // Create table for associating menus to permissions (Many-to-Many)
-        Schema::create('menu_permission', function (Blueprint $table) {
+        Schema::create('{{ $menuPermissionTable }}', function (Blueprint $table) {
             $table->integer('menu_id')->unsigned();
             $table->integer('permission_id')->unsigned();
 
@@ -105,8 +105,11 @@ class EntrustSetupTables extends Migration
     public function down()
     {
         Schema::drop('{{ $permissionRoleTable }}');
+        Schema::drop('{{ $menuPermissionTable }}');
         Schema::drop('{{ $permissionsTable }}');
         Schema::drop('{{ $roleUserTable }}');
+        Schema::drop('{{ $menuRoleTable }}');
         Schema::drop('{{ $rolesTable }}');
+        Schema::drop('{{ $menusTable }}');
     }
 }
