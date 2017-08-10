@@ -42,6 +42,15 @@ interface EntrustMenuInterface
     public function parent();
 
     /**
+     * Sync multiple permissions to current role.
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function syncPermissions($permissions);
+
+    /**
      * Get all ancestors (parents) of given menu in one dimentional array
      *
      * @param object $menu      Object of menu

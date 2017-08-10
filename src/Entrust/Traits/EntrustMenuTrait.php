@@ -76,6 +76,28 @@ trait EntrustMenuTrait
     }
 
     /**
+     * Sync multiple permissions to current menu.
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function syncPermissions($permissions)
+    {
+        $perms = [];
+        if(is_object($permissions)) {
+            foreach ($permissions as $v) {
+                $perms[] = $v->getKey();
+            }
+        }
+        if(is_array($permissions)) {
+            $perms = $permissions;
+        }
+
+        $this->perms()->sync($perms);
+    }
+
+    /**
      * Get all ancestors (parents) of given menu in one dimentional array
      *
      * @param array $menu           Array of $menu
