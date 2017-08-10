@@ -26,7 +26,7 @@ This repo is a fork for  [zizaco/entrust](https://github.com/Zizaco/entrust) wit
 1) In order to install Laravel 5 Entrust, just run following command:
 
 ```bash
-composer require adesr/entrust
+composer require adesr/entrust:0.0.2
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
