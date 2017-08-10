@@ -41,4 +41,13 @@ interface EntrustMenuInterface
      */
     public function parent();
 
+    /**
+     * Get all ancestors (parents) of given menu in one dimentional array
+     *
+     * @param object $menu      Object of menu
+     *
+     * @return array
+     */
+    public function getAncestors($menu);
+
 }
