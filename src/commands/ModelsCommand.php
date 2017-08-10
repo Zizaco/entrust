@@ -11,7 +11,7 @@
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 
-class MigrationCommand extends Command
+class ModelsCommand extends Command
 {
     /**
      * The console command name.
