@@ -1,6 +1,6 @@
-# ENTRUST (Laravel 5 Package) (ON PROGRESS)
+# ENTRUST (Laravel 5 Package)
 
-This repo is a fork for  [zizaco/entrust](https://github.com/Zizaco/entrust) with additional feature. It support dynamic navigation based on role and permissions registered.
+This repo is a fork for  [zizaco/entrust](https://github.com/Zizaco/entrust). It supports dynamic navigation based on role and permissions registered.
 
 ## Contents
 
@@ -10,6 +10,7 @@ This repo is a fork for  [zizaco/entrust](https://github.com/Zizaco/entrust) wit
     - [Models](#models)
         - [Role](#role)
         - [Permission](#permission)
+        - [Menu](#menu)
         - [User](#user)
         - [Soft Deleting](#soft-deleting)
 - [Usage](#usage)
@@ -26,7 +27,7 @@ This repo is a fork for  [zizaco/entrust](https://github.com/Zizaco/entrust) wit
 1) In order to install Laravel 5 Entrust, just run following command:
 
 ```bash
-composer require adesr/entrust:0.0.2
+composer require adesr/entrust
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
@@ -94,14 +95,30 @@ php artisan migrate
 After the migration, four new tables will be present:
 - `roles` &mdash; stores role records
 - `permissions` &mdash; stores permission records
-- `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and users
-- `permission_role` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and permissions
+- `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between roles and users
+- `permission_role` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between roles and permissions
+- `menus` &mdash; stores menu records
+- `menu_role` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between menus and roles
+- `menu_permission` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between menus and permissions
 
 ### Models
 
+RUn following command:
+
+```bash
+php artisan entrust:models
+```
+
+It will generate 3 model files inside `app` directory:
+- `Role`
+- `Permission`
+- `Menu`
+
+or, you can create your own model:
+
 #### Role
 
-Create a Role model inside `app/models/Role.php` using the following example:
+Create a Role model inside `app/Role.php` using the following example:
 
 ```php
 <?php namespace App;
@@ -113,16 +130,15 @@ class Role extends EntrustRole
 }
 ```
 
-The `Role` model has three main attributes:
+The `Role` model has two main attributes:
 - `name` &mdash; Unique name for the Role, used for looking up role information in the application layer. For example: "admin", "owner", "employee".
-- `display_name` &mdash; Human readable name for the Role. Not necessarily unique and optional. For example: "User Administrator", "Project Owner", "Widget  Co. Employee".
 - `description` &mdash; A more detailed explanation of what the Role does. Also optional.
 
-Both `display_name` and `description` are optional; their fields are nullable in the database.
+`description` is optional; their fields are nullable in the database.
 
 #### Permission
 
-Create a Permission model inside `app/models/Permission.php` using the following example:
+Create a Permission model inside `app/Permission.php` using the following example:
 
 ```php
 <?php namespace App;
@@ -136,10 +152,35 @@ class Permission extends EntrustPermission
 
 The `Permission` model has the same three attributes as the `Role`:
 - `name` &mdash; Unique name for the permission, used for looking up permission information in the application layer. For example: "create-post", "edit-user", "post-payment", "mailing-list-subscribe".
-- `display_name` &mdash; Human readable name for the permission. Not necessarily unique and optional. For example "Create Posts", "Edit Users", "Post Payments", "Subscribe to mailing list".
 - `description` &mdash; A more detailed explanation of the Permission.
 
-In general, it may be helpful to think of the last two attributes in the form of a sentence: "The permission `display_name` allows a user to `description`."
+In general, it may be helpful to think of the last two attributes in the form of a sentence: "The permission `name` allows a user to `description`."
+
+#### Menu
+
+Create a Menu model inside `app/Menu.php` using following example:
+
+```php
+<?php
+namespace App;
+
+use Adesr\Entrust\EntrustMenu;
+
+class Menu extends EntrustMenu
+{
+
+    protected $casts = [ 'is_active' ];
+
+}
+```
+
+The `Menu` model has six main attributes:
+- `name` &mdash; Name for the Menu, used as a display name of the menu.
+- `slug` &mdash; Unique name of Menu used as URL target.
+- `parent` &mdash; Name of parent Menu, used as relations between menus (parent-child relation).
+- `icon` &mdash; Icon class name for the Menu, used as an icon display of the menu (based on bootstrap/ glyphicons or other css framework available).
+- `is_active` &mdash; Active flag of the menu.
+- `order_no` &mdash; Order number for the menu.
 
 #### User
 
@@ -181,6 +222,7 @@ $role->delete(); // This will work no matter what
 // Force Delete
 $role->users()->sync([]); // Delete relationship data
 $role->perms()->sync([]); // Delete relationship data
+$role->menus()->sync([]); // Delete relationship data
 
 $role->forceDelete(); // Now force delete will work regardless of whether the pivot table has cascading delete
 ```
