@@ -166,27 +166,4 @@ trait EntrustMenuTrait
 
         $this->perms()->sync($perms);
     }
-
-    /**
-     * Get all ancestors (parents) of given menu in one dimentional array
-     *
-     * @param array $menu           Array of $menu
-     *
-     * @return array
-     */
-    public function getAncestors($menu)
-    {
-        $ancestors = [];
-        foreach ($menu as $val) {
-            $ancestors[] = $val->id;
-            $parent = $val->parent()->get();
-            if($parent->isNotEmpty()) {
-                $ancestors[] = $this->getAncestors($parent);
-            }
-        }
-        // return collect($ancestors)->flatten()->unique()->values()->all();
-        $return = [];
-        array_walk_recursive($ancestors, function($a) use(&$return) { $return[] = $a; });
-        return array_unique($return);
-    }
 }
