@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Adesr\Entrust\EntrustRole;
+use Adesr\Entrust\EntrustMenu;
 
 class Menu extends EntrustMenu
 {
