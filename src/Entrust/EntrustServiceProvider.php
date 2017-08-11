@@ -1,11 +1,11 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Adesr\Entrust;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Adesr\Entrust
  */
 
 use Illuminate\Support\ServiceProvider;
@@ -33,6 +33,7 @@ class EntrustServiceProvider extends ServiceProvider
 
         // Register commands
         $this->commands('command.entrust.migration');
+        $this->commands('command.entrust.models');
 
         // Register blade directives
         $this->bladeDirectives();
@@ -100,7 +101,7 @@ class EntrustServiceProvider extends ServiceProvider
             return new Entrust($app);
         });
 
-        $this->app->alias('entrust', 'Zizaco\Entrust\Entrust');
+        $this->app->alias('entrust', 'Adesr\Entrust\Entrust');
     }
 
     /**
@@ -112,6 +113,9 @@ class EntrustServiceProvider extends ServiceProvider
     {
         $this->app->singleton('command.entrust.migration', function ($app) {
             return new MigrationCommand();
+        });
+        $this->app->singleton('command.entrust.models', function ($app) {
+            return new ModelsCommand();
         });
     }
 
@@ -135,7 +139,8 @@ class EntrustServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'command.entrust.migration'
+            'command.entrust.migration',
+            'command.entrust.models',
         ];
     }
 }

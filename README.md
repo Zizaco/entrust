@@ -1,16 +1,6 @@
 # ENTRUST (Laravel 5 Package)
 
-[![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
-[![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
-[![License](https://poser.pugx.org/zizaco/entrust/license.svg)](https://packagist.org/packages/zizaco/entrust)
-[![Total Downloads](https://img.shields.io/packagist/dt/zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
-
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)
-
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
-
-If you are looking for the Laravel 4 version, take a look [Branch 1.0](https://github.com/Zizaco/entrust/tree/1.0). It
-contains the latest entrust version for Laravel 4.
+This repo is a fork for  [zizaco/entrust](https://github.com/Zizaco/entrust). It supports dynamic navigation based on role and permissions registered.
 
 ## Contents
 
@@ -20,6 +10,7 @@ contains the latest entrust version for Laravel 4.
     - [Models](#models)
         - [Role](#role)
         - [Permission](#permission)
+        - [Menu](#menu)
         - [User](#user)
         - [Soft Deleting](#soft-deleting)
 - [Usage](#usage)
@@ -30,29 +21,25 @@ contains the latest entrust version for Laravel 4.
     - [Middleware](#middleware)
     - [Short syntax route filter](#short-syntax-route-filter)
     - [Route filter](#route-filter)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
-- [Contribution guidelines](#contribution-guidelines)
-- [Additional information](#additional-information)
 
 ## Installation
 
-1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
+1) In order to install Laravel 5 Entrust, just run following command:
 
-```json
-"zizaco/entrust": "5.2.x-dev"
+```bash
+composer require adesr/entrust
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
 
 ```php
-Zizaco\Entrust\EntrustServiceProvider::class,
+Adesr\Entrust\EntrustServiceProvider::class,
 ```
 
-3) In the same `config/app.php` and add the following to the `aliases ` array: 
+3) In the same `config/app.php` and add the following to the `aliases ` array:
 
 ```php
-'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+'Entrust'   => Adesr\Entrust\EntrustFacade::class,
 ```
 
 4) Run the command below to publish the package config file `config/entrust.php`:
@@ -76,9 +63,9 @@ php artisan vendor:publish
 6)  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
 
 ```php
-    'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
-    'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
-    'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+    'role' => \Adesr\Entrust\Middleware\EntrustRole::class,
+    'permission' => \Adesr\Entrust\Middleware\EntrustPermission::class,
+    'ability' => \Adesr\Entrust\Middleware\EntrustAbility::class,
 ```
 
 to `routeMiddleware` array in `app/Http/Kernel.php`.
@@ -108,40 +95,55 @@ php artisan migrate
 After the migration, four new tables will be present:
 - `roles` &mdash; stores role records
 - `permissions` &mdash; stores permission records
-- `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and users
-- `permission_role` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and permissions
+- `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between roles and users
+- `permission_role` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between roles and permissions
+- `menus` &mdash; stores menu records
+- `menu_role` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between menus and roles
+- `menu_permission` &mdash; stores [many-to-many](http://laravel.com/docs/5.4/eloquent#many-to-many) relations between menus and permissions
 
 ### Models
 
+RUn following command:
+
+```bash
+php artisan entrust:models
+```
+
+It will generate 3 model files inside `app` directory:
+- `Role`
+- `Permission`
+- `Menu`
+
+or, you can create your own model:
+
 #### Role
 
-Create a Role model inside `app/models/Role.php` using the following example:
+Create a Role model inside `app/Role.php` using the following example:
 
 ```php
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustRole;
+use Adesr\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
 }
 ```
 
-The `Role` model has three main attributes:
+The `Role` model has two main attributes:
 - `name` &mdash; Unique name for the Role, used for looking up role information in the application layer. For example: "admin", "owner", "employee".
-- `display_name` &mdash; Human readable name for the Role. Not necessarily unique and optional. For example: "User Administrator", "Project Owner", "Widget  Co. Employee".
 - `description` &mdash; A more detailed explanation of what the Role does. Also optional.
 
-Both `display_name` and `description` are optional; their fields are nullable in the database.
+`description` is optional; their fields are nullable in the database.
 
 #### Permission
 
-Create a Permission model inside `app/models/Permission.php` using the following example:
+Create a Permission model inside `app/Permission.php` using the following example:
 
 ```php
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustPermission;
+use Adesr\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
@@ -150,10 +152,35 @@ class Permission extends EntrustPermission
 
 The `Permission` model has the same three attributes as the `Role`:
 - `name` &mdash; Unique name for the permission, used for looking up permission information in the application layer. For example: "create-post", "edit-user", "post-payment", "mailing-list-subscribe".
-- `display_name` &mdash; Human readable name for the permission. Not necessarily unique and optional. For example "Create Posts", "Edit Users", "Post Payments", "Subscribe to mailing list".
 - `description` &mdash; A more detailed explanation of the Permission.
 
-In general, it may be helpful to think of the last two attributes in the form of a sentence: "The permission `display_name` allows a user to `description`."
+In general, it may be helpful to think of the last two attributes in the form of a sentence: "The permission `name` allows a user to `description`."
+
+#### Menu
+
+Create a Menu model inside `app/Menu.php` using following example:
+
+```php
+<?php
+namespace App;
+
+use Adesr\Entrust\EntrustMenu;
+
+class Menu extends EntrustMenu
+{
+
+    protected $casts = [ 'is_active' ];
+
+}
+```
+
+The `Menu` model has six main attributes:
+- `name` &mdash; Name for the Menu, used as a display name of the menu.
+- `slug` &mdash; Unique name of Menu used as URL target.
+- `parent` &mdash; Name of parent Menu, used as relations between menus (parent-child relation).
+- `icon` &mdash; Icon class name for the Menu, used as an icon display of the menu (based on bootstrap/ glyphicons or other css framework available).
+- `is_active` &mdash; Active flag of the menu.
+- `order_no` &mdash; Order number for the menu.
 
 #### User
 
@@ -162,7 +189,7 @@ Next, use the `EntrustUserTrait` trait in your existing `User` model. For exampl
 ```php
 <?php
 
-use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Adesr\Entrust\Traits\EntrustUserTrait;
 
 class User extends Eloquent
 {
@@ -195,6 +222,7 @@ $role->delete(); // This will work no matter what
 // Force Delete
 $role->users()->sync([]); // Delete relationship data
 $role->perms()->sync([]); // Delete relationship data
+$role->menus()->sync([]); // Delete relationship data
 
 $role->forceDelete(); // Now force delete will work regardless of whether the pivot table has cascading delete
 ```
@@ -382,18 +410,18 @@ Three directives are available for use within your Blade templates. What you giv
 
 ```php
 @role('admin')
-    <p>This is visible to users with the admin role. Gets translated to 
+    <p>This is visible to users with the admin role. Gets translated to
     \Entrust::role('admin')</p>
 @endrole
 
 @permission('manage-admins')
-    <p>This is visible to users with the given permissions. Gets translated to 
-    \Entrust::can('manage-admins'). The @can directive is already taken by core 
+    <p>This is visible to users with the given permissions. Gets translated to
+    \Entrust::can('manage-admins'). The @can directive is already taken by core
     laravel authorization package, hence the @permission directive instead.</p>
 @endpermission
 
 @ability('admin,owner', 'create-post,edit-user')
-    <p>This is visible to users with the given abilities. Gets translated to 
+    <p>This is visible to users with the given abilities. Gets translated to
     \Entrust::ability('admin,owner', 'create-post,edit-user')</p>
 @endability
 ```
@@ -505,35 +533,3 @@ Route::when('admin/advanced*', 'owner_role');
 
 As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged in, and then if he or she has the role or permission.
 If the user is not logged the return will also be `false`.
-
-## Troubleshooting
-
-If you encounter an error when doing the migration that looks like:
-
-```
-SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150)
-    (SQL: alter table `role_user` add constraint role_user_user_id_foreign foreign key (`user_id`)
-    references `users` (`id`)) (Bindings: array ())
-```
-
-Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`.
-Make sure both are `INT(10)`.
-
-When trying to use the EntrustUserTrait methods, you encounter the error which looks like
-
-    Class name must be a valid object or a string
-
-then probably you don't have published Entrust assets or something went wrong when you did it.
-First of all check that you have the `entrust.php` file in your `config` directory.
-If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/zizaco/entrust/src/config/config.php` file in your config directory and rename it `entrust.php`.
-
-## License
-
-Entrust is free software distributed under the terms of the MIT license.
-
-## Contribution guidelines
-
-Support follows PSR-1 and PSR-4 PHP coding standards, and semantic versioning.
-
-Please report any issue you find in the issues page.  
-Pull requests are welcome.

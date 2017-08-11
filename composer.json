@@ -1,6 +1,6 @@
 {
-    "name": "zizaco/entrust",
-    "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
+    "name": "adesr/entrust",
+    "description": "This package provides a flexible way to add Role-based Permissions and Navigations to Laravel",
     "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
     "license": "MIT",
     "authors": [
@@ -19,6 +19,10 @@
         {
             "name": "Michele Angioni",
             "email": "michele.angioni@gmail.com"
+        },
+        {
+            "name": "AdeSR",
+            "homepage": "http://github.com/adesr"
         }
     ],
     "require": {
@@ -38,7 +42,7 @@
             "src/commands"
         ],
         "psr-4": {
-            "Zizaco\\Entrust\\": "src/Entrust/"
+            "Adesr\\Entrust\\": "src/Entrust/"
         }
     },
     "autoload-dev": {

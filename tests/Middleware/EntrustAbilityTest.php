@@ -1,6 +1,6 @@
 <?php
 
-use Zizaco\Entrust\Middleware\EntrustAbility;
+use Adesr\Entrust\Middleware\EntrustAbility;
 use Mockery as m;
 
 class EntrustAbilityTest extends MiddlewareTest

@@ -1,11 +1,11 @@
-<?php namespace Zizaco\Entrust\Traits;
+<?php namespace Adesr\Entrust\Traits;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Adesr\Entrust
  */
 
 use Illuminate\Cache\TaggableStore;
@@ -81,6 +81,16 @@ trait EntrustRoleTrait
     }
 
     /**
+     * Many-to-Many relations with the Menu model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function menus()
+    {
+        return $this->belongsToMany(Config::get('entrust.menu'), Config::get('entrust.menu_role_table'), Config::get('entrust.role_foreign_key'), Config::get('entrust.menu_foreign_key'));
+    }
+
+    /**
      * Boot the role model
      * Attach event listener to remove the many-to-many records when trying to delete
      * Will NOT delete any records if the role model uses soft deletes.
@@ -95,6 +105,7 @@ trait EntrustRoleTrait
             if (!method_exists(Config::get('entrust.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
                 $role->perms()->sync([]);
+                $role->menus()->sync([]);
             }
 
             return true;
@@ -225,5 +236,83 @@ trait EntrustRoleTrait
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
+    }
+
+    /**
+     * Sync multiple permissions to current role.
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function syncPermissions($permissions)
+    {
+        $perms = [];
+        if(is_object($permissions)) {
+            foreach ($permissions as $v) {
+                $perms[] = $v->getKey();
+            }
+        }
+        if(is_array($permissions)) {
+            $perms = $permissions;
+        }
+
+        $this->perms()->sync($perms);
+    }
+
+    /**
+     * Attach menu to current role.
+     *
+     * @param object|array $menu
+     *
+     * @return void
+     */
+    public function attachMenu($menu)
+    {
+        if (is_object($menu)) {
+            $menu = $menu->getKey();
+        }
+
+        if (is_array($menu)) {
+            return $this->attachMenus($menu);
+        }
+
+        $this->menus()->attach($menu);
+    }
+
+    /**
+     * Attach multiple menus to current role.
+     *
+     * @param mixed $menus
+     *
+     * @return void
+     */
+    public function attachMenus($menus)
+    {
+        foreach ($menus as $menu) {
+            $this->attachMenu($menu);
+        }
+    }
+
+    /**
+     * Sync multiple menus to current role.
+     *
+     * @param mixed $menus
+     *
+     * @return void
+     */
+    public function syncMenus($menus)
+    {
+        $menu = [];
+        if(is_object($menus)) {
+            foreach ($menus as $v) {
+                $menu[] = $v->getKey();
+            }
+        }
+        if(is_array($menus)) {
+            $menu = $menus;
+        }
+
+        $this->menus()->sync($menu);
     }
 }

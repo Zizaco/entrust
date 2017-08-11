@@ -18,7 +18,6 @@ class EntrustSetupTables extends Migration
         Schema::create('{{ $rolesTable }}', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->string('display_name')->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
         });
@@ -40,7 +39,6 @@ class EntrustSetupTables extends Migration
         Schema::create('{{ $permissionsTable }}', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->string('display_name')->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
         });
@@ -58,6 +56,44 @@ class EntrustSetupTables extends Migration
             $table->primary(['permission_id', 'role_id']);
         });
 
+        // Create table for storing menus
+        Schema::create('{{ $menusTable }}', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('parent')->nullable();
+            $table->string('icon')->nullable();
+            $table->tinyInteger('is_active')->unsigned()->default(0);
+            $table->tinyInteger('order_no')->unsigned()->default(0);
+            $table->timestamps();
+        });
+
+        // Create table for associating menus to roles (Many-to-Many)
+        Schema::create('{{ $menuRoleTable }}', function (Blueprint $table) {
+            $table->integer('role_id')->unsigned();
+            $table->integer('menu_id')->unsigned();
+
+            $table->foreign('role_id')->references('id')->on('roles')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('menu_id')->references('id')->on('menus')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->primary(['menu_id', 'role_id']);
+        });
+
+        // Create table for associating menus to permissions (Many-to-Many)
+        Schema::create('{{ $menuPermissionTable }}', function (Blueprint $table) {
+            $table->integer('menu_id')->unsigned();
+            $table->integer('permission_id')->unsigned();
+
+            $table->foreign('menu_id')->references('id')->on('menus')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('permission_id')->references('id')->on('permissions')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->primary(['menu_id', 'permission_id']);
+        });
+
         DB::commit();
     }
 
@@ -69,8 +105,11 @@ class EntrustSetupTables extends Migration
     public function down()
     {
         Schema::drop('{{ $permissionRoleTable }}');
+        Schema::drop('{{ $menuPermissionTable }}');
         Schema::drop('{{ $permissionsTable }}');
         Schema::drop('{{ $roleUserTable }}');
+        Schema::drop('{{ $menuRoleTable }}');
         Schema::drop('{{ $rolesTable }}');
+        Schema::drop('{{ $menusTable }}');
     }
 }

@@ -5,7 +5,7 @@
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Adesr\Entrust
  */
 
 return [
@@ -129,4 +129,81 @@ return [
     |
     */
     'permission_foreign_key' => 'permission_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust Menu Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the Menu model used by Entrust to create correct relations.
+    | Update the menu if it is in a different namespace.
+    |
+    */
+    'menu' => 'App\Menu',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust Menu Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu table used by Entrust to save menu to the
+    | database.
+    |
+    */
+    'menu_table' => 'menus',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust menu_role Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu_role table used by Entrust to save relationship
+    | between menus and roles to the database.
+    |
+    */
+    'menu_role_table' => 'menu_role',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust menu_permission Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu_permission table used by Entrust to save relationship
+    | between menus and permissions to the database.
+    |
+    */
+    'menu_permission_table' => 'menu_permission',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust menu foreign key
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu foreign key used by Entrust to make a proper
+    | relation between menu and roles / permissions
+    |
+    */
+    'menu_foreign_key' => 'menu_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust menu foreign key (parent-child structure)
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu foreign key used by Entrust to make a proper
+    | relation between menu and its decendants
+    |
+    */
+    'menu_child_key' => 'slug',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust menu foreign key (parent-child structure)
+    |--------------------------------------------------------------------------
+    |
+    | This is the menu foreign key used by Entrust to make a proper
+    | relation between menu and its ancestor
+    |
+    */
+    'menu_parent_key' => 'parent',
 ];

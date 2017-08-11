@@ -1,12 +1,12 @@
 <?php
 
-use Zizaco\Entrust\Contracts\EntrustUserInterface;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Adesr\Entrust\Contracts\EntrustUserInterface;
+use Adesr\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
-use Zizaco\Entrust\Permission;
-use Zizaco\Entrust\Role;
+use Adesr\Entrust\Permission;
+use Adesr\Entrust\Role;
 use Mockery as m;
 
 class EntrustUserTest extends PHPUnit_Framework_TestCase
@@ -1106,7 +1106,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
     protected function mockPermission($permName)
     {
-        $permMock = m::mock('Zizaco\Entrust\Permission');
+        $permMock = m::mock('Adesr\Entrust\Permission');
         $permMock->name = $permName;
         $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
         $permMock->id = 1;
@@ -1116,7 +1116,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
     protected function mockRole($roleName)
     {
-        $roleMock = m::mock('Zizaco\Entrust\Role');
+        $roleMock = m::mock('Adesr\Entrust\Role');
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];

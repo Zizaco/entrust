@@ -8,14 +8,14 @@
  * @package Adesr\Entrust
  */
 
-use Adesr\Entrust\Contracts\EntrustPermissionInterface;
-use Adesr\Entrust\Traits\EntrustPermissionTrait;
+use Adesr\Entrust\Contracts\EntrustMenuInterface;
+use Adesr\Entrust\Traits\EntrustMenuTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
-class EntrustPermission extends Model implements EntrustPermissionInterface
+class EntrustMenu extends Model implements EntrustMenuInterface
 {
-    use EntrustPermissionTrait;
+    use EntrustMenuTrait;
 
     /**
      * The database table used by the model.
@@ -32,7 +32,7 @@ class EntrustPermission extends Model implements EntrustPermissionInterface
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('entrust.permissions_table');
+        $this->table = Config::get('entrust.menu_table');
     }
 
 }
