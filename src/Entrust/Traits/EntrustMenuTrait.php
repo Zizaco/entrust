@@ -76,6 +76,76 @@ trait EntrustMenuTrait
     }
 
     /**
+     * Attach permission to current menu.
+     *
+     * @param object|array $permission
+     *
+     * @return void
+     */
+    public function attachPermission($permission)
+    {
+        if (is_object($permission)) {
+            $permission = $permission->getKey();
+        }
+
+        if (is_array($permission)) {
+            return $this->attachPermissions($permission);
+        }
+
+        $this->perms()->attach($permission);
+    }
+
+    /**
+     * Detach permission from current menu.
+     *
+     * @param object|array $permission
+     *
+     * @return void
+     */
+    public function detachPermission($permission)
+    {
+        if (is_object($permission)) {
+            $permission = $permission->getKey();
+        }
+
+        if (is_array($permission)) {
+            return $this->detachPermissions($permission);
+        }
+
+        $this->perms()->detach($permission);
+    }
+
+    /**
+     * Attach multiple permissions to current menu.
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function attachPermissions($permissions)
+    {
+        foreach ($permissions as $permission) {
+            $this->attachPermission($permission);
+        }
+    }
+
+    /**
+     * Detach multiple permissions from current menu
+     *
+     * @param mixed $permissions
+     *
+     * @return void
+     */
+    public function detachPermissions($permissions = null)
+    {
+        if (!$permissions) $permissions = $this->perms()->get();
+
+        foreach ($permissions as $permission) {
+            $this->detachPermission($permission);
+        }
+    }
+
+    /**
      * Sync multiple permissions to current menu.
      *
      * @param mixed $permissions
@@ -116,7 +186,7 @@ trait EntrustMenuTrait
         }
         // return collect($ancestors)->flatten()->unique()->values()->all();
         $return = [];
-        array_walk_recursive($ancestors, function($a) use(&$return) { $return[] = $a });
+        array_walk_recursive($ancestors, function($a) use(&$return) { $return[] = $a; });
         return array_unique($return);
     }
 }
