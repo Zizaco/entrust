@@ -261,6 +261,40 @@ trait EntrustRoleTrait
     }
 
     /**
+     * Attach menu to current role.
+     *
+     * @param object|array $menu
+     *
+     * @return void
+     */
+    public function attachMenu($menu)
+    {
+        if (is_object($menu)) {
+            $menu = $menu->getKey();
+        }
+
+        if (is_array($menu)) {
+            return $this->attachMenus($menu);
+        }
+
+        $this->menus()->attach($menu);
+    }
+
+    /**
+     * Attach multiple menus to current role.
+     *
+     * @param mixed $menus
+     *
+     * @return void
+     */
+    public function attachMenus($menus)
+    {
+        foreach ($menus as $menu) {
+            $this->attachMenu($menu);
+        }
+    }
+
+    /**
      * Sync multiple menus to current role.
      *
      * @param mixed $menus
