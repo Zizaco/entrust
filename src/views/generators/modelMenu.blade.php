@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Adesr\Entrust\EntrustRole;
 
 class Menu extends EntrustMenu
 {

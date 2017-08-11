@@ -1,6 +1,6 @@
 {
     "name": "adesr/entrust",
-    "description": "This package provides a flexible way to add Navigation and Role-based Permissions to Laravel",
+    "description": "This package provides a flexible way to add Role-based Permissions and Navigations to Laravel",
     "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
     "license": "MIT",
     "authors": [
@@ -29,7 +29,7 @@
         "php": ">=5.5.0",
         "illuminate/console": "~5.0",
         "illuminate/support": "~5.0",
-        "illuminate/cache": "~5.0"
+        "illuminate/cache": "~5.0",
     },
     "require-dev": {
         "phpunit/phpunit": "~4.1",

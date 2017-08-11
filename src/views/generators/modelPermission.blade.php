@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Zizaco\Entrust\EntrustPermission;
+use Adesr\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
