@@ -48,8 +48,8 @@ class ModelsCommand extends Command
 
             $this->line('');
 
-            $this->info("Creating model...");
-            if ($this->createModel()) {
+            $this->info("Creating models...");
+            if ($this->createModels()) {
 
                 $this->info("Models successfully created!");
             } else {
@@ -71,7 +71,7 @@ class ModelsCommand extends Command
      *
      * @return bool
      */
-    protected function createMigration()
+    protected function createModels()
     {
         $isDone = true;
         $modelFiles = [
