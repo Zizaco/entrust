@@ -201,7 +201,7 @@ $role->forceDelete(); // Now force delete will work regardless of whether the pi
 
 #### Custom configuration - add multiple auth
 
-when you do not use Auth::user(), use another table(e.g. "admins"), this "auth" configuration item should be set up in the `config/entrust.php`. For example, when you use session(["admin_id" => $admin->id]) for background login verification, you may need this configuration.
+when you do not use Auth::user(), use another table(e.g. "admins"), this "auth" configuration item should be set up in the `config/entrust.php`. For example, when you use `session(["admin_id" => $admin->id])` for background login verification, you may need this configuration.
 
 ```php
     /*
