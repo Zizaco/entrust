@@ -8,6 +8,8 @@
  * @package Zizaco\Entrust
  */
 
+use Illuminate\Support\Facades\Config;
+
 class Entrust
 {
     /**
@@ -86,7 +88,16 @@ class Entrust
      */
     public function user()
     {
-        return $this->app->auth->user();
+        //when do not use Auth::user(), use another table(e.g. "admins")
+        if(!empty(Config::get('entrust.auth'))){
+            $userModelName = Config::get('entrust.auth.model');
+            $userModel = new $userModelName();
+            $user = $userModel->where('id', session(Config::get('entrust.auth.user_id_in_session')))->first();
+            return $user;
+        }else{
+            //default
+            return $this->app->auth->user();
+        }
     }
 
     /**

@@ -10,6 +10,7 @@
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Config;
 
 class EntrustAbility
 {
@@ -51,8 +52,19 @@ class EntrustAbility
 			$validateAll = filter_var($validateAll, FILTER_VALIDATE_BOOLEAN);
 		}
 
-		if ($this->auth->guest() || !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
-			abort(403);
+		//when do not use Auth::user(), use another table(e.g. "admins")
+		if(!empty(Config::get('entrust.auth'))){
+			$userModelName = Config::get('entrust.auth.model');
+			$userModel = new $userModelName();
+			$user = $userModel->where('id', session(Config::get('entrust.auth.user_id_in_session')))->first();
+			if (empty($user) || !$user->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
+				abort(403);
+			}
+		}else{
+			//default
+			if ($this->auth->guest() || !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
+				abort(403);
+			}
 		}
 
 		return $next($request);
