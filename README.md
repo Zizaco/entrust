@@ -199,6 +199,26 @@ $role->perms()->sync([]); // Delete relationship data
 $role->forceDelete(); // Now force delete will work regardless of whether the pivot table has cascading delete
 ```
 
+#### Custom configuration - add multiple auth
+
+when you do not use Auth::user(), use another table(e.g. "admins"), this "auth" configuration item should be set up in the `config/entrust.php`. For example, when you use session('admin_id', $admin->id) for background login verification, you may need this configuration.
+
+```php
+    /*
+    |--------------------------------------------------------------------------
+    | Custom configuration
+    |--------------------------------------------------------------------------
+    |
+    | when do not use Auth::user(), use another table(e.g. "admins"), this "auth"
+    | configuration item should be set up.
+    |
+    */
+    'auth' => [
+        'model' => App\Models\Admin::class,
+        'user_id_in_session' => 'admin_id',
+    ],
+```
+
 ## Usage
 
 ### Concepts
