@@ -51,9 +51,20 @@ class EntrustAbility
 			$validateAll = filter_var($validateAll, FILTER_VALIDATE_BOOLEAN);
 		}
 
-		if ($this->auth->guest() || !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
-			abort(403);
-		}
+		//when do not use Auth::user(), use another table(e.g. "admins")
+		if(!empty(config('entrust.auth'))){
+            $userModelName = config('entrust.auth.model');
+            $userModel = new $userModelName();
+            $user = $userModel->where('id', session(config('entrust.auth.user_id_in_session')))->first();
+            if (empty($user) || !$user->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
+				abort(403);
+			}
+        }else{
+            //default
+            if ($this->auth->guest() || !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
+				abort(403);
+			}
+        }
 
 		return $next($request);
 	}

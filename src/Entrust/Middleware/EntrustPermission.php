@@ -41,9 +41,20 @@ class EntrustPermission
 			$permissions = explode(self::DELIMITER, $permissions);
 		}
 
-		if ($this->auth->guest() || !$request->user()->can($permissions)) {
-			abort(403);
-		}
+		//when do not use Auth::user(), use another table(e.g. "admins")
+		if(!empty(config('entrust.auth'))){
+            $userModelName = config('entrust.auth.model');
+            $userModel = new $userModelName();
+            $user = $userModel->where('id', session(config('entrust.auth.user_id_in_session')))->first();
+            if (empty($user) || !$user->can($permissions)) {
+				abort(403);
+			}
+        }else{
+            //default
+            if ($this->auth->guest() || !$request->user()->can($permissions)) {
+				abort(403);
+			}
+        }
 
 		return $next($request);
 	}

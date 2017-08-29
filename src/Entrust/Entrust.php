@@ -86,7 +86,16 @@ class Entrust
      */
     public function user()
     {
-        return $this->app->auth->user();
+        //when do not use Auth::user(), use another table(e.g. "admins")
+        if(!empty(config('entrust.auth'))){
+            $userModelName = config('entrust.auth.model');
+            $userModel = new $userModelName();
+            $user = $userModel->where('id', session(config('entrust.auth.user_id_in_session')))->first();
+            return $user;
+        }else{
+            //default
+            return $this->app->auth->user();
+        }
     }
 
     /**
