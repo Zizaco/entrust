@@ -10,6 +10,7 @@
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Config;
 
 class EntrustPermission
 {
@@ -42,10 +43,10 @@ class EntrustPermission
 		}
 
 		//when do not use Auth::user(), use another table(e.g. "admins")
-		if(!empty(config('entrust.auth'))){
-			$userModelName = config('entrust.auth.model');
+		if(!empty(Config::get('entrust.auth'))){
+			$userModelName = Config::get('entrust.auth.model');
 			$userModel = new $userModelName();
-			$user = $userModel->where('id', session(config('entrust.auth.user_id_in_session')))->first();
+			$user = $userModel->where('id', session(Config::get('entrust.auth.user_id_in_session')))->first();
 			if (empty($user) || !$user->can($permissions)) {
 				abort(403);
 			}
