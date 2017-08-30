@@ -81,7 +81,7 @@ class MigrationCommand extends Command
     {
         $migrationFile = base_path("/database/migrations")."/".date('Y_m_d_His')."_entrust_setup_tables.php";
 
-        $userModelName = Config::get('auth.providers.users.model');
+        $userModelName = $this->resolveModelName();
         $userModel = new $userModelName();
         $usersTable = $userModel->getTable();
         $userKeyName = $userModel->getKeyName();
@@ -97,5 +97,19 @@ class MigrationCommand extends Command
         }
 
         return false;
+    }
+
+    /**
+     * Resolve model name by default guard.
+     *
+     * @return string
+     */
+    protected function resolveModelName()
+    {
+        $defaultGuard    = Config::get('auth.defaults.guard');
+        $defaultProvider = Config::get('auth.guards.' . $defaultGuard . '.provider');
+        $modelName       = Config::get('auth.providers.' . $defaultProvider . '.model');
+
+        return $modelName;
     }
 }
