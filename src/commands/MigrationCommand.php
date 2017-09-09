@@ -26,13 +26,23 @@ class MigrationCommand extends Command
      * @var string
      */
     protected $description = 'Creates a migration following the Entrust specifications.';
-
+   
     /**
      * Execute the console command.
      *
      * @return void
      */
     public function fire()
+    {
+        $this->handle();
+    }
+
+    /**
+     * Execute the console command for Laravel 5.5+.
+     *
+     * @return void
+     */
+    public function handle()
     {
         $this->laravel->view->addNamespace('entrust', substr(__DIR__, 0, -8).'views');
 
