@@ -172,7 +172,7 @@ class User extends Eloquent
 }
 ```
 
-This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`, `can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
+This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`, `withRole($name)`, `can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
 
 Don't forget to dump composer autoload
 
@@ -305,6 +305,13 @@ $user->can("admin.*"); // true
 
 // match any permission about users
 $user->can("*_users"); // true
+```
+
+To filter users according a specific role, you may use withRole() scope, for example to retrieve all admins:
+```
+$admins = User::withRole('admin')->get();
+// or maybe with a relationsship
+$company->users()->withRole('admin')->get();
 ```
 
 
