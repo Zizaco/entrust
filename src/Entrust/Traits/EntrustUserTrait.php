@@ -15,7 +15,11 @@ use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
-    //Big block of caching functionality.
+    /**
+     * Big block of caching functionality.
+     *
+     * @return mixed Roles
+     */
     public function cachedRoles()
     {
         $userPrimaryKey = $this->primaryKey;
@@ -27,6 +31,10 @@ trait EntrustUserTrait
         }
         else return $this->roles()->get();
     }
+
+    /**
+     * {@inheritDoc}
+     */
     public function save(array $options = [])
     {   //both inserts and updates
         if(Cache::getStore() instanceof TaggableStore) {
@@ -34,19 +42,29 @@ trait EntrustUserTrait
         }
         return parent::save($options);
     }
+
+    /**
+     * {@inheritDoc}
+     */
     public function delete(array $options = [])
     {   //soft or hard
-        parent::delete($options);
+        $result = parent::delete($options);
         if(Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
+        return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     public function restore()
     {   //soft delete undo's
-        parent::restore();
+        $result = parent::restore();
         if(Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
+        return $result;
     }
 
     /**
