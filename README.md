@@ -40,7 +40,7 @@ contains the latest entrust version for Laravel 4.
 1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"zizaco/entrust": "5.2.x-dev"
+"zizaco/entrust": "dev-master"
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
@@ -82,6 +82,26 @@ php artisan vendor:publish
 ```
 
 to `routeMiddleware` array in `app/Http/Kernel.php`.
+
+7) Custom configuration - add multiple auth
+
+when you do not use Auth::user(), use another table(e.g. "admins"), this "auth" configuration item should be set up in the `config/entrust.php`. For example, when you use `session(["admin_id" => $admin->id])` for background login verification, you may need this configuration.
+
+```php
+    /*
+    |--------------------------------------------------------------------------
+    | Custom configuration
+    |--------------------------------------------------------------------------
+    |
+    | when do not use Auth::user(), use another table(e.g. "admins"), this "auth"
+    | configuration item should be set up.
+    |
+    */
+    'auth' => [
+        'model' => App\Models\Admin::class,
+        'user_id_in_session' => 'admin_id',
+    ],
+```
 
 ## Configuration
 
