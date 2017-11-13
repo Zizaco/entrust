@@ -14,29 +14,53 @@ use Illuminate\Support\Facades\Cache;
 
 trait EntrustRoleTrait
 {
-    //Big block of caching functionality.
+    /**
+     * Big block of caching functionality.
+     *
+     * @return void
+     */
     public function cachedPermissions()
     {
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_permissions_for_role_' . $this->$rolePrimaryKey;
+        
         if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
+            return Cache::tags(
+                Config::get('entrust.permission_role_table')
+            )->remember($cacheKey, Config::get('cache.ttl', 60), function () {
                 return $this->perms()->get();
             });
-        } else return $this->perms()->get();
+        } else {
+            return $this->perms()->get();
+        }
     }
-
+    
+    /**
+     * Save
+     *
+     * @param array $options
+     * @return bool|void
+     */
     public function save(array $options = [])
-    {   //both inserts and updates
+    {   
+        //both inserts and updates
         if (!parent::save($options)) {
             return false;
         }
+        
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
+        
         return true;
     }
-
+    
+    /**
+     * Delete
+     *
+     * @param array $options
+     * @return bool|void
+     */
     public function delete(array $options = [])
     {   //soft or hard
         if (!parent::delete($options)) {
@@ -45,17 +69,26 @@ trait EntrustRoleTrait
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
+        
         return true;
     }
-
+    
+    /**
+     * Restore
+     *
+     * @return bool|void
+     */
     public function restore()
-    {   //soft delete undo's
+    {   
+        //soft delete undo's
         if (!parent::restore()) {
             return false;
         }
+        
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
+        
         return true;
     }
 
