@@ -25,7 +25,7 @@ trait EntrustUserTrait
         $userPrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
         if(Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+            return Cache::tags(Config::get('app.key').':'.Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
                 return $this->roles()->get();
             });
         }
@@ -38,7 +38,7 @@ trait EntrustUserTrait
     public function save(array $options = [])
     {   //both inserts and updates
         if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            Cache::tags(Config::get('app.key').':'.Config::get('entrust.role_user_table'))->flush();
         }
         return parent::save($options);
     }
@@ -50,7 +50,7 @@ trait EntrustUserTrait
     {   //soft or hard
         $result = parent::delete($options);
         if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            Cache::tags(Config::get('app.key').':'.Config::get('entrust.role_user_table'))->flush();
         }
         return $result;
     }
@@ -62,7 +62,7 @@ trait EntrustUserTrait
     {   //soft delete undo's
         $result = parent::restore();
         if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            Cache::tags(Config::get('app.key').':'.Config::get('entrust.role_user_table'))->flush();
         }
         return $result;
     }
