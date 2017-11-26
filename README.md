@@ -216,9 +216,16 @@ $admin->name         = 'admin';
 $admin->display_name = 'User Administrator'; // optional
 $admin->description  = 'User is allowed to manage and edit other users'; // optional
 $admin->save();
+
+
+$edit_post = new Permission();
+$edit_post->name         = 'edit_own_post';
+$edit_post->display_name = 'Can Edit Self Created Post'; // optional
+$edit_post->description  = 'User is allowed to edit only his own posts'; // optional
+$edit_post->save();
 ```
 
-Next, with both roles created let's assign them to the users.
+Next, with both roles and the new permission created let's assign them to the users.
 Thanks to the `HasRole` trait this is as easy as:
 
 ```php
@@ -229,6 +236,12 @@ $user->attachRole($admin); // parameter can be an Role object, array, or id
 
 // or eloquent's original technique
 $user->roles()->attach($admin->id); // id only
+
+// permission attach alias
+$user->attachPermission($edit_post); // parameter can be an Permission object, array, or id
+
+// or eloquent's original technique
+$user->permission()->attach($edit_post->id); // id only
 ```
 
 Now we just need to add permissions to those Roles:
