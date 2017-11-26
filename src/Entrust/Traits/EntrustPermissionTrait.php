@@ -19,7 +19,17 @@ trait EntrustPermissionTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.permission_role_table'), Config::get('entrust.permission_foreign_key'), Config::get('entrust.role_foreign_key'));
+        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.permission_role_table'));
+    }
+
+    /**
+     * Many-to-Many relations with permission model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(Config::get('entrust.permission'),Config::get('entrust.user_permission_table'), 'user_id','permission_id');
     }
 
     /**
@@ -36,6 +46,7 @@ trait EntrustPermissionTrait
         static::deleting(function($permission) {
             if (!method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
+                $permission->users()->sync([]);
             }
 
             return true;
