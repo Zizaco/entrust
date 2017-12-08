@@ -1,10 +1,5 @@
-### Docs ###
-build/
-cache/
-
-### PHP ###
-
-/bootstrap/compiled.php
+/build
+/cache
 /vendor
 composer.phar
 .DS_Store
