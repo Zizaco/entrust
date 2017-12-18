@@ -256,8 +256,8 @@ trait EntrustUserTrait
         if(is_array($role)) {
             $role = $role['id'];
         }
-
-        $this->roles()->attach($role);
+        // no duplicate insers
+        $this->roles()->sync([$role], false);
     }
 
     /**
