@@ -66,6 +66,14 @@ class EntrustServiceProvider extends ServiceProvider
             return "<?php if (\\Entrust::hasRole({$expression})) : ?>";
         });
 
+        \Blade::directive('elseifrole', function($expression) {
+            return "<?php elseif (\\Entrust::hasRole({$expression})) : ?>";
+        });
+
+        \Blade::directive('elserole', function() {
+            return "<?php else: ?>";
+        });
+
         \Blade::directive('endrole', function($expression) {
             return "<?php endif; // Entrust::hasRole ?>";
         });
