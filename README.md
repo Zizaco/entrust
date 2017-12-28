@@ -391,6 +391,11 @@ Three directives are available for use within your Blade templates. What you giv
 @role('admin')
     <p>This is visible to users with the admin role. Gets translated to 
     \Entrust::role('admin')</p>
+@elseifrole('staff')
+     <p>This is visible to users with the staff role. Gets translated to 
+        \Entrust::role('staff')</p>
+@elserole
+     <p>This is visible to all the other roles./p>
 @endrole
 
 @permission('manage-admins')
