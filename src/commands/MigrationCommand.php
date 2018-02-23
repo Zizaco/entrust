@@ -1,4 +1,6 @@
-<?php namespace Zizaco\Entrust;
+<?php
+
+namespace Zizaco\Entrust;
 
 /**
  * This file is part of Entrust,
@@ -26,7 +28,7 @@ class MigrationCommand extends Command
      * @var string
      */
     protected $description = 'Creates a migration following the Entrust specifications.';
-   
+
     /**
      * Execute the console command.
      *
