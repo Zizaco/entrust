@@ -84,7 +84,7 @@ trait EntrustUserTrait
      *
      * @return void|bool
      */
-    public static function boot()
+    public static function bootEntrustUserTrait()
     {
         parent::boot();
 
