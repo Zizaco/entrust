@@ -20,7 +20,7 @@ trait EntrustRoleTrait
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_permissions_for_role_' . $this->$rolePrimaryKey;
         if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
+            return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('entrust.cache_ttl', 60), function () {
                 return $this->perms()->get();
             });
         } else return $this->perms()->get();
