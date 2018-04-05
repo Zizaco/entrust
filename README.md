@@ -43,6 +43,12 @@ contains the latest entrust version for Laravel 4.
 "zizaco/entrust": "5.2.x-dev"
 ```
 
+If you are using laravel 5.5 or higher you need to add the following to your composer.json instead of previous one.
+
+```json
+"zizaco/entrust": "dev-master"
+```
+
 2) Open your `config/app.php` and add the following to the `providers` array:
 
 ```php
