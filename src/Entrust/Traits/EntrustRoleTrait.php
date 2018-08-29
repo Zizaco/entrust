@@ -174,7 +174,7 @@ trait EntrustRoleTrait
             return $this->attachPermissions($permission);
         }
 
-        $this->perms()->attach($permission);
+        $this->perms()->sync($permission, false);
     }
 
     /**
