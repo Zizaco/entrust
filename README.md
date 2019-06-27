@@ -64,6 +64,7 @@ php artisan vendor:publish
 5) Open your `config/auth.php` and add the following to it:
 
 ```php
+'model' => Namespace\Of\Your\User\Model\User::class,
 'providers' => [
     'users' => [
         'driver' => 'eloquent',
