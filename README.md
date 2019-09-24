@@ -1,4 +1,4 @@
-# ENTRUST (Laravel 5 Package)
+# ENTRUST (Laravel 6 Package)
 
 [![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
 [![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
@@ -7,10 +7,13 @@
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 6**.
 
 If you are looking for the Laravel 4 version, take a look [Branch 1.0](https://github.com/Zizaco/entrust/tree/1.0). It
 contains the latest entrust version for Laravel 4.
+
+If you are looking for the Laravel 5 version, take a look [Tag 1.7.0](https://github.com/Zizaco/entrust/tree/1.7.0). It
+contains the latest entrust version for Laravel 5.
 
 ## Contents
 
@@ -37,10 +40,10 @@ contains the latest entrust version for Laravel 4.
 
 ## Installation
 
-1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
+1) In order to install Laravel 6 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"zizaco/entrust": "5.2.x-dev"
+"zizaco/entrust": "6.0.1-dev"
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
@@ -115,7 +118,7 @@ After the migration, four new tables will be present:
 
 #### Role
 
-Create a Role model inside `app/models/Role.php` using the following example:
+Create a Role model inside `app/Role.php` using the following example:
 
 ```php
 <?php namespace App;
@@ -136,7 +139,7 @@ Both `display_name` and `description` are optional; their fields are nullable in
 
 #### Permission
 
-Create a Permission model inside `app/models/Permission.php` using the following example:
+Create a Permission model inside `app/Permission.php` using the following example:
 
 ```php
 <?php namespace App;
@@ -514,17 +517,6 @@ As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is l
 If the user is not logged the return will also be `false`.
 
 ## Troubleshooting
-
-If you encounter an error when doing the migration that looks like:
-
-```
-SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150)
-    (SQL: alter table `role_user` add constraint role_user_user_id_foreign foreign key (`user_id`)
-    references `users` (`id`)) (Bindings: array ())
-```
-
-Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`.
-Make sure both are `INT(10)`.
 
 When trying to use the EntrustUserTrait methods, you encounter the error which looks like
 
