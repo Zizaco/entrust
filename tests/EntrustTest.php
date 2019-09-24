@@ -3,8 +3,9 @@
 use Zizaco\Entrust\Entrust;
 use Illuminate\Support\Facades\Facade;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class EntrustTest extends PHPUnit_Framework_TestCase
+class EntrustTest extends TestCase
 {
     protected $nullFilterTest;
     protected $abortFilterTest;
@@ -12,7 +13,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
 
     protected $expectedResponse;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->nullFilterTest = function($filterClosure) {
             if (!($filterClosure instanceof Closure)) {
@@ -54,7 +55,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         };
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
