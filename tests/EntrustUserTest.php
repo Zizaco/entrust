@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\Cache;
 use Zizaco\Entrust\Permission;
 use Zizaco\Entrust\Role;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class EntrustUserTest extends PHPUnit_Framework_TestCase
+class EntrustUserTest extends TestCase
 {
     private $facadeMocks = array();
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -29,7 +30,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::swap($this->facadeMocks['cache']);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
