@@ -32,37 +32,37 @@ Entrust is a succinct and flexible way to add Role-based Permissions to **Larave
 
 ## Installation
 
-1) In order to install Laravel 6 Entrust, just run:
+1). In order to install Laravel 6 Entrust, just run:
 
 ```shell
 composer require trebol/entrust
 ```
 
-2) In the same `config/app.php` and add the following to the `aliases ` array: 
+2). In the same `config/app.php` and add the following to the `aliases ` array: 
 
 ```php
 'Entrust'   => Trebol\Entrust\EntrustFacade::class,
 ```
 
-3) Run the command below to publish the package config file `config/entrust.php`:
+3). Run the command below to publish the package config file `config/entrust.php`:
 
 ```shell
 php artisan vendor:publish
 ```
 
-4) Open your `config/auth.php` and add the following to it:
+4). Open your `config/auth.php` and add the following to it:
 
 ```php
 'providers' => [
     'users' => [
         'driver' => 'eloquent',
-        'model' => Namespace\Of\Your\User\Model\User::class,
+        'model' => Namespace\Of\Your\User\Model\User::class, // Default: App\User::class
         'table' => 'users',
     ],
 ],
 ```
 
-5)  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
+5).  If you want to use [Middleware](#middleware) you also need to add the following:
 
 ```php
     'role' => \Trebol\Entrust\Middleware\EntrustRole::class,

@@ -11,6 +11,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "php": "^7.1",
         "illuminate/console": "^6.5",
         "illuminate/support": "^6.5",
         "illuminate/cache": "^6.5"
