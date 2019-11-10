@@ -12,6 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^7.1.3",
+        "nesbot/carbon": "^1.39",
         "illuminate/console": "5.8.*",
         "illuminate/support": "5.8.*",
         "illuminate/cache": "5.8.*"
