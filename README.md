@@ -32,10 +32,10 @@ Entrust is a succinct and flexible way to add Role-based Permissions to **Larave
 
 ## Installation
 
-1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
+1) In order to install Laravel 6 Entrust, just run:
 
-```json
-"trebol/entrust": "5.2.x-dev"
+```shell
+composer require trebol/entrust
 ```
 
 2) In the same `config/app.php` and add the following to the `aliases ` array: 
