@@ -13,6 +13,7 @@
     "require": {
         "php": "^7.1.3",
         "illuminate/console": "5.8.x-dev",
+        "nesbot/carbon": "^1.39.1",
         "illuminate/cache": "5.8.x-dev"
     },
     "require-dev": {
