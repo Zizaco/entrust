@@ -3,13 +3,7 @@ language: php
 dist: trusty
 
 php:
-  - 7.1.3
   - 7.2
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - php: 7.1
 
 install:
   - composer install
