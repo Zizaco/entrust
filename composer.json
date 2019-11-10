@@ -12,14 +12,13 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^7.1.3",
-        "illuminate/console": "5.8.*",
-        "illuminate/support": "5.8.*",
-        "illuminate/cache": "5.8.*"
+        "illuminate/console": "5.8.x-dev",
+        "illuminate/cache": "5.8.x-dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5.17",
+        "phpunit/phpunit": "7.5.x-dev",
         "mockery/mockery": "dev-master",
-        "illuminate/database": " 5.8.*"
+        "illuminate/database": "5.8.x-dev"
     },
     "autoload": {
         "classmap": [
