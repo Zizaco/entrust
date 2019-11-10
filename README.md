@@ -1,9 +1,8 @@
 # ENTRUST (Laravel 6 Package)
 
-[![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
-[![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
-[![License](https://poser.pugx.org/zizaco/entrust/license.svg)](https://packagist.org/packages/zizaco/entrust)
-[![Total Downloads](https://img.shields.io/packagist/dt/zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
+[![Build Status](https://travis-ci.org/jromero98/entrust.svg?branch=master)](https://travis-ci.org/jromero98/entrust)
+[![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/trebol/entrust)
+[![Total Downloads](https://img.shields.io/packagist/dt/zizaco/entrust.svg)](https://packagist.org/packages/trebol/entrust)
 
 Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5.8** and **Laravel 6**.
 
