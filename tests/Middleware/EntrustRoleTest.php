@@ -1,6 +1,6 @@
 <?php
 
-use Zizaco\Entrust\Middleware\EntrustRole;
+use Trebol\Entrust\Middleware\EntrustRole;
 use Mockery as m;
 
 class EntrustRoleTest extends MiddlewareTest

@@ -1,36 +1,24 @@
 {
-    "name": "zizaco/entrust",
-    "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
-    "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
+    "name": "trebol/entrust",
+    "description": "This package provides a flexible way to add role-based permissions to Laravel and is a fork from Zizaco/entrust",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "Zizaco Zizuini",
-            "email": "zizaco@gmail.com"
-        },
-        {
-            "name": "Andrew Elkins",
-            "homepage": "http://andrewelkins.com"
-        },
-        {
-            "name": "Ben Batschelet",
-            "homepage": "http://github.com/bbatsche"
-        },
-        {
-            "name": "Michele Angioni",
-            "email": "michele.angioni@gmail.com"
+            "name": "Jorge Romero",
+            "email": "jromero@trebolcolombia.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
-        "php": ">=5.5.0",
-        "illuminate/console": "~5.0",
-        "illuminate/support": "~5.0",
-        "illuminate/cache": "~5.0"
+        "illuminate/console": "^6.5",
+        "illuminate/support": "^6.5",
+        "illuminate/cache": "^6.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.1",
+        "phpunit/phpunit": "^8.4",
         "mockery/mockery": "dev-master",
-        "illuminate/database": "~5.0",
+        "illuminate/database": "^6.5",
         "sami/sami": "dev-master"
     },
     "autoload": {
@@ -38,16 +26,16 @@
             "src/commands"
         ],
         "psr-4": {
-            "Zizaco\\Entrust\\": "src/Entrust/"
+            "Trebol\\Entrust\\": "src/Entrust/"
         }
     },
     "extra":{
         "laravel":{
             "providers":[
-                "Zizaco\\Entrust\\EntrustServiceProvider"
+                "Trebol\\Entrust\\EntrustServiceProvider"
             ],
             "aliases":{
-                "Entrust": "Zizaco\\Entrust\\EntrustFacade"
+                "Entrust": "Trebol\\Entrust\\EntrustFacade"
             }
         }
     },
@@ -55,6 +43,5 @@
         "classmap": [
             "tests/Middleware/MiddlewareTest.php"
         ]
-    },
-    "minimum-stability": "dev"
+    }
 }

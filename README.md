@@ -1,16 +1,11 @@
-# ENTRUST (Laravel 5 Package)
+# ENTRUST (Laravel 6 Package)
 
 [![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
 [![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
 [![License](https://poser.pugx.org/zizaco/entrust/license.svg)](https://packagist.org/packages/zizaco/entrust)
 [![Total Downloads](https://img.shields.io/packagist/dt/zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)
-
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
-
-If you are looking for the Laravel 4 version, take a look [Branch 1.0](https://github.com/Zizaco/entrust/tree/1.0). It
-contains the latest entrust version for Laravel 4.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5.8** and **Laravel 6**.
 
 ## Contents
 
@@ -40,28 +35,22 @@ contains the latest entrust version for Laravel 4.
 1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"zizaco/entrust": "5.2.x-dev"
+"trebol/entrust": "5.2.x-dev"
 ```
 
-2) Open your `config/app.php` and add the following to the `providers` array:
+2) In the same `config/app.php` and add the following to the `aliases ` array: 
 
 ```php
-Zizaco\Entrust\EntrustServiceProvider::class,
+'Entrust'   => Trebol\Entrust\EntrustFacade::class,
 ```
 
-3) In the same `config/app.php` and add the following to the `aliases ` array: 
-
-```php
-'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
-```
-
-4) Run the command below to publish the package config file `config/entrust.php`:
+3) Run the command below to publish the package config file `config/entrust.php`:
 
 ```shell
 php artisan vendor:publish
 ```
 
-5) Open your `config/auth.php` and add the following to it:
+4) Open your `config/auth.php` and add the following to it:
 
 ```php
 'providers' => [
@@ -73,12 +62,12 @@ php artisan vendor:publish
 ],
 ```
 
-6)  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
+5)  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
 
 ```php
-    'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
-    'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
-    'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+    'role' => \Trebol\Entrust\Middleware\EntrustRole::class,
+    'permission' => \Trebol\Entrust\Middleware\EntrustPermission::class,
+    'ability' => \Trebol\Entrust\Middleware\EntrustAbility::class,
 ```
 
 to `routeMiddleware` array in `app/Http/Kernel.php`.
@@ -120,7 +109,7 @@ Create a Role model inside `app/models/Role.php` using the following example:
 ```php
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustRole;
+use Trebol\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
@@ -141,7 +130,7 @@ Create a Permission model inside `app/models/Permission.php` using the following
 ```php
 <?php namespace App;
 
-use Zizaco\Entrust\EntrustPermission;
+use Trebol\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
@@ -162,11 +151,13 @@ Next, use the `EntrustUserTrait` trait in your existing `User` model. For exampl
 ```php
 <?php
 
-use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Trebol\Entrust\Traits\EntrustUserTrait;
 
-class User extends Eloquent
+class User extends Authenticatable
 {
-    use EntrustUserTrait; // add this trait to your user model
+    use Notifiable,EntrustUserTrait; // add this trait to your user model
 
     ...
 }
@@ -532,7 +523,7 @@ When trying to use the EntrustUserTrait methods, you encounter the error which l
 
 then probably you don't have published Entrust assets or something went wrong when you did it.
 First of all check that you have the `entrust.php` file in your `config` directory.
-If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/zizaco/entrust/src/config/config.php` file in your config directory and rename it `entrust.php`.
+If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/trebol/entrust/src/config/config.php` file in your config directory and rename it `entrust.php`.
 
 If your app uses a custom namespace then you'll need to tell entrust where your `permission` and `role` models are, you can do this by editing the config file in `config/entrust.php`
 

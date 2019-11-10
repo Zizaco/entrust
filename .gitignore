@@ -2,6 +2,10 @@
 build/
 cache/
 
+### PHP Storm###
+.idea/
+
+
 ### PHP ###
 
 /bootstrap/compiled.php
