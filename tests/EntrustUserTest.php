@@ -2,6 +2,7 @@
 
 use Trebol\Entrust\Contracts\EntrustUserInterface;
 use Trebol\Entrust\Traits\EntrustUserTrait;
+use PHPunit\Framework\TestCase;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
@@ -9,11 +10,11 @@ use Trebol\Entrust\Permission;
 use Trebol\Entrust\Role;
 use Mockery as m;
 
-class EntrustUserTest extends PHPUnit_Framework_TestCase
+class EntrustUserTest extends TestCase
 {
     private $facadeMocks = array();
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -29,7 +30,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::swap($this->facadeMocks['cache']);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
