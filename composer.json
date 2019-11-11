@@ -16,7 +16,7 @@
         "illuminate/cache": "^6.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5",
+        "phpunit/phpunit": "^8.5",
         "mockery/mockery": "dev-master",
         "illuminate/database": "^6.5"
     },
