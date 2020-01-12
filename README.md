@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/trebol/entrust/downloads?format=plastic)](https://packagist.org/packages/trebol/entrust)
 [![License](https://poser.pugx.org/trebol/entrust/license?format=plastic)](https://packagist.org/packages/trebol/entrust)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5.8** and **Laravel 6**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 6**.
 
 ## Contents
 
