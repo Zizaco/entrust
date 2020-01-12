@@ -41,7 +41,7 @@ class EntrustPermission
 			$permissions = explode(self::DELIMITER, $permissions);
 		}
 
-		if ($this->auth->guest() || !$request->user()->can($permissions)) {
+		if ($this->auth->guest() || !$request->user()->cans($permissions)) {
 			abort(403);
 		}
 
