@@ -129,4 +129,7 @@ return [
     |
     */
     'permission_foreign_key' => 'permission_id',
+
+    'type' => 'web',
+    'response-error' => '{Unauthorized}'
 ];
