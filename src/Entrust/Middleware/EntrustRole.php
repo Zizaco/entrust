@@ -46,7 +46,7 @@ class EntrustRole
 		if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
             switch (Config::get('entrust.type')) {
                 case 'api':
-                    return Response::json(Config::get('entrust.response-error'),403);
+                    return response()->json(Config::get('entrust.response-error'),403);
                     break;
                 default:
                     abort(403);

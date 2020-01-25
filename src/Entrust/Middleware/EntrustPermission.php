@@ -46,7 +46,7 @@ class EntrustPermission
 		if ($this->auth->guest() || !$request->user()->cans($permissions)) {
             switch (Config::get('entrust.type')) {
                 case 'api':
-                    return Response::json(Config::get('entrust.response-error'),403);
+                    return response()->json(Config::get('entrust.response-error'),403);
                     break;
                 default:
                     abort(403);

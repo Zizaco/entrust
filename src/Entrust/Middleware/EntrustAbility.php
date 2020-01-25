@@ -56,7 +56,7 @@ class EntrustAbility
 		if ($this->auth->guest() || !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
             switch (Config::get('entrust.type')) {
                 case 'api':
-                    return Response::json(Config::get('entrust.response-error'),403);
+                    return response()->json(Config::get('entrust.response-error'),403);
                     break;
                 default:
                     abort(403);
