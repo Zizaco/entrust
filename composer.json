@@ -1,6 +1,6 @@
 {
     "name": "sunergix/entrust",
-    "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
+    "description": "This package provides a flexible way to add Role-based Permissions to Laravel. Supports laravel 5|6",
     "keywords": ["laravel","illuminate","auth","roles","acl","permission"],
     "license": "MIT",
     "authors": [
