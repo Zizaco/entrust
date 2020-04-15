@@ -19,18 +19,22 @@
         {
             "name": "Michele Angioni",
             "email": "michele.angioni@gmail.com"
+        },
+        {
+            "name": "Edwin Karanja",
+            "email": "edwinkaranja4@gmail.com"
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "illuminate/console": "~5.0",
-        "illuminate/support": "~5.0",
-        "illuminate/cache": "~5.0"
+        "php": "^7.0",
+        "illuminate/console": "~5.0|~6.0",
+        "illuminate/support": "~5.0|~6.0",
+        "illuminate/cache": "~5.0|~6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.1",
+        "phpunit/phpunit": "~4.1|~8.0",
         "mockery/mockery": "dev-master",
-        "illuminate/database": "~5.0",
+        "illuminate/database": "~5.0|~6.0",
         "sami/sami": "dev-master"
     },
     "autoload": {
@@ -56,5 +60,6 @@
             "tests/Middleware/MiddlewareTest.php"
         ]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
