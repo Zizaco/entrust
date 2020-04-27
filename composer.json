@@ -10,15 +10,16 @@
         }
     ],
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
-        "php": "^7.2",
-        "illuminate/console": "^6.5",
-        "illuminate/cache": "^6.5"
+        "php": ">=7.2.5",
+        "illuminate/console": "^7.8",
+        "illuminate/cache": "^7.8"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5",
         "mockery/mockery": "dev-master",
-        "illuminate/database": "^6.5"
+        "illuminate/database": "^7.8"
     },
     "autoload": {
         "classmap": [
@@ -42,5 +43,10 @@
         "classmap": [
             "tests/Middleware/MiddlewareTest.php"
         ]
+    },
+    "config": {
+        "platform": {
+            "php": "7.2.5"
+        }
     }
 }
