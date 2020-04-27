@@ -38,6 +38,8 @@ Entrust is a succinct and flexible way to add Role-based Permissions to **Larave
 composer require trebol/entrust
 ```
 
+use version ^1.0 for Laravel 7
+
 2). In the same `config/app.php` and add the following to the `aliases ` array: 
 
 ```php
