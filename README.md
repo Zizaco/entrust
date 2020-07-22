@@ -1,11 +1,11 @@
-# ENTRUST (Laravel 6 Package)
+# ENTRUST (Laravel Package)
 
 [![Build Status](https://travis-ci.org/jromero98/entrust.svg)](https://travis-ci.org/jromero98/entrust)
 [![Latest Stable Version](https://poser.pugx.org/trebol/entrust/v/stable?format=plastic)](https://packagist.org/packages/trebol/entrust)
 [![Total Downloads](https://poser.pugx.org/trebol/entrust/downloads?format=plastic)](https://packagist.org/packages/trebol/entrust)
 [![License](https://poser.pugx.org/trebol/entrust/license?format=plastic)](https://packagist.org/packages/trebol/entrust)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 6**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel**.
 
 ## Contents
 
@@ -32,13 +32,23 @@ Entrust is a succinct and flexible way to add Role-based Permissions to **Larave
 
 ## Installation
 
-1). In order to install Laravel 6 Entrust, just run:
+1). In order to install Laravel Entrust, just run:
 
 ```shell
 composer require trebol/entrust
 ```
 
-use version ^1.0 for Laravel 7
+If your version is laravel 6
+
+```shell
+composer require trebol/entrust:0.6
+```
+
+If your version is laravel 5.8
+
+```shell
+composer require trebol/entrust:0.2
+```
 
 2). In the same `config/app.php` and add the following to the `aliases ` array: 
 
