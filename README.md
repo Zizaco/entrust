@@ -1,3 +1,5 @@
+> This fork is to fix the package to be installable on laravel v7
+
 # ENTRUST (Laravel 5 Package)
 
 [![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
@@ -40,7 +42,7 @@ contains the latest entrust version for Laravel 4.
 1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"zizaco/entrust": "5.2.x-dev"
+"codebot/entrust": "^1.0"
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
