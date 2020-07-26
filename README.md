@@ -1,4 +1,4 @@
-> This fork is to fix the package to be installable on laravel v7
+> This fork is to fix the package to be installable on Laravel v7
 
 # ENTRUST (Laravel 5 Package)
 
@@ -42,7 +42,7 @@ contains the latest entrust version for Laravel 4.
 1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"codebot/entrust": "^1.0"
+"codebot/entrust": "^7.0"
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
