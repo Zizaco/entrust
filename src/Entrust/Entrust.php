@@ -55,7 +55,7 @@ class Entrust
     public function can($permission, $requireAll = false)
     {
         if ($user = $this->user()) {
-            return $user->can($permission, $requireAll);
+            return $user->cans($permission, $requireAll);
         }
 
         return false;
