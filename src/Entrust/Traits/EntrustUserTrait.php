@@ -1,16 +1,17 @@
-<?php namespace Zizaco\Entrust\Traits;
+<?php namespace Trebol\Entrust\Traits;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Trebol\Entrust
  */
 
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 trait EntrustUserTrait
@@ -141,11 +142,11 @@ trait EntrustUserTrait
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function cans($permission, $requireAll = false)
     {
         if (is_array($permission)) {
             foreach ($permission as $permName) {
-                $hasPerm = $this->can($permName);
+                $hasPerm = $this->cans($permName);
 
                 if ($hasPerm && !$requireAll) {
                     return true;
@@ -162,7 +163,7 @@ trait EntrustUserTrait
             foreach ($this->cachedRoles() as $role) {
                 // Validate against the Permission table
                 foreach ($role->cachedPermissions() as $perm) {
-                    if (str_is( $permission, $perm->name) ) {
+                    if (Str::is( $permission, $perm->name) ) {
                         return true;
                     }
                 }
@@ -218,7 +219,7 @@ trait EntrustUserTrait
             $checkedRoles[$role] = $this->hasRole($role);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->can($permission);
+            $checkedPermissions[$permission] = $this->cans($permission);
         }
 
         // If validate all and there is a false in either
