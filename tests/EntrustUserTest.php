@@ -1,5 +1,6 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Zizaco\Entrust\Contracts\EntrustUserInterface;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Cache\ArrayStore;
@@ -9,11 +10,11 @@ use Zizaco\Entrust\Permission;
 use Zizaco\Entrust\Role;
 use Mockery as m;
 
-class EntrustUserTest extends PHPUnit_Framework_TestCase
+class EntrustUserTest extends TestCase
 {
     private $facadeMocks = array();
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -29,7 +30,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::swap($this->facadeMocks['cache']);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -913,6 +914,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'potato']));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAttachRole()
     {
         /*
@@ -955,6 +959,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $user->attachRole(3);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testDetachRole()
     {
         /*
@@ -998,6 +1005,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $user->detachRole(3);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAttachRoles()
     {
         /*
@@ -1030,6 +1040,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $user->attachRoles([1, 2, 3]);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testDetachRoles()
     {
         /*
@@ -1062,6 +1075,9 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $user->detachRoles([1, 2, 3]);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testDetachAllRoles()
     {
         /*
