@@ -4,7 +4,7 @@ use Zizaco\Entrust\Entrust;
 use Illuminate\Support\Facades\Facade;
 use Mockery as m;
 
-class EntrustTest extends PHPUnit_Framework_TestCase
+class EntrustTest extends \PHPUnit\Framework\TestCase
 {
     protected $nullFilterTest;
     protected $abortFilterTest;
@@ -12,7 +12,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
 
     protected $expectedResponse;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->nullFilterTest = function($filterClosure) {
             if (!($filterClosure instanceof Closure)) {
@@ -54,7 +54,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         };
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -176,6 +176,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $this->assertSame($user, $entrust->user());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testRouteNeedsRole()
     {
         /*
@@ -201,7 +204,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         */
         $app->router->shouldReceive('filter')
             ->with(m::anyOf($oneRoleFilterName, $manyRoleFilterName), m::type('Closure'))
-            ->twice()->ordered();
+            ->atLeast()->twice()->ordered();
 
         $app->router->shouldReceive('when')
             ->with($route, m::anyOf($oneRoleFilterName, $manyRoleFilterName))
@@ -216,6 +219,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $entrust->routeNeedsRole($route, $manyRole);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testRouteNeedsPermission()
     {
         /*
@@ -256,6 +262,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $entrust->routeNeedsPermission($route, $manyPerm);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testRouteNeedsRoleOrPermission()
     {
         /*
@@ -318,7 +327,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $entrust->routeNeedsRoleOrPermission($route, $manyRole, $manyPerm);
     }
 
-    public function simpleFilterDataProvider()
+    public function simpleFilterDataProvider(): array
     {
         return [
             // Filter passes, null is returned
