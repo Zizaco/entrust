@@ -2,9 +2,10 @@
 
 use Zizaco\Entrust\Entrust;
 use Illuminate\Support\Facades\Facade;
-use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Mockery\Exception\NoMatchingExpectationException;
 
-class EntrustTest extends PHPUnit_Framework_TestCase
+class EntrustTest extends TestCase
 {
     protected $nullFilterTest;
     protected $abortFilterTest;
@@ -56,7 +57,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        m::close();
+        Mockery::close();
     }
 
     public function testHasRole()
@@ -67,8 +68,8 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $entrust = m::mock('Zizaco\Entrust\Entrust[user]', [$app]);
-        $user = m::mock('_mockedUser');
+        $entrust = Mockery::mock('Zizaco\Entrust\Entrust[user]', [$app]);
+        $user = Mockery::mock('_mockedUser');
 
         /*
         |------------------------------------------------------------
@@ -111,8 +112,8 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $entrust = m::mock('Zizaco\Entrust\Entrust[user]', [$app]);
-        $user = m::mock('_mockedUser');
+        $entrust = Mockery::mock('Zizaco\Entrust\Entrust[user]', [$app]);
+        $user = Mockery::mock('_mockedUser');
 
         /*
         |------------------------------------------------------------
@@ -155,9 +156,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $app->auth = m::mock('Auth');
+        $app->auth = Mockery::mock('Auth');
         $entrust = new Entrust($app);
-        $user = m::mock('_mockedUser');
+        $user = Mockery::mock('_mockedUser');
 
         /*
         |------------------------------------------------------------
@@ -184,7 +185,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $app->router = m::mock('Route');
+        $app->router = Mockery::mock('Route');
         $entrust = new Entrust($app);
 
         $route = 'route';
@@ -200,11 +201,11 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app->router->shouldReceive('filter')
-            ->with(m::anyOf($oneRoleFilterName, $manyRoleFilterName), m::type('Closure'))
+            ->with(Mockery::anyOf($oneRoleFilterName, $manyRoleFilterName), Mockery::type('Closure'))
             ->twice()->ordered();
 
         $app->router->shouldReceive('when')
-            ->with($route, m::anyOf($oneRoleFilterName, $manyRoleFilterName))
+            ->with($route, Mockery::anyOf($oneRoleFilterName, $manyRoleFilterName))
             ->twice();
 
         /*
@@ -212,8 +213,14 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $entrust->routeNeedsRole($route, $oneRole);
-        $entrust->routeNeedsRole($route, $manyRole);
+        $noExceptionThrown = true;
+        try {
+            $entrust->routeNeedsRole($route, $oneRole);
+            $entrust->routeNeedsRole($route, $manyRole);
+        } catch (NoMatchingExpectationException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     public function testRouteNeedsPermission()
@@ -224,7 +231,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $app->router = m::mock('Route');
+        $app->router = Mockery::mock('Route');
         $entrust = new Entrust($app);
 
         $route = 'route';
@@ -240,11 +247,11 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app->router->shouldReceive('filter')
-            ->with(m::anyOf($onePermFilterName, $manyPermFilterName), m::type('Closure'))
+            ->with(Mockery::anyOf($onePermFilterName, $manyPermFilterName), Mockery::type('Closure'))
             ->twice()->ordered();
 
         $app->router->shouldReceive('when')
-            ->with($route, m::anyOf($onePermFilterName, $manyPermFilterName))
+            ->with($route, Mockery::anyOf($onePermFilterName, $manyPermFilterName))
             ->twice();
 
         /*
@@ -252,8 +259,14 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $entrust->routeNeedsPermission($route, $onePerm);
-        $entrust->routeNeedsPermission($route, $manyPerm);
+        $noExceptionThrown = true;
+        try {
+            $entrust->routeNeedsPermission($route, $onePerm);
+            $entrust->routeNeedsPermission($route, $manyPerm);
+        } catch (NoMatchingExpectationException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     public function testRouteNeedsRoleOrPermission()
@@ -264,7 +277,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $app->router = m::mock('Route');
+        $app->router = Mockery::mock('Route');
         $entrust = new Entrust($app);
 
         $route = 'route';
@@ -285,20 +298,20 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         */
         $app->router->shouldReceive('filter')
             ->with(
-                m::anyOf(
+                Mockery::anyOf(
                     $oneRoleOnePermFilterName,
                     $oneRoleManyPermFilterName,
                     $manyRoleOnePermFilterName,
                     $manyRoleManyPermFilterName
                 ),
-                m::type('Closure')
+                Mockery::type('Closure')
             )
             ->times(4)->ordered();
 
         $app->router->shouldReceive('when')
             ->with(
                 $route,
-                m::anyOf(
+                Mockery::anyOf(
                     $oneRoleOnePermFilterName,
                     $oneRoleManyPermFilterName,
                     $manyRoleOnePermFilterName,
@@ -312,10 +325,16 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $entrust->routeNeedsRoleOrPermission($route, $oneRole, $onePerm);
-        $entrust->routeNeedsRoleOrPermission($route, $oneRole, $manyPerm);
-        $entrust->routeNeedsRoleOrPermission($route, $manyRole, $onePerm);
-        $entrust->routeNeedsRoleOrPermission($route, $manyRole, $manyPerm);
+        $noExceptionThrown = true;
+        try {
+            $entrust->routeNeedsRoleOrPermission($route, $oneRole, $onePerm);
+            $entrust->routeNeedsRoleOrPermission($route, $oneRole, $manyPerm);
+            $entrust->routeNeedsRoleOrPermission($route, $manyRole, $onePerm);
+            $entrust->routeNeedsRoleOrPermission($route, $manyRole, $manyPerm);
+        } catch (NoMatchingExpectationException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     public function simpleFilterDataProvider()
@@ -349,9 +368,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase
     protected function filterTestExecution($methodTested, $mockedMethod, $returnValue, $filterTest, $abort, $expectedResponse)
     {
         // Mock Objects
-        $app         = m::mock('Illuminate\Foundation\Application');
-        $app->router = m::mock('Route');
-        $entrust     = m::mock("Zizaco\Entrust\Entrust[$mockedMethod]", [$app]);
+        $app         = Mockery::mock('Illuminate\Foundation\Application');
+        $app->router = Mockery::mock('Route');
+        $entrust     = Mockery::mock("Zizaco\Entrust\Entrust[$mockedMethod]", [$app]);
 
         // Static values
         $route       = 'route';
@@ -359,7 +378,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $filterName  = $this->makeFilterName($route, [$methodValue]);
 
         $app->router->shouldReceive('when')->with($route, $filterName)->once();
-        $app->router->shouldReceive('filter')->with($filterName, m::on($this->$filterTest))->once();
+        $app->router->shouldReceive('filter')->with($filterName, Mockery::on($this->$filterTest))->once();
 
         if ($abort) {
             $app->shouldReceive('abort')->with(403)->andThrow('Exception', 'abort')->once();
@@ -367,7 +386,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
 
         $this->expectedResponse = $expectedResponse;
 
-        $entrust->shouldReceive($mockedMethod)->with($methodValue, m::any(true, false))->andReturn($returnValue)->once();
+        $entrust->shouldReceive($mockedMethod)->with($methodValue, Mockery::any(true, false))->andReturn($returnValue)->once();
         $entrust->$methodTested($route, $methodValue, $expectedResponse);
     }
 
@@ -399,9 +418,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase
     public function testFilterGeneratedByRouteNeedsRoleOrPermission(
         $roleIsValid, $permIsValid, $filterTest, $requireAll = false, $abort = false, $expectedResponse = null
     ) {
-        $app         = m::mock('Illuminate\Foundation\Application');
-        $app->router = m::mock('Route');
-        $entrust     = m::mock('Zizaco\Entrust\Entrust[hasRole, can]', [$app]);
+        $app         = Mockery::mock('Illuminate\Foundation\Application');
+        $app->router = Mockery::mock('Route');
+        $entrust     = Mockery::mock('Zizaco\Entrust\Entrust[hasRole, can]', [$app]);
 
         // Static values
         $route      = 'route';
@@ -410,7 +429,7 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $filterName = $this->makeFilterName($route, [$roleName], [$permName]);
 
         $app->router->shouldReceive('when')->with($route, $filterName)->once();
-        $app->router->shouldReceive('filter')->with($filterName, m::on($this->$filterTest))->once();
+        $app->router->shouldReceive('filter')->with($filterName, Mockery::on($this->$filterTest))->once();
 
         $entrust->shouldReceive('hasRole')->with($roleName, $requireAll)->andReturn($roleIsValid)->once();
         $entrust->shouldReceive('can')->with($permName, $requireAll)->andReturn($permIsValid)->once();

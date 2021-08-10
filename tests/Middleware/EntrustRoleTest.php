@@ -12,7 +12,7 @@ class EntrustRoleTest extends MiddlewareTest
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard[guest]');
+        $guard = Mockery::mock('Illuminate\Contracts\Auth\Guard[guest]');
         $request = $this->mockRequest();
 
         $middleware = new EntrustRole($guard);
@@ -42,7 +42,7 @@ class EntrustRoleTest extends MiddlewareTest
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
+        $guard = Mockery::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
         $middleware = new EntrustRole($guard);
@@ -72,7 +72,7 @@ class EntrustRoleTest extends MiddlewareTest
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
+        $guard = Mockery::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
         $middleware = new EntrustRole($guard);
@@ -102,7 +102,7 @@ class EntrustRoleTest extends MiddlewareTest
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
+        $guard = Mockery::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
         $middleware = new EntrustRole($guard);

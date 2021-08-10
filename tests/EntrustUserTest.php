@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Zizaco\Entrust\Permission;
 use Zizaco\Entrust\Role;
-use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Mockery\Exception\BadMethodCallException;
+use Mockery\Exception\InvalidCountException;
 
-class EntrustUserTest extends PHPUnit_Framework_TestCase
+class EntrustUserTest extends TestCase
 {
     private $facadeMocks = array();
 
@@ -17,10 +19,10 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $app = m::mock('app')->shouldReceive('instance')->getMock();
+        $app = Mockery::mock('app')->shouldReceive('instance')->getMock();
 
-        $this->facadeMocks['config'] = m::mock('config');
-        $this->facadeMocks['cache'] = m::mock('cache');
+        $this->facadeMocks['config'] = Mockery::mock('config');
+        $this->facadeMocks['cache'] = Mockery::mock('cache');
 
         Config::setFacadeApplication($app);
         Config::swap($this->facadeMocks['config']);
@@ -31,7 +33,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        m::close();
+        Mockery::close();
     }
 
     public function testRoles()
@@ -42,7 +44,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $belongsToMany = new stdClass();
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
 
         /*
         |------------------------------------------------------------
@@ -229,7 +231,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
         $user->id = 4;
         $user->primaryKey = 'id';
@@ -247,16 +249,16 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
 
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userRoleNameA, $userRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserRoleNameA, $nonUserRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userPermNameA, $userPermNameB, $userPermNameC), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserPermNameA, $nonUserPermNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
 
         /*
@@ -352,7 +354,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
         $user->id = 4;
         $user->primaryKey = 'id';
@@ -371,16 +373,16 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
 
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userRoleNameA, $userRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserRoleNameA, $nonUserRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userPermNameA, $userPermNameB, $userPermNameC), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserPermNameA, $nonUserPermNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
 
         /*
@@ -515,7 +517,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
         $user->id = 4;
         $user->primaryKey = 'id';
@@ -533,16 +535,16 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
 
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userRoleNameA, $userRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserRoleNameA, $nonUserRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userPermNameA, $userPermNameB, $userPermNameC), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserPermNameA, $nonUserPermNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
 
         /*
@@ -691,7 +693,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
         $user->id = 4;
         $user->primaryKey = 'id';
@@ -709,16 +711,16 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::shouldReceive('getStore')->times(8)->andReturn(new ArrayStore);
 
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf('UserRoleA', 'UserRoleB'), m::anyOf(true, false))
+            ->with(Mockery::anyOf('UserRoleA', 'UserRoleB'), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with('NonUserRoleB', m::anyOf(true, false))
+            ->with('NonUserRoleB', Mockery::anyOf(true, false))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf('user_can_a', 'user_can_b', 'user_can_c'), m::anyOf(true, false))
+            ->with(Mockery::anyOf('user_can_a', 'user_can_b', 'user_can_c'), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with('user_cannot_b', m::anyOf(true, false))
+            ->with('user_cannot_b', Mockery::anyOf(true, false))
             ->andReturn(false);
 
         /*
@@ -767,7 +769,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleA->perms = [$permA];
         $roleB->perms = [$permB, $permC];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
         $user->id = 4;
         $user->primaryKey = 'id';
@@ -785,16 +787,16 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         Cache::shouldReceive('getStore')->times(32)->andReturn(new ArrayStore);
 
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userRoleNameA, $userRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserRoleNameA, $nonUserRoleNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(Mockery::anyOf($userPermNameA, $userPermNameB, $userPermNameC), Mockery::anyOf(true, false))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(Mockery::anyOf($nonUserPermNameA, $nonUserPermNameB), Mockery::anyOf(true, false))
             ->andReturn(false);
 
         /*
@@ -870,7 +872,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleA = $this->mockRole('RoleA');
         $roleA->perms = [$permA];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA];
         $user->id = 4;
         $user->primaryKey = 'id';
@@ -920,10 +922,10 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $roleObject = m::mock('Role');
+        $roleObject = Mockery::mock('Role');
         $roleArray = ['id' => 2];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
 
         /*
         |------------------------------------------------------------
@@ -950,9 +952,15 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->attachRole($roleObject);
-        $user->attachRole($roleArray);
-        $user->attachRole(3);
+        $noExceptionThrown = true;
+        try {
+            $user->attachRole($roleObject);
+            $user->attachRole($roleArray);
+            $user->attachRole(3);
+        } catch(BadMethodCallException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     public function testDetachRole()
@@ -962,10 +970,10 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $roleObject = m::mock('Role');
+        $roleObject = Mockery::mock('Role');
         $roleArray = ['id' => 2];
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
 
         /*
         |------------------------------------------------------------
@@ -993,9 +1001,15 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->detachRole($roleObject);
-        $user->detachRole($roleArray);
-        $user->detachRole(3);
+        $noExceptionThrown = true;
+        try {
+            $user->detachRole($roleObject);
+            $user->detachRole($roleArray);
+            $user->detachRole(3);
+        } catch(BadMethodCallException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     public function testAttachRoles()
@@ -1005,7 +1019,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
 
         /*
         |------------------------------------------------------------
@@ -1027,7 +1041,13 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->attachRoles([1, 2, 3]);
+        $noExceptionThrown = true;
+        try {
+            $user->attachRoles([1, 2, 3]);
+        } catch(BadMethodCallException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     public function testDetachRoles()
@@ -1037,7 +1057,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
 
         /*
         |------------------------------------------------------------
@@ -1059,7 +1079,13 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->detachRoles([1, 2, 3]);
+        $noExceptionThrown = true;
+        try {
+            $user->detachRoles([1, 2, 3]);
+        } catch(BadMethodCallException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     public function testDetachAllRoles()
@@ -1072,10 +1098,10 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $roleA = $this->mockRole('RoleA');
         $roleB = $this->mockRole('RoleB');
 
-        $user = m::mock('HasRoleUser')->makePartial();
+        $user = Mockery::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
 
-        $relationship = m::mock('BelongsToMany');
+        $relationship = Mockery::mock('BelongsToMany');
 
         /*
         |------------------------------------------------------------
@@ -1100,13 +1126,18 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->detachRoles();
-
+        $noExceptionThrown = true;
+        try {
+            $user->detachRoles();
+        } catch(InvalidCountException $e) {
+            $noExceptionThrown = false;
+        }
+        $this->assertTrue($noExceptionThrown);
     }
 
     protected function mockPermission($permName)
     {
-        $permMock = m::mock('Zizaco\Entrust\Permission');
+        $permMock = Mockery::mock('Zizaco\Entrust\Permission');
         $permMock->name = $permName;
         $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
         $permMock->id = 1;
@@ -1116,7 +1147,7 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
 
     protected function mockRole($roleName)
     {
-        $roleMock = m::mock('Zizaco\Entrust\Role');
+        $roleMock = Mockery::mock('Zizaco\Entrust\Role');
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];
