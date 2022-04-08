@@ -1,4 +1,4 @@
-# ENTRUST (Laravel 5|6 Package)
+# ENTRUST (Laravel 5|6|7|8 Package)
 
 Forked from [zizaco/entrust](https://github.com/Zizaco/entrust)
 
