@@ -2,7 +2,7 @@
 
 Forked from [zizaco/entrust](https://github.com/Zizaco/entrust)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5|6**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5|6|7|8**.
 
 
 ## Contents
