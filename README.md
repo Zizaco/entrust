@@ -1,16 +1,6 @@
-# ENTRUST (Laravel 5 Package)
+# ENTRUST (Laravel 6 Package)
 
-[![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
-[![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
-[![License](https://poser.pugx.org/zizaco/entrust/license.svg)](https://packagist.org/packages/zizaco/entrust)
-[![Total Downloads](https://img.shields.io/packagist/dt/zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
-
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)
-
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
-
-If you are looking for the Laravel 4 version, take a look [Branch 1.0](https://github.com/Zizaco/entrust/tree/1.0). It
-contains the latest entrust version for Laravel 4.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 6**.
 
 ## Contents
 
@@ -37,10 +27,10 @@ contains the latest entrust version for Laravel 4.
 
 ## Installation
 
-1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
+1) In order to install Laravel 6 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"zizaco/entrust": "5.2.x-dev"
+"cubs/entrust": "^2.0"
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
@@ -49,7 +39,7 @@ contains the latest entrust version for Laravel 4.
 Zizaco\Entrust\EntrustServiceProvider::class,
 ```
 
-3) In the same `config/app.php` and add the following to the `aliases ` array: 
+3) In the same `config/app.php` and add the following to the `aliases ` array:
 
 ```php
 'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
@@ -389,18 +379,18 @@ Three directives are available for use within your Blade templates. What you giv
 
 ```php
 @role('admin')
-    <p>This is visible to users with the admin role. Gets translated to 
+    <p>This is visible to users with the admin role. Gets translated to
     \Entrust::role('admin')</p>
 @endrole
 
 @permission('manage-admins')
-    <p>This is visible to users with the given permissions. Gets translated to 
-    \Entrust::can('manage-admins'). The @can directive is already taken by core 
+    <p>This is visible to users with the given permissions. Gets translated to
+    \Entrust::can('manage-admins'). The @can directive is already taken by core
     laravel authorization package, hence the @permission directive instead.</p>
 @endpermission
 
 @ability('admin,owner', 'create-post,edit-user')
-    <p>This is visible to users with the given abilities. Gets translated to 
+    <p>This is visible to users with the given abilities. Gets translated to
     \Entrust::ability('admin,owner', 'create-post,edit-user')</p>
 @endability
 ```
@@ -550,5 +540,5 @@ Entrust is free software distributed under the terms of the MIT license.
 
 Support follows PSR-1 and PSR-4 PHP coding standards, and semantic versioning.
 
-Please report any issue you find in the issues page.  
+Please report any issue you find in the issues page.
 Pull requests are welcome.

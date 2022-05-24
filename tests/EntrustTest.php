@@ -1,10 +1,10 @@
 <?php
 
 use Zizaco\Entrust\Entrust;
-use Illuminate\Support\Facades\Facade;
+use PHPUnit\Framework\TestCase;
 use Mockery as m;
 
-class EntrustTest extends PHPUnit_Framework_TestCase
+class EntrustTest extends TestCase
 {
     protected $nullFilterTest;
     protected $abortFilterTest;
@@ -12,8 +12,10 @@ class EntrustTest extends PHPUnit_Framework_TestCase
 
     protected $expectedResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->nullFilterTest = function($filterClosure) {
             if (!($filterClosure instanceof Closure)) {
                 return false;
@@ -54,8 +56,9 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         };
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
+        parent::tearDown();
         m::close();
     }
 
@@ -214,6 +217,8 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         */
         $entrust->routeNeedsRole($route, $oneRole);
         $entrust->routeNeedsRole($route, $manyRole);
+
+        $this->assertTrueWithoutException();
     }
 
     public function testRouteNeedsPermission()
@@ -254,6 +259,8 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         */
         $entrust->routeNeedsPermission($route, $onePerm);
         $entrust->routeNeedsPermission($route, $manyPerm);
+
+        $this->assertTrueWithoutException();
     }
 
     public function testRouteNeedsRoleOrPermission()
@@ -316,6 +323,8 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         $entrust->routeNeedsRoleOrPermission($route, $oneRole, $manyPerm);
         $entrust->routeNeedsRoleOrPermission($route, $manyRole, $onePerm);
         $entrust->routeNeedsRoleOrPermission($route, $manyRole, $manyPerm);
+
+        $this->assertTrueWithoutException();
     }
 
     public function simpleFilterDataProvider()
@@ -431,5 +440,10 @@ class EntrustTest extends PHPUnit_Framework_TestCase
         } else {
             return implode('_', $roles) . '_' . implode('_', $permissions) . '_' . substr(md5($route), 0, 6);
         }
+    }
+
+    private function assertTrueWithoutException()
+    {
+        $this->assertTrue(true, 'Make it to the end without exception');
     }
 }

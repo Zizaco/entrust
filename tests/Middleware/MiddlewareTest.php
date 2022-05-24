@@ -1,18 +1,19 @@
 <?php
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
+abstract class MiddlewareTest extends TestCase
 {
 	public static $abortCode = null;
 
-	public static function setupBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		if (! function_exists('abort')) {
 		    /**
 		     * Mimicks Laravel5's abort() helper function.
 		     *
-		     * Instead of calling \Illuminate\Foundation\Application::abort(), this function keeps track of 
+		     * Instead of calling \Illuminate\Foundation\Application::abort(), this function keeps track of
 		     * the last abort called, so the abort can be retrieved for test assertions.
 		     *
 		     * @see https://github.com/laravel/framework/blob/master/src/Illuminate/Foundation/helpers.php#L7-L23
@@ -29,13 +30,13 @@ abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
 		}
 	}
 
-	public function tearDown()
+	protected function tearDown(): void
 	{
 		parent::tearDown();
 
         m::close();
 
-		// Reset the abort code every end of test case, 
+		// Reset the abort code every end of test case,
 		// so the result of previous test case does not pollute the next one.
         static::$abortCode = null;
 	}
