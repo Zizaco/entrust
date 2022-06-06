@@ -107,6 +107,7 @@ trait EntrustUserTrait
      */
     public function hasRole($name, $requireAll = false)
     {
+        var_dump('hasRole');
         if (is_array($name)) {
             foreach ($name as $roleName) {
                 $hasRole = $this->hasRole($roleName);
