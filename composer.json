@@ -22,15 +22,15 @@
         }
     ],
     "require": {
-        "php": "^7.2",
-        "illuminate/console": "~7.0",
-        "illuminate/support": "~7.0",
-        "illuminate/cache": "~7.0"
+        "php": "^7.3",
+        "illuminate/console": "~8.0",
+        "illuminate/support": "~8.0",
+        "illuminate/cache": "~8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~8.0",
         "mockery/mockery": "dev-master",
-        "illuminate/database": "~7.0"
+        "illuminate/database": "~8.0"
     },
     "autoload": {
         "classmap": [
