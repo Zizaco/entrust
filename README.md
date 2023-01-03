@@ -1,4 +1,4 @@
-# ENTRUST (Laravel 5 Package -- Updated for Laravel 8.x)
+# ENTRUST (Laravel 5 Package -- Updated for Laravel 9.x)
 
 [![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
 [![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
@@ -7,7 +7,7 @@
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)
 
-Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 8**.
+Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 9**.
 
 ## Contents
 
@@ -34,10 +34,10 @@ Entrust is a succinct and flexible way to add Role-based Permissions to **Larave
 
 ## Installation
 
-1) In order to install Laravel 8 Entrust, just add the following to your composer.json. Then run `composer update`:
+1) In order to install Laravel 9 Entrust, just add the following to your composer.json. Then run `composer update`:
 
 ```json
-"zizaco/entrust": "5.2.x-dev"
+"zizaco/entrust": "dev-laravel-9"
 ```
 
 2) Open your `config/app.php` and add the following to the `providers` array:
