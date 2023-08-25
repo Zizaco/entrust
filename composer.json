@@ -6,14 +6,15 @@
     "minimum-stability": "dev",
     "prefer-stable": false,
     "require": {
-        "php": "^8.0",
-        "illuminate/console": "^9.0",
-        "illuminate/cache": "^9.0"
+        "php": "^8.1",
+        "illuminate/console": "^10.0.0",
+        "illuminate/cache": "^10.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.5 || ^9.0",
-        "mockery/mockery": "dev-master",
-        "illuminate/database": "^9.0"
+        "phpunit/phpunit": "^10.0",
+        "mockery/mockery": "^1.5.1",
+        "illuminate/database": "^10.0.0",
+        "overtrue/phplint": "^9.0.3"
     },
     "autoload": {
         "classmap": [
