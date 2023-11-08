@@ -30,7 +30,7 @@
         "psr/simple-cache": "^3.0.0",
         "symfony/console": "^6.3.4",
         "symfony/deprecation-contracts": "^3.3.0",
-        "symfony/finder": "^6.3.7",
+        "symfony/finder": "^6.3.0",
         "symfony/polyfill-ctype": "^1.0.0",
         "symfony/polyfill-intl-grapheme": "^1.0.0",
         "symfony/polyfill-intl-normalizer": "^1.0.0",
