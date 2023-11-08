@@ -7,7 +7,6 @@
     "prefer-stable": false,
     "require": {
         "php": "^8.1",
-        "carbonphp/carbon-doctrine-types": "^3.0.0",
         "doctrine/inflector": "^2.0.8",
         "illuminate/bus": "^10.0.0",
         "illuminate/cache": "^10.0.0",
