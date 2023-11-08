@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "edde10baf5c1ea66e990d058bdcec5fe",
+    "content-hash": "8d375bd9ddff7944d5bf777fdb088992",
     "packages": [
         {
             "name": "brick/math",
@@ -5115,24 +5115,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "psr/cache": 20,
-        "psr/event-dispatcher": 20,
-        "psr/log": 20,
-        "sebastian/cli-parser": 20,
-        "sebastian/code-unit": 20,
-        "sebastian/code-unit-reverse-lookup": 20,
-        "sebastian/comparator": 20,
-        "sebastian/complexity": 20,
-        "sebastian/diff": 20,
-        "sebastian/environment": 20,
-        "sebastian/exporter": 20,
-        "sebastian/global-state": 20,
-        "sebastian/lines-of-code": 20,
-        "sebastian/object-enumerator": 20,
-        "sebastian/object-reflector": 20,
-        "sebastian/recursion-context": 20,
-        "sebastian/type": 20,
-        "sebastian/version": 20,
         "phpunit/php-code-coverage": 20,
         "phpunit/php-invoker": 20,
         "phpunit/php-text-template": 20,
