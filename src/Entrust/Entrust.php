@@ -1,11 +1,11 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Trebol\Entrust;
 
 /**
  * This class is the main entry point of entrust. Usually the interaction
  * with this class will be done through the Entrust Facade
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Trebol\Entrust
  */
 
 class Entrust
@@ -55,7 +55,7 @@ class Entrust
     public function can($permission, $requireAll = false)
     {
         if ($user = $this->user()) {
-            return $user->can($permission, $requireAll);
+            return $user->cans($permission, $requireAll);
         }
 
         return false;

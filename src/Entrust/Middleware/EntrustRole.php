@@ -1,15 +1,17 @@
-<?php namespace Zizaco\Entrust\Middleware;
+<?php namespace Trebol\Entrust\Middleware;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Trebol\Entrust
  */
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Response;
 
 class EntrustRole
 {
@@ -42,7 +44,14 @@ class EntrustRole
 		}
 
 		if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
-			abort(403);
+            switch (Config::get('entrust.type')) {
+                case 'api':
+                    return response()->json(Config::get('entrust.response-error'),403);
+                    break;
+                default:
+                    abort(403);
+                    break;
+            }
 		}
 
 		return $next($request);

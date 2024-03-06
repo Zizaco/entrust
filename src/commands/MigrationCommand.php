@@ -1,11 +1,11 @@
-<?php namespace Zizaco\Entrust;
+<?php namespace Trebol\Entrust;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Trebol\Entrust
  */
 
 use Illuminate\Console\Command;
@@ -26,16 +26,6 @@ class MigrationCommand extends Command
      * @var string
      */
     protected $description = 'Creates a migration following the Entrust specifications.';
-   
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function fire()
-    {
-        $this->handle();
-    }
 
     /**
      * Execute the console command for Laravel 5.5+.
