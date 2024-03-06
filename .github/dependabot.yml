@@ -1,7 +1,11 @@
 version: 2
 updates:
-  - package-ecosystem: composer
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: daily
-    rebase-strategy: auto
+      interval: "weekly"
+
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
