@@ -12,8 +12,9 @@ class EntrustSetupTables extends Migration
      */
     public function up()
     {
-        DB::beginTransaction();
-
+        
+       try{
+       
         // Create table for storing roles
         Schema::create('{{ $rolesTable }}', function (Blueprint $table) {
             $table->increments('id');
@@ -56,9 +57,13 @@ class EntrustSetupTables extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
 
             $table->primary(['permission_id', 'role_id']);
-        });
+         });
+        } catch (\Exception $err) {
+            $this->down();
+            throw $err;
+        }
 
-        DB::commit();
+        
     }
 
     /**
@@ -68,9 +73,9 @@ class EntrustSetupTables extends Migration
      */
     public function down()
     {
-        Schema::drop('{{ $permissionRoleTable }}');
-        Schema::drop('{{ $permissionsTable }}');
-        Schema::drop('{{ $roleUserTable }}');
-        Schema::drop('{{ $rolesTable }}');
+        Schema::dropIfExists('{{ $permissionRoleTable }}');
+        Schema::dropIfExists('{{ $permissionsTable }}');
+        Schema::dropIfExists('{{ $roleUserTable }}');
+        Schema::dropIfExists('{{ $rolesTable }}');
     }
 }
