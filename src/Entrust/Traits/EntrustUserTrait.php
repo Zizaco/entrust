@@ -27,7 +27,7 @@ trait EntrustUserTrait
         $userPrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
         if(Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+            return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('entrust.cache_ttl', 60), function () {
                 return $this->roles()->get();
             });
         }
@@ -307,7 +307,7 @@ trait EntrustUserTrait
     }
 
     /**
-     *Filtering users according to their role 
+     *Filtering users according to their role
      *
      *@param string $role
      *@return users collection

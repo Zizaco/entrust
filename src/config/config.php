@@ -129,4 +129,15 @@ return [
     |
     */
     'permission_foreign_key' => 'permission_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entrust Cache TTL
+    |--------------------------------------------------------------------------
+    |
+    | This is the TTL (in minutes) used by Entrust to cache roles and
+    | permissions
+    |
+    */
+    'cache_ttl' => 60
 ];
