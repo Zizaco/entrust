@@ -12,6 +12,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Cache store used by Entrust
+    |--------------------------------------------------------------------------
+    |
+    | The Laravel cache store used to cache permissions and roles. If null, it
+    | will use the default cache store.
+    |
+    */
+    'cache_store' => env('ENTRUST_CACHE_STORE', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Entrust Role Model
     |--------------------------------------------------------------------------
     |

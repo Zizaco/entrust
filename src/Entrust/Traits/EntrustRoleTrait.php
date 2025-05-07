@@ -9,8 +9,8 @@
  */
 
 use Illuminate\Cache\TaggableStore;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 trait EntrustRoleTrait
 {
@@ -19,8 +19,9 @@ trait EntrustRoleTrait
     {
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_permissions_for_role_' . $this->$rolePrimaryKey;
-        if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            return $cache->tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
                 return $this->perms()->get();
             });
         } else return $this->perms()->get();
@@ -31,8 +32,9 @@ trait EntrustRoleTrait
         if (!parent::save($options)) {
             return false;
         }
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            $cache->tags(Config::get('entrust.permission_role_table'))->flush();
         }
         return true;
     }
@@ -42,8 +44,9 @@ trait EntrustRoleTrait
         if (!parent::delete($options)) {
             return false;
         }
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            $cache->tags(Config::get('entrust.permission_role_table'))->flush();
         }
         return true;
     }
@@ -53,8 +56,9 @@ trait EntrustRoleTrait
         if (!parent::restore()) {
             return false;
         }
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            $cache->tags(Config::get('entrust.permission_role_table'))->flush();
         }
         return true;
     }
@@ -152,8 +156,9 @@ trait EntrustRoleTrait
             $this->perms()->detach();
         }
 
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            $cache->tags(Config::get('entrust.permission_role_table'))->flush();
         }
     }
 
