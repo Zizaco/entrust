@@ -12,7 +12,6 @@ use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-
 use InvalidArgumentException;
 
 trait EntrustUserTrait
@@ -26,8 +25,9 @@ trait EntrustUserTrait
     {
         $userPrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
-        if(Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            return $cache->tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
                 return $this->roles()->get();
             });
         }
@@ -39,8 +39,9 @@ trait EntrustUserTrait
      */
     public function save(array $options = [])
     {   //both inserts and updates
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            $cache->tags(Config::get('entrust.role_user_table'))->flush();
         }
         return parent::save($options);
     }
@@ -51,8 +52,9 @@ trait EntrustUserTrait
     public function delete(array $options = [])
     {   //soft or hard
         $result = parent::delete($options);
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            $cache->tags(Config::get('entrust.role_user_table'))->flush();
         }
         return $result;
     }
@@ -63,8 +65,9 @@ trait EntrustUserTrait
     public function restore()
     {   //soft delete undo's
         $result = parent::restore();
-        if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        $cache = Cache::store(Config::get('entrust.cache_store'));
+        if ($cache instanceof TaggableStore) {
+            $cache->tags(Config::get('entrust.role_user_table'))->flush();
         }
         return $result;
     }
@@ -307,7 +310,7 @@ trait EntrustUserTrait
     }
 
     /**
-     *Filtering users according to their role 
+     *Filtering users according to their role
      *
      *@param string $role
      *@return users collection
