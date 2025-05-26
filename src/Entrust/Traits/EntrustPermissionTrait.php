@@ -1,4 +1,9 @@
-<?php namespace Zizaco\Entrust\Traits;
+<?php
+
+namespace Zizaco\Entrust\Traits;
+
+use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * This file is part of Entrust,
@@ -7,38 +12,32 @@
  * @license MIT
  * @package Zizaco\Entrust
  */
-
-use Illuminate\Support\Facades\Config;
-
 trait EntrustPermissionTrait
 {
     /**
      * Many-to-Many relations with role model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function roles()
+    public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.permission_role_table'), Config::get('entrust.permission_foreign_key'), Config::get('entrust.role_foreign_key'));
+        return $this->belongsToMany(
+            Config::get('entrust.role'),
+            Config::get('entrust.permission_role_table'),
+            Config::get('entrust.permission_foreign_key'),
+            Config::get('entrust.role_foreign_key')
+        );
     }
 
     /**
-     * Boot the permission model
-     * Attach event listener to remove the many-to-many records when trying to delete
+     * Boot the permission model.
+     * Attach event listener to remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the permission model uses soft deletes.
-     *
-     * @return void|bool
      */
-    public static function boot()
+    public static function bootEntrustPermissionTrait(): void
     {
-        parent::boot();
-
-        static::deleting(function($permission) {
-            if (!method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
-                $permission->roles()->sync([]);
+        static::deleting(function ($permission) {
+            if (! method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
+                $permission->roles()->detach();
             }
-
-            return true;
         });
     }
 }
