@@ -1,64 +1,93 @@
-<?php namespace Zizaco\Entrust\Middleware;
+<?php 
 
-/**
- * This file is part of Entrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Zizaco\Entrust
- */
+namespace Zizaco\Entrust\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
 
 class EntrustAbility
 {
-	const DELIMITER = '|';
+    const DELIMITER = '|';
 
-	protected $auth;
+    /**
+     * The guard instance.
+     *
+     * @var Guard
+     */
+    protected $auth;
 
-	/**
-	 * Creates a new instance of the middleware.
-	 *
-	 * @param Guard $auth
-	 */
-	public function __construct(Guard $auth)
-	{
-		$this->auth = $auth;
-	}
+    /**
+     * Create a new middleware instance.
+     */
+    public function __construct(Guard $auth)
+    {
+        $this->auth = $auth;
+    }
 
-	/**
-	 * Handle an incoming request.
-	 *
-	 * @param \Illuminate\Http\Request $request
-	 * @param Closure $next
-	 * @param $roles
-	 * @param $permissions
-	 * @param bool $validateAll
-	 * @return mixed
-	 */
-	public function handle($request, Closure $next, $roles, $permissions, $validateAll = false)
-	{
-		if (!is_array($roles)) {
-	    // Convert $roles to an empty string if it's null or not a string
-	    $roles = $roles ?? '';  
-	    $roles = explode(self::DELIMITER, $roles);
-		}
+    /**
+     * Handle an incoming request.
+     *
+     * @param  Request  $request
+     * @param  Closure  $next
+     * @param  string|array  $roles
+     * @param  string|array  $permissions
+     * @param  bool|string  $validateAll
+     * @return mixed
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function handle($request, Closure $next, $roles, $permissions, $validateAll = false)
+    {
+        $roles = $this->normalizeInput($roles);
+        $permissions = $this->normalizeInput($permissions);
+        $validateAll = $this->normalizeBoolean($validateAll);
 
-		if (!is_array($permissions)) {
-		    // Convert $permissions to an empty string if it's null or not a string
-		    $permissions = $permissions ?? '';  
-		    $permissions = explode(self::DELIMITER, $permissions);
-		}
+        if ($this->unauthorized($request, $roles, $permissions, $validateAll)) {
+            abort(403);
+        }
 
-		if (!is_bool($validateAll)) {
-			$validateAll = filter_var($validateAll, FILTER_VALIDATE_BOOLEAN);
-		}
+        return $next($request);
+    }
 
-		if ($this->auth->guest() || !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
-			abort(403);
-		}
+    /**
+     * Normalize the input to an array.
+     *
+     * @param  string|array  $input
+     * @return array
+     */
+    protected function normalizeInput($input): array
+    {
+        if (is_array($input)) {
+            return $input;
+        }
 
-		return $next($request);
-	}
+        return explode(self::DELIMITER, $input ?? '');
+    }
+
+    /**
+     * Normalize a boolean input.
+     *
+     * @param  bool|string  $value
+     * @return bool
+     */
+    protected function normalizeBoolean($value): bool
+    {
+        return is_bool($value) ? $value : filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Determine if the request is unauthorized.
+     *
+     * @param  Request  $request
+     * @param  array  $roles
+     * @param  array  $permissions
+     * @param  bool  $validateAll
+     * @return bool
+     */
+    protected function unauthorized(Request $request, array $roles, array $permissions, bool $validateAll): bool
+    {
+        return $this->auth->guest() || 
+               !$request->user()->ability($roles, $permissions, ['validate_all' => $validateAll]);
+    }
 }
