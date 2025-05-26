@@ -1,4 +1,11 @@
-<?php namespace Zizaco\Entrust\Middleware;
+<?php 
+
+namespace Zizaco\Entrust\Middleware;
+
+use Closure;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * This file is part of Entrust,
@@ -7,47 +14,56 @@
  * @license MIT
  * @package Zizaco\Entrust
  */
-
-use Closure;
-use Illuminate\Contracts\Auth\Guard;
-
 class EntrustRole
 {
-	const DELIMITER = '|';
+    const DELIMITER = '|';
 
-	protected $auth;
+    protected Guard $auth;
 
-	/**
-	 * Creates a new instance of the middleware.
-	 *
-	 * @param Guard $auth
-	 */
-	public function __construct(Guard $auth)
-	{
-		$this->auth = $auth;
-	}
+    /**
+     * Creates a new instance of the middleware.
+     */
+    public function __construct(Guard $auth)
+    {
+        $this->auth = $auth;
+    }
 
-	/**
-	 * Handle an incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request $request
-	 * @param  Closure $next
-	 * @param  $roles
-	 * @return mixed
-	 */
-	public function handle($request, Closure $next, $roles)
-	{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  Request  $request
+     * @param  Closure $next
+     * @param  string|array  $roles
+     * @return Response
+     */
+    public function handle($request, Closure $next, $roles): Response
+    {
+        $roles = $this->normalizeRoles($roles);
 
-		if (!is_array($roles)) {
-		    // Convert $roles to an empty string if it's null or not a string
-		    $roles = $roles ?? '';  
-		    $roles = explode(self::DELIMITER, $roles);
-		}
+        if ($this->unauthorized($roles)) {
+            abort(403);
+        }
 
-		if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
-			abort(403);
-		}
+        return $next($request);
+    }
 
-		return $next($request);
-	}
+    /**
+     * Normalize roles to array format
+     */
+    protected function normalizeRoles($roles): array
+    {
+        if (is_array($roles)) {
+            return $roles;
+        }
+
+        return explode(self::DELIMITER, (string)($roles ?? ''));
+    }
+
+    /**
+     * Check if user is unauthorized
+     */
+    protected function unauthorized(array $roles): bool
+    {
+        return $this->auth->guest() || !$this->auth->user()->hasRole($roles);
+    }
 }
