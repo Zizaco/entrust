@@ -1,4 +1,10 @@
-<?php namespace Zizaco\Entrust;
+<?php
+
+namespace Zizaco\Entrust;
+
+use Illuminate\Foundation\Application;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Routing\Router;
 
 /**
  * This class is the main entry point of entrust. Usually the interaction
@@ -7,24 +13,17 @@
  * @license MIT
  * @package Zizaco\Entrust
  */
-
 class Entrust
 {
     /**
      * Laravel application
-     *
-     * @var \Illuminate\Foundation\Application
      */
-    public $app;
+    protected Application $app;
 
     /**
      * Create a new confide instance.
-     *
-     * @param \Illuminate\Foundation\Application $app
-     *
-     * @return void
      */
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
@@ -32,59 +31,44 @@ class Entrust
     /**
      * Checks if the current user has a role by its name
      *
-     * @param string $name Role name.
-     *
+     * @param string|array $role Role name or array of role names.
+     * @param bool $requireAll Whether all roles are required.
      * @return bool
      */
-    public function hasRole($role, $requireAll = false)
+    public function hasRole($role, bool $requireAll = false): bool
     {
-        if ($user = $this->user()) {
-            return $user->hasRole($role, $requireAll);
-        }
-
-        return false;
+        return $this->user()?->hasRole($role, $requireAll) ?? false;
     }
 
     /**
      * Check if the current user has a permission by its name
      *
-     * @param string $permission Permission string.
-     *
+     * @param string|array $permission Permission string or array of permissions.
+     * @param bool $requireAll Whether all permissions are required.
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function can($permission, bool $requireAll = false): bool
     {
-        if ($user = $this->user()) {
-            return $user->can($permission, $requireAll);
-        }
-
-        return false;
+        return $this->user()?->can($permission, $requireAll) ?? false;
     }
 
     /**
      * Check if the current user has a role or permission by its name
      *
-     * @param array|string $roles            The role(s) needed.
-     * @param array|string $permissions      The permission(s) needed.
-     * @param array $options                 The Options.
-     *
+     * @param array|string $roles The role(s) needed.
+     * @param array|string $permissions The permission(s) needed.
+     * @param array $options The Options.
      * @return bool
      */
-    public function ability($roles, $permissions, $options = [])
+    public function ability($roles, $permissions, array $options = []): bool
     {
-        if ($user = $this->user()) {
-            return $user->ability($roles, $permissions, $options);
-        }
-
-        return false;
+        return $this->user()?->ability($roles, $permissions, $options) ?? false;
     }
 
     /**
      * Get the currently authenticated user or null.
-     *
-     * @return Illuminate\Auth\UserInterface|null
      */
-    public function user()
+    public function user(): ?Authenticatable
     {
         return $this->app->auth->user();
     }
@@ -95,32 +79,19 @@ class Entrust
      * If the third parameter is null then abort with status code 403.
      * Otherwise the $result is returned.
      *
-     * @param string       $route      Route pattern. i.e: "admin/*"
-     * @param array|string $roles      The role(s) needed
-     * @param mixed        $result     i.e: Redirect::to('/')
-     * @param bool         $requireAll User must have all roles
-     *
-     * @return mixed
+     * @param string $route Route pattern. i.e: "admin/*"
+     * @param array|string $roles The role(s) needed
+     * @param mixed $result i.e: Redirect::to('/')
+     * @param bool $requireAll User must have all roles
      */
-    public function routeNeedsRole($route, $roles, $result = null, $requireAll = true)
+    public function routeNeedsRole(string $route, $roles, $result = null, bool $requireAll = true): void
     {
-        $filterName  = is_array($roles) ? implode('_', $roles) : $roles;
-        $filterName .= '_'.substr(md5($route), 0, 6);
-
-        $closure = function () use ($roles, $result, $requireAll) {
-            $hasRole = $this->hasRole($roles, $requireAll);
-
-            if (!$hasRole) {
-                return empty($result) ? $this->app->abort(403) : $result;
-            }
-        };
-
-        // Same as Route::filter, registers a new filter
-        $this->app->router->filter($filterName, $closure);
-
-        // Same as Route::when, assigns a route pattern to the
-        // previously created filter.
-        $this->app->router->when($route, $filterName);
+        $this->registerRouteFilter(
+            $route,
+            $roles,
+            fn () => $this->handleRouteAccessCheck($this->hasRole($roles, $requireAll), $result),
+            'role'
+        );
     }
 
     /**
@@ -129,32 +100,19 @@ class Entrust
      * If the third parameter is null then abort with status code 403.
      * Otherwise the $result is returned.
      *
-     * @param string       $route       Route pattern. i.e: "admin/*"
+     * @param string $route Route pattern. i.e: "admin/*"
      * @param array|string $permissions The permission(s) needed
-     * @param mixed        $result      i.e: Redirect::to('/')
-     * @param bool         $requireAll  User must have all permissions
-     *
-     * @return mixed
+     * @param mixed $result i.e: Redirect::to('/')
+     * @param bool $requireAll User must have all permissions
      */
-    public function routeNeedsPermission($route, $permissions, $result = null, $requireAll = true)
+    public function routeNeedsPermission(string $route, $permissions, $result = null, bool $requireAll = true): void
     {
-        $filterName  = is_array($permissions) ? implode('_', $permissions) : $permissions;
-        $filterName .= '_'.substr(md5($route), 0, 6);
-
-        $closure = function () use ($permissions, $result, $requireAll) {
-            $hasPerm = $this->can($permissions, $requireAll);
-
-            if (!$hasPerm) {
-                return empty($result) ? $this->app->abort(403) : $result;
-            }
-        };
-
-        // Same as Route::filter, registers a new filter
-        $this->app->router->filter($filterName, $closure);
-
-        // Same as Route::when, assigns a route pattern to the
-        // previously created filter.
-        $this->app->router->when($route, $filterName);
+        $this->registerRouteFilter(
+            $route,
+            $permissions,
+            fn () => $this->handleRouteAccessCheck($this->can($permissions, $requireAll), $result),
+            'permission'
+        );
     }
 
     /**
@@ -163,40 +121,62 @@ class Entrust
      * If the third parameter is null then abort with status code 403.
      * Otherwise the $result is returned.
      *
-     * @param string       $route       Route pattern. i.e: "admin/*"
-     * @param array|string $roles       The role(s) needed
+     * @param string $route Route pattern. i.e: "admin/*"
+     * @param array|string $roles The role(s) needed
      * @param array|string $permissions The permission(s) needed
-     * @param mixed        $result      i.e: Redirect::to('/')
-     * @param bool         $requireAll  User must have all roles and permissions
-     *
-     * @return void
+     * @param mixed $result i.e: Redirect::to('/')
+     * @param bool $requireAll User must have all roles and permissions
      */
-    public function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = null, $requireAll = false)
-    {
-        $filterName  =      is_array($roles)       ? implode('_', $roles)       : $roles;
-        $filterName .= '_'.(is_array($permissions) ? implode('_', $permissions) : $permissions);
-        $filterName .= '_'.substr(md5($route), 0, 6);
+    public function routeNeedsRoleOrPermission(
+        string $route,
+        $roles,
+        $permissions,
+        $result = null,
+        bool $requireAll = false
+    ): void {
+        $filterName = $this->generateFilterName([$roles, $permissions], $route);
 
         $closure = function () use ($roles, $permissions, $result, $requireAll) {
-            $hasRole  = $this->hasRole($roles, $requireAll);
+            $hasRole = $this->hasRole($roles, $requireAll);
             $hasPerms = $this->can($permissions, $requireAll);
 
-            if ($requireAll) {
-                $hasRolePerm = $hasRole && $hasPerms;
-            } else {
-                $hasRolePerm = $hasRole || $hasPerms;
-            }
+            $hasAccess = $requireAll ? ($hasRole && $hasPerms) : ($hasRole || $hasPerms);
 
-            if (!$hasRolePerm) {
-                return empty($result) ? $this->app->abort(403) : $result;
-            }
+            $this->handleRouteAccessCheck($hasAccess, $result);
         };
 
-        // Same as Route::filter, registers a new filter
         $this->app->router->filter($filterName, $closure);
-
-        // Same as Route::when, assigns a route pattern to the
-        // previously created filter.
         $this->app->router->when($route, $filterName);
+    }
+
+    /**
+     * Register a route filter with the router.
+     */
+    protected function registerRouteFilter(string $route, $items, callable $closure, string $type): void
+    {
+        $filterName = $this->generateFilterName($items, $route, $type);
+        
+        $this->app->router->filter($filterName, $closure);
+        $this->app->router->when($route, $filterName);
+    }
+
+    /**
+     * Generate a unique filter name based on items and route.
+     */
+    protected function generateFilterName($items, string $route, string $type = ''): string
+    {
+        $parts = array_map(fn ($item) => is_array($item) ? implode('_', $item) : $item, (array) $items);
+        
+        return ($type ? $type . '_' : '') . implode('_', $parts) . '_' . substr(md5($route), 0, 6);
+    }
+
+    /**
+     * Handle the route access check result.
+     */
+    protected function handleRouteAccessCheck(bool $hasAccess, $result): void
+    {
+        if (!$hasAccess) {
+            empty($result) ? $this->app->abort(403) : $result;
+        }
     }
 }
